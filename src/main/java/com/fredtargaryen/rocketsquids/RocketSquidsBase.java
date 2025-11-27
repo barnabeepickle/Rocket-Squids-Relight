@@ -24,25 +24,25 @@ import com.fredtargaryen.rocketsquids.proxy.ClientProxy;
 import com.fredtargaryen.rocketsquids.proxy.IProxy;
 import com.fredtargaryen.rocketsquids.proxy.ServerProxy;
 import com.fredtargaryen.rocketsquids.worldgen.*;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntitySpawnPlacementRegistry;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.particles.BasicParticleType;
-import net.minecraft.particles.ParticleType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.world.biome.MobSpawnInfo;
-import net.minecraft.world.gen.Heightmap;
-import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.core.Rotations;
+import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.gen.placement.NoPlacementConfig;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
@@ -125,11 +125,11 @@ public class RocketSquidsBase {
 
     //Declare all ParticleTypes here
     @ObjectHolder("firework")
-    public static BasicParticleType FIREWORK_TYPE;
+    public static SimpleParticleType FIREWORK_TYPE;
 
     public static FeatureManager FEATURE_MANAGER;
 
-    public static MobSpawnInfo.Spawners ROCKET_SQUID_SPAWN_INFO;
+    public static MobSpawnSettings.Spawners ROCKET_SQUID_SPAWN_INFO;
 
     /**
      * The creative tab for all items from Rocket Squids.
@@ -152,7 +152,7 @@ public class RocketSquidsBase {
      *     |_TagIntArray    ("Colors")
      *     |_TagIntArray    ("FadeColors")
      */
-    public static final CompoundNBT firework = new CompoundNBT();
+    public static final CompoundTag firework = new CompoundTag();
 	
     /**   
      * Says where the client and server 'proxy' code is loaded.
@@ -188,7 +188,7 @@ public class RocketSquidsBase {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        SQUID_EARLYREG = EntityType.Builder.create((type, world) -> new RocketSquidEntity(world), EntityClassification.WATER_CREATURE)
+        SQUID_EARLYREG = EntityType.Builder.create((type, world) -> new RocketSquidEntity(world), MobCategory.WATER_CREATURE)
                 .size(0.99F, 0.99F)
                 .setTrackingRange(128)
                 .setUpdateInterval(10)
@@ -223,21 +223,21 @@ public class RocketSquidsBase {
     public static void registerEntities(RegistryEvent.Register<EntityType<?>> event) {
         event.getRegistry().registerAll(
                 SQUID_EARLYREG,
-                EntityType.Builder.create(BabyRocketSquidEntity::new, EntityClassification.WATER_CREATURE)
+                EntityType.Builder.create(BabyRocketSquidEntity::new, MobCategory.WATER_CREATURE)
                         .size(0.4F, 0.4F)
                         .setTrackingRange(64)
                         .setUpdateInterval(10)
                         .setShouldReceiveVelocityUpdates(true)
                         .build(DataReference.MODID)
                         .setRegistryName("babyrs"),
-                EntityType.Builder.<ThrownSacEntity>create(ThrownSacEntity::new, EntityClassification.MISC)
+                EntityType.Builder.<ThrownSacEntity>create(ThrownSacEntity::new, MobCategory.MISC)
                         .setTrackingRange(64)
                         .setUpdateInterval(10)
                         .setShouldReceiveVelocityUpdates(true)
                         .setCustomClientFactory(ThrownSacEntity::new)
                         .build(DataReference.MODID)
                         .setRegistryName("nitroinksac"),
-                EntityType.Builder.<ThrownTubeEntity>create(ThrownTubeEntity::new, EntityClassification.MISC)
+                EntityType.Builder.<ThrownTubeEntity>create(ThrownTubeEntity::new, MobCategory.MISC)
                         .setTrackingRange(128)
                         .setUpdateInterval(10)
                         .setShouldReceiveVelocityUpdates(true)
@@ -250,7 +250,7 @@ public class RocketSquidsBase {
     @SubscribeEvent
     public static void registerParticleTypes(RegistryEvent.Register<ParticleType<?>> event) {
         event.getRegistry().register(
-                new BasicParticleType(false)
+                new SimpleParticleType(false)
                         .setRegistryName("firework")
         );
     }
@@ -294,8 +294,8 @@ public class RocketSquidsBase {
         MessageHandler.init();
 
         //Add entity attributes
-        event.enqueueWork(() -> GlobalEntityTypeAttributes.put(RocketSquidsBase.BABY_SQUID_TYPE, BabyRocketSquidEntity.prepareAttributes().create()));
-        event.enqueueWork(() -> GlobalEntityTypeAttributes.put(RocketSquidsBase.SQUID_TYPE, RocketSquidEntity.prepareAttributes().create()));
+        event.enqueueWork(() -> DefaultAttributes.put(RocketSquidsBase.BABY_SQUID_TYPE, BabyRocketSquidEntity.prepareAttributes().create()));
+        event.enqueueWork(() -> DefaultAttributes.put(RocketSquidsBase.SQUID_TYPE, RocketSquidEntity.prepareAttributes().create()));
 
         //Capability
         CapabilityManager.INSTANCE.register(IBabyCapability.class, new BabyCapStorage(), new DefaultBabyImplFactory());
@@ -304,8 +304,8 @@ public class RocketSquidsBase {
         MinecraftForge.EVENT_BUS.register(this);
 
         //Make the firework
-        ListNBT list = new ListNBT();
-            CompoundNBT f1 = new CompoundNBT();
+        ListTag list = new ListTag();
+        CompoundTag f1 = new CompoundTag();
             f1.putBoolean("Flicker", false);
             f1.putBoolean("Trail", false);
             f1.putIntArray("Colors", new int[]{15435844});
@@ -319,8 +319,8 @@ public class RocketSquidsBase {
         }
 
         //Spawn info
-        EntitySpawnPlacementRegistry.register(SQUID_TYPE, EntitySpawnPlacementRegistry.PlacementType.IN_WATER, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, (type, world, reason, pos, random) -> true);
-        ROCKET_SQUID_SPAWN_INFO = new MobSpawnInfo.Spawners(SQUID_TYPE, GeneralConfig.SPAWN_PROB.get(), GeneralConfig.MIN_GROUP_SIZE.get(), GeneralConfig.MAX_GROUP_SIZE.get());
+        SpawnPlacements.register(SQUID_TYPE, SpawnPlacements.PlacementType.IN_WATER, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, (type, world, reason, pos, random) -> true);
+        ROCKET_SQUID_SPAWN_INFO = new MobSpawnSettings.Spawners(SQUID_TYPE, GeneralConfig.SPAWN_PROB.get(), GeneralConfig.MIN_GROUP_SIZE.get(), GeneralConfig.MAX_GROUP_SIZE.get());
     }
 
     /////////////////
@@ -341,7 +341,7 @@ public class RocketSquidsBase {
     public void onItemStackConstruct(AttachCapabilitiesEvent<ItemStack> evt) {
         if(evt.getObject().getItem() == SQUELEPORTER_ACTIVE) {
             evt.addCapability(DataReference.SQUELEPORTER_LOCATION,
-                    new ICapabilitySerializable<CompoundNBT>() {
+                    new ICapabilitySerializable<CompoundTag>() {
                         ISqueleporter inst = SQUELEPORTER_CAP.getDefaultInstance();
 
                         @Nullable
@@ -351,12 +351,12 @@ public class RocketSquidsBase {
                         }
 
                         @Override
-                        public CompoundNBT serializeNBT() {
-                            return (CompoundNBT) SQUELEPORTER_CAP.getStorage().writeNBT(SQUELEPORTER_CAP, inst, null);
+                        public CompoundTag serializeNBT() {
+                            return (CompoundTag) SQUELEPORTER_CAP.getStorage().writeNBT(SQUELEPORTER_CAP, inst, null);
                         }
 
                         @Override
-                        public void deserializeNBT(CompoundNBT nbt) {
+                        public void deserializeNBT(CompoundTag nbt) {
                             SQUELEPORTER_CAP.getStorage().readNBT(SQUELEPORTER_CAP, inst, null, nbt);
                         }
                     });
@@ -369,7 +369,7 @@ public class RocketSquidsBase {
         if(e instanceof BabyRocketSquidEntity) {
             evt.addCapability(DataReference.BABY_CAP_LOCATION,
                     //Full name ICapabilitySerializableProvider
-                    new ICapabilitySerializable<CompoundNBT>() {
+                    new ICapabilitySerializable<CompoundTag>() {
                         IBabyCapability inst = BABYCAP.getDefaultInstance();
 
                         @Override
@@ -378,12 +378,12 @@ public class RocketSquidsBase {
                         }
 
                         @Override
-                        public CompoundNBT serializeNBT() {
-                            return (CompoundNBT) BABYCAP.getStorage().writeNBT(BABYCAP, inst, null);
+                        public CompoundTag serializeNBT() {
+                            return (CompoundTag) BABYCAP.getStorage().writeNBT(BABYCAP, inst, null);
                         }
 
                         @Override
-                        public void deserializeNBT(CompoundNBT nbt) {
+                        public void deserializeNBT(CompoundTag nbt) {
                             BABYCAP.getStorage().readNBT(BABYCAP, inst, null, nbt);
                         }
                     });
@@ -391,7 +391,7 @@ public class RocketSquidsBase {
         else if(e instanceof RocketSquidEntity) {
             evt.addCapability(DataReference.ADULT_CAP_LOCATION,
                     //Full name ICapabilitySerializableProvider
-                    new ICapabilitySerializable<CompoundNBT>() {
+                    new ICapabilitySerializable<CompoundTag>() {
                         IAdultCapability inst = ADULTCAP.getDefaultInstance();
 
                         @Override
@@ -400,12 +400,12 @@ public class RocketSquidsBase {
                         }
 
                         @Override
-                        public CompoundNBT serializeNBT() {
-                            return (CompoundNBT) ADULTCAP.getStorage().writeNBT(ADULTCAP, inst, null);
+                        public CompoundTag serializeNBT() {
+                            return (CompoundTag) ADULTCAP.getStorage().writeNBT(ADULTCAP, inst, null);
                         }
 
                         @Override
-                        public void deserializeNBT(CompoundNBT nbt) {
+                        public void deserializeNBT(CompoundTag nbt) {
                             ADULTCAP.getStorage().readNBT(ADULTCAP, inst, null, nbt);
                         }
                     }
@@ -413,7 +413,7 @@ public class RocketSquidsBase {
         }
     }
 
-    public static Vector3f getPlayerAimVector(PlayerEntity player)
+    public static Rotations getPlayerAimVector(Player player)
     {
         double rp = Math.toRadians(player.rotationPitch);
         double ry = Math.toRadians(player.rotationYaw);
@@ -421,7 +421,7 @@ public class RocketSquidsBase {
         float hori = (float) Math.cos(rp);
         float x = (float) (hori * -Math.sin(ry));
         float z = (float) (hori * Math.cos(ry));
-        return new Vector3f(x, y, z);
+        return new Rotations(x, y, z);
     }
 
     ////////////////////////
