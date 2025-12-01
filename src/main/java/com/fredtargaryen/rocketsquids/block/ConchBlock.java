@@ -3,7 +3,7 @@ package com.fredtargaryen.rocketsquids.block;
 import com.fredtargaryen.rocketsquids.RocketSquidsBase;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +23,7 @@ public class ConchBlock extends Block {
     private static final VoxelShape CONCH_NORTH = Block.box(2.0, 0.0, 10.0, 8.0, 2.0, 13.0);
 
     public ConchBlock() {
-        super(Block.Properties.create(Material.SAND));
+        super(Block.Properties.of(Material.SAND));
     }
 
     @Override
@@ -62,20 +62,20 @@ public class ConchBlock extends Block {
      * Called by ItemBlocks after a block is set in the world, to allow post-place logic
      */
     @Override
-    public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-        Direction facing = placer.getHorizontalFacing();
+    public void setPlacedBy(Level worldLevel, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+        Direction facing = placer.getDirection();
         switch(facing) {
             case NORTH:
-                worldIn.setBlock(pos, state.with(BlockStateProperties.HORIZONTAL_FACING, Direction.EAST));
+                worldLevel.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.EAST));
                 break;
             case SOUTH:
-                worldIn.setBlock(pos, state.with(BlockStateProperties.HORIZONTAL_FACING, Direction.WEST));
+                worldLevel.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.WEST));
                 break;
             case WEST:
-                worldIn.setBlock(pos, state.with(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+                worldLevel.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
                 break;
             default:
-                worldIn.setBlock(pos, state.with(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH));
+                worldLevel.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH));
                 break;
         }
     }
