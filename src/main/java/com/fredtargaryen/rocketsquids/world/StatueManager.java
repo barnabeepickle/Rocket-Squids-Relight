@@ -1,8 +1,8 @@
 package com.fredtargaryen.rocketsquids.world;
 
 import com.fredtargaryen.rocketsquids.DataReference;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DimensionSavedDataManager;
@@ -27,7 +27,7 @@ public class StatueManager extends WorldSavedData {
     }
 
     @Override
-    public void read(CompoundNBT nbt) {
+    public void read(CompoundTag nbt) {
         this.statues = new ArrayList<>();
         int amount = nbt.getInt("amount");
         for(int i = 0; i < amount; ++i) {
@@ -36,7 +36,7 @@ public class StatueManager extends WorldSavedData {
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT compound) {
+    public CompoundTag write(CompoundTag compound) {
         int amount = this.statues.size();
         compound.putInt("amount", this.statues.size());
         for(int i = 0; i < amount; ++i) {
