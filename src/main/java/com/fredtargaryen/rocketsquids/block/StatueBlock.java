@@ -29,8 +29,8 @@ public class StatueBlock extends FallingBlock {
     private static final VoxelShape TALLBOX = Block.box(0.0, 0.0, 0.0, 16.0, 32.0, 16.0);
 
     public StatueBlock() {
-        super(Block.Properties.create(Material.ROCK).notSolid());
-        this.setDefaultState(this.getStateContainer().getBaseState().with(BlockStateProperties.FACING, Direction.UP));
+        super(Block.Properties.of(Material.STONE).noOcclusion());
+        this.registerDefaultState(this.getStateDefinition().any().setValue(BlockStateProperties.FACING, Direction.UP));
     }
 
     /**
@@ -46,22 +46,22 @@ public class StatueBlock extends FallingBlock {
     }
 
     @Override
-    protected void fillStateContainer(StateDefinition.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(BlockStateProperties.FACING);
     }
 
     @Override
     @Deprecated
-    public boolean isValidPosition(BlockState state, LevelReader worldIn, BlockPos pos) {
-        return worldIn.getBlockState(pos.down()).getMaterial().isSolid() && !worldIn.getBlockState(pos.up()).getMaterial().isSolid();
+    public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos) {
+        return worldIn.getBlockState(pos.below()).getMaterial().isSolid() && !worldIn.getBlockState(pos.above()).getMaterial().isSolid();
     }
 
     /**
      * Called by ItemBlocks after a block is set in the world, to allow post-place logic
      */
-    public void onBlockPlacedBy(Level worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(worldIn, pos, state, placer, stack);
-        if(!worldIn.isRemote) {
+        if(!worldIn.isClientSide) {
             StatueManager.forWorld(worldIn).addStatue(pos);
         }
     }
@@ -87,12 +87,12 @@ public class StatueBlock extends FallingBlock {
                 ItemEntity squav = new ItemEntity(world,x + 0.5D, y + 0.5D, z - 0.5D);
                 squav.setItem(RocketSquidsBase.SQUAVIGATOR.getDefaultInstance());
                 //North is negative Z I think
-                squav.setVelocity(0.0, 0.05, -0.1);
-                world.addEntity(squav);
+                squav.setDeltaMovement(0.0, 0.05, -0.1);
+                world.addFreshEntity(squav);
                 ItemEntity squel = new ItemEntity(world,x + 0.5D, y + 0.5D, z - 0.5D);
                 squel.setItem(RocketSquidsBase.SQUELEPORTER_INACTIVE.getDefaultInstance());
-                squel.setVelocity(0.0, 0.05, -0.1);
-                world.addEntity(squel);
+                squel.setDeltaMovement(0.0, 0.05, -0.1);
+                world.addFreshEntity(squel);
                 break;
             default:
                 break;
@@ -103,11 +103,11 @@ public class StatueBlock extends FallingBlock {
      * Remove its location. It can add a new one when it lands
      */
     @Override
-    protected void onStartFalling(FallingBlockEntity fallingEntity) {
-        BlockPos startPos = fallingEntity.getPosition();
-        BlockState startState = fallingEntity.world.getBlockState(startPos);
-        if(startState.get(BlockStateProperties.FACING) == Direction.UP) {
-            StatueManager.forWorld(fallingEntity.world).removeStatue(startPos);
+    protected void falling(FallingBlockEntity fallingEntity) {
+        BlockPos startPos = fallingEntity.blockPosition();
+        BlockState startState = fallingEntity.level.getBlockState(startPos);
+        if(startState.getValue(BlockStateProperties.FACING) == Direction.UP) {
+            StatueManager.forWorld(fallingEntity.level).removeStatue(startPos);
         }
     }
 
@@ -115,8 +115,8 @@ public class StatueBlock extends FallingBlock {
      * Add a new location for where it ended up
      */
     @Override
-    public void onEndFalling(Level worldIn, BlockPos pos, BlockState fallingState, BlockState hitState, FallingBlockEntity fallingBlock) {
-        if(fallingState.get(BlockStateProperties.FACING) == Direction.UP) {
+    public void onLand(Level worldIn, BlockPos pos, BlockState fallingState, BlockState hitState, FallingBlockEntity fallingBlock) {
+        if(fallingState.getValue(BlockStateProperties.FACING) == Direction.UP) {
             StatueManager.forWorld(worldIn).addStatue(pos);
         }
     }
