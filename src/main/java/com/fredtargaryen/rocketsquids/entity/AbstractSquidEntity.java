@@ -47,9 +47,9 @@ public abstract class AbstractSquidEntity extends WaterAnimal {
      * @return Whether a solid block is in the way in all directions pointed, so the squid can't move much
      */
     public boolean areBlocksInWay() {
-        BlockPos squidPos = this.getPosition();
+        BlockPos squidPos = this.blockPosition();
         for(Direction dir : this.getDirectionsPointing()) {
-            if(!this.level.getBlockState(squidPos.offset(dir)).getMaterial().isSolid()) {
+            if(!this.level.getBlockState(squidPos.relative(dir)).getMaterial().isSolid()) {
                 return false;
             }
         }
@@ -96,14 +96,13 @@ public abstract class AbstractSquidEntity extends WaterAnimal {
 
     public void addForce(double force) {
         if(!this.level.isClientSide) {
-            Vec3 motion = this.getMotion();
+            Vec3 motion = this.getDeltaMovement();
             Vec3 direction = this.getDirectionAsVector();
-            this.setMotion(
+            this.setDeltaMovement(
                     motion.x + direction.x * force,
                     motion.y + direction.y * force,
                     motion.z + direction.z * force);
             this.onGround = false;
-            this.isAirBorne = true;
         }
     }
 
@@ -111,15 +110,14 @@ public abstract class AbstractSquidEntity extends WaterAnimal {
      * Get the current force, and recalculate the motion based on the current angle of the squid
      */
     public void moveToWherePointing() {
-        Vec3 motion = this.getMotion();
+        Vec3 motion = this.getDeltaMovement();
         double force = Math.sqrt(motion.x * motion.x + motion.y * motion.y + motion.z * motion.z);
         Vec3 direction = this.getDirectionAsVector();
-        this.setMotion(
+        this.setDeltaMovement(
                 direction.x * force,
                 direction.y * force,
                 direction.z * force);
         this.onGround = false;
-        this.isAirBorne = true;
     }
 
     /**
@@ -129,15 +127,15 @@ public abstract class AbstractSquidEntity extends WaterAnimal {
      */
     public void pointToVector(Vec3 vec, double deviation) {
         double hozDir = Math.sqrt(vec.x * vec.x + vec.z * vec.z);
-        this.setTargetRotYaw(Math.acos(vec.z / hozDir) + deviation * (this.rand.nextBoolean() ? 1 : -1));
-        this.setTargetRotPitch(Math.acos(vec.y) + deviation * (this.rand.nextBoolean() ? 1 : -1));
+        this.setTargetRotYaw(Math.acos(vec.z / hozDir) + deviation * (this.random.nextBoolean() ? 1 : -1));
+        this.setTargetRotPitch(Math.acos(vec.y) + deviation * (this.random.nextBoolean() ? 1 : -1));
     }
 
     /**
      * Turn the entity based on its motion vector
      */
     public void pointToWhereMoving() {
-        Vec3 motion = this.getMotion();
+        Vec3 motion = this.getDeltaMovement();
         if(!(Math.abs(motion.y) < 0.0785 && motion.x == 0.0 && motion.z == 0.0)) {
             //The aim is to find the local z movement to decide if the squid should pitch backwards or forwards.
             //The global z movement is given by this.motionZ.
