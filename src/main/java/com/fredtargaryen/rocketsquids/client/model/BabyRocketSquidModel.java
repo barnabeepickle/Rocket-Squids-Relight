@@ -28,45 +28,45 @@ public abstract class BabyRocketSquidModel extends EntityModel<BabyRocketSquidEn
         this.texHeight = 32;
         this.Head = new ModelPart(this, 0, 6);
         this.Head.mirror = true;
-        this.Head.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.Head.setPos(0.0F, 0.0F, 0.0F);
         this.Head.addBox(-2.0F, -3.0F, -2.0F, 5, 7, 5, 0.0F);
 
         this.Tent1 = new ModelPart(this, 0, 0);
-        this.Tent1.setRotationPoint(-0.5F, 4.0F, -0.5F);
+        this.Tent1.setPos(-0.5F, 4.0F, -0.5F);
         this.Tent1.addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F);
         this.setRotateAngle(Tent1, 0.0F, -2.356194490192345F, 0.0F);
 
         this.Tent2 = new ModelPart(this, 0, 0);
-        this.Tent2.setRotationPoint(0.5F, 4.0F, -1.0F);
+        this.Tent2.setPos(0.5F, 4.0F, -1.0F);
         this.Tent2.addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F);
         this.setRotateAngle(Tent2, 0.0F, 3.141592653589793F, 0.0F);
 
         this.Tent3 = new ModelPart(this, 0, 0);
-        this.Tent3.setRotationPoint(1.5F, 4.0F, -0.5F);
+        this.Tent3.setPos(1.5F, 4.0F, -0.5F);
         this.Tent3.addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F);
         this.setRotateAngle(Tent3, 0.0F, 2.356194490192345F, 0.0F);
 
         this.Tent4 = new ModelPart(this, 0, 0);
-        this.Tent4.setRotationPoint(2.0F, 4.0F, 0.5F);
+        this.Tent4.setPos(2.0F, 4.0F, 0.5F);
         this.Tent4.addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F);
         this.setRotateAngle(Tent4, 0.0F, 1.5707963267948966F, 0.0F);
 
         this.Tent5 = new ModelPart(this, 0, 0);
-        this.Tent5.setRotationPoint(1.5F, 4.0F, 1.5F);
+        this.Tent5.setPos(1.5F, 4.0F, 1.5F);
         this.Tent5.addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F);
         this.setRotateAngle(Tent5, 0.0F, 0.7853981633974483F, 0.0F);
 
         this.Tent6 = new ModelPart(this, 0, 0);
-        this.Tent6.setRotationPoint(0.5F, 4.0F, 2.0F);
+        this.Tent6.setPos(0.5F, 4.0F, 2.0F);
         this.Tent6.addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F);
 
         this.Tent7 = new ModelPart(this, 0, 0);
-        this.Tent7.setRotationPoint(-0.5F, 4.0F, 1.5F);
+        this.Tent7.setPos(-0.5F, 4.0F, 1.5F);
         this.Tent7.addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F);
         this.setRotateAngle(Tent7, 0.0F, -0.7853981633974483F, 0.0F);
 
         this.Tent8 = new ModelPart(this, 0, 0);
-        this.Tent8.setRotationPoint(-1.0F, 4.0F, 0.5F);
+        this.Tent8.setPos(-1.0F, 4.0F, 0.5F);
         this.Tent8.addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F);
         this.setRotateAngle(Tent8, 0.0F, -1.5707963267948966F, 0.0F);
     }
