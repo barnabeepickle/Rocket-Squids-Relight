@@ -12,7 +12,7 @@ import net.minecraft.world.entity.Entity;
  * BabyRocketSquidModel - FredTargaryen
  * Created using Tabula 7.0.0
  */
-public abstract class BabyRocketSquidModel extends EntityModel<BabyRocketSquidEntity> {
+public class BabyRocketSquidModel extends EntityModel<BabyRocketSquidEntity> {
     public ModelPart Head;
     public ModelPart Tent1;
     public ModelPart Tent2;
@@ -86,7 +86,7 @@ public abstract class BabyRocketSquidModel extends EntityModel<BabyRocketSquidEn
 //        this.Tent8.render(f5);
 //    }
 
-    public void render(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float r, float g, float b, float a) {
+    public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float r, float g, float b, float a) {
         this.Head.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
         this.Tent1.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
         this.Tent2.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
