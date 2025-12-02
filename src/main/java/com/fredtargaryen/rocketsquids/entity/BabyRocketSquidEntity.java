@@ -27,8 +27,8 @@ public class BabyRocketSquidEntity extends AbstractSquidEntity {
     }
 
 
-    public static AttributeSupplier.MutableAttribute prepareAttributes() {
-        return Mob.createMobAttributes().createMutableAttribute(Attributes.MAX_HEALTH, 1.0D);
+    public static AttributeSupplier.Builder prepareAttributes() {
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 1.0D);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class BabyRocketSquidEntity extends AbstractSquidEntity {
 
 
     @Override
-    protected boolean canBeRidden(Entity entityIn)
+    protected boolean canRide(Entity entityIn)
     {
         return false;
     }
