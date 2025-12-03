@@ -1,51 +1,51 @@
 package com.fredtargaryen.rocketsquids.entity.projectile;
 
 import com.fredtargaryen.rocketsquids.RocketSquidsBase;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.ProjectileItemEntity;
-import net.minecraft.item.Item;
-import net.minecraft.network.IPacket;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import net.minecraft.world.item.Item;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import java.util.List;
 
-public class ThrownSacEntity extends ProjectileItemEntity {
-    private static final Effect blindnessPotion = Effects.BLINDNESS;
+public class ThrownSacEntity extends ThrowableItemProjectile {
+    private static final MobEffect blindnessPotion = MobEffects.BLINDNESS;
 
-    public ThrownSacEntity(EntityType<? extends ThrownSacEntity> type, World w) { super(type, w); }
-    public ThrownSacEntity(LivingEntity elb, World w)
+    public ThrownSacEntity(EntityType<? extends ThrownSacEntity> type, Level w) { super(type, w); }
+    public ThrownSacEntity(LivingEntity elb, Level w)
     {
         super(RocketSquidsBase.SAC_TYPE, elb, w);
     }
-    public ThrownSacEntity(FMLPlayMessages.SpawnEntity spawn, World world) {
+    public ThrownSacEntity(FMLPlayMessages.SpawnEntity spawn, Level world) {
         this(RocketSquidsBase.SAC_TYPE, world);
     }
 
     @Override
-    protected void onImpact(RayTraceResult result) {
-        if (!this.world.isRemote) {
-            if (result.getType() == RayTraceResult.Type.ENTITY) {
-                EntityRayTraceResult ertr = (EntityRayTraceResult) result;
-                ertr.getEntity().attackEntityFrom(DamageSource.causeThrownDamage(this, this.func_234616_v_()), 0.0F);
+    protected void onHit(HitResult result) {
+        if (!this.level.isClientSide) {
+            if (result.getType() == HitResult.Type.ENTITY) {
+                EntityHitResult ertr = (EntityHitResult) result;
+                ertr.getEntity().hurt(DamageSource.thrown(this, this.getOwner()), 0.0F);
             }
-            AxisAlignedBB axisalignedbb = this.getBoundingBox().grow(2.0D, 2.0D, 2.0D);
-            List<LivingEntity> list1 = this.world.getEntitiesWithinAABB(LivingEntity.class, axisalignedbb);
+            AABB aabb = this.getBoundingBox().expandTowards(2.0D, 2.0D, 2.0D);
+            List<LivingEntity> list1 = this.level.getEntitiesOfClass(LivingEntity.class, aabb);
 
             if (!list1.isEmpty()) {
                 for (LivingEntity entitylivingbase : list1) {
-                    if (entitylivingbase.canBeHitWithPotion()) {
-                        entitylivingbase.addPotionEffect(new EffectInstance(blindnessPotion, 60));
+                    if (entitylivingbase.isAffectedByPotions()) {
+                        entitylivingbase.addEffect(new MobEffectInstance(blindnessPotion, 60));
                     }
                 }
             }
@@ -63,7 +63,7 @@ public class ThrownSacEntity extends ProjectileItemEntity {
      * Without this, they will not spawn on the client.
      */
     @Override
-    public IPacket<?> createSpawnPacket() {
+    public Packet<?> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 }
