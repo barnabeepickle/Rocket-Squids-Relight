@@ -21,7 +21,7 @@ public class RenderBabyRS extends MobRenderer<BabyRocketSquidEntity, BabyRocketS
      * par2 = time elapsed since last render call
      */
     @Override
-    protected float handleRotationFloat(BabyRocketSquidEntity squid, float partialTicks) {
+    protected float getBob(BabyRocketSquidEntity squid, float partialTicks) {
         return squid.lastTentacleAngle + (squid.tentacleAngle - squid.lastTentacleAngle) * partialTicks;
     }
 
