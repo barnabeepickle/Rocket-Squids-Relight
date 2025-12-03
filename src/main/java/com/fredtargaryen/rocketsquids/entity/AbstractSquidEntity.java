@@ -58,7 +58,7 @@ public abstract class AbstractSquidEntity extends WaterAnimal {
 
     public ArrayList<Direction> getDirectionsPointing() {
         ArrayList<Direction> directions = new ArrayList<>();
-        Vec3 direction = this.getDirectionAsVector();
+        Vec3 direction = this.getDirectionAsVec3();
         //A threshold; if a component is beyond this the squid is considered pointing in that direction
         double t = 0.45;//0.3125;
         if(direction.y > t) {
@@ -84,7 +84,7 @@ public abstract class AbstractSquidEntity extends WaterAnimal {
         return directions;
     }
 
-    public Vec3 getDirectionAsVector() {
+    public Vec3 getDirectionAsVec3() {
         double rp = this.getRotPitch();
         double ry = this.getRotYaw();
         double yDir = Math.cos(rp);
@@ -97,7 +97,7 @@ public abstract class AbstractSquidEntity extends WaterAnimal {
     public void addForce(double force) {
         if(!this.level.isClientSide) {
             Vec3 motion = this.getDeltaMovement();
-            Vec3 direction = this.getDirectionAsVector();
+            Vec3 direction = this.getDirectionAsVec3();
             this.setDeltaMovement(
                     motion.x + direction.x * force,
                     motion.y + direction.y * force,
@@ -112,7 +112,7 @@ public abstract class AbstractSquidEntity extends WaterAnimal {
     public void moveToWherePointing() {
         Vec3 motion = this.getDeltaMovement();
         double force = Math.sqrt(motion.x * motion.x + motion.y * motion.y + motion.z * motion.z);
-        Vec3 direction = this.getDirectionAsVector();
+        Vec3 direction = this.getDirectionAsVec3();
         this.setDeltaMovement(
                 direction.x * force,
                 direction.y * force,

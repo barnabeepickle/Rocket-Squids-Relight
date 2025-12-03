@@ -236,7 +236,7 @@ public class RocketSquidEntity extends AbstractSquidEntity {
         if(!this.level.isClientSide) {
             ItemStack stack = getHandItem(hand);
             if (stack == ItemStack.EMPTY) {
-                if (this.getSaddled() && !this.getPassengers().isEmpty()) {
+                if (this.getSaddled() && !this.isVehicle()) {
                     player.startRiding(this);
                     return InteractionResult.SUCCESS;
                 }
@@ -251,7 +251,7 @@ public class RocketSquidEntity extends AbstractSquidEntity {
                         player.level.playSound(null, pos.x, pos.y, pos.z, Sounds.SQUIDTP_IN, SoundSource.PLAYERS, 1.0F, 1.0F);
                         // Set squid data
                         CompoundTag nbt = new CompoundTag();
-                        this.writeAdditional(nbt);
+                        this.addAdditionalSaveData(nbt);
                         squeleporterCap.setSquidData(nbt);
                         // Set squid capability data
                         this.getCapability(RocketSquidsBase.ADULTCAP).ifPresent(squidCap ->
@@ -285,7 +285,7 @@ public class RocketSquidEntity extends AbstractSquidEntity {
                     return InteractionResult.SUCCESS;
                 }
                 else {
-                    if (this.getSaddled() && !this.getPassengers().isEmpty()) {
+                    if (this.getSaddled() && !this.isVehicle()) {
                         player.startRiding(this);
                         return InteractionResult.SUCCESS;
                     }
@@ -341,7 +341,7 @@ public class RocketSquidEntity extends AbstractSquidEntity {
 
     @OnlyIn(Dist.CLIENT)
     private void doFireworkParticles() {
-        ParticleEngine effectRenderer = Minecraft.getInstance().particles;
+        ParticleEngine effectRenderer = Minecraft.getInstance().particleEngine;
         Vec3 pos = this.position();
         effectRenderer.add(new SquidFireworkParticle.SquidStarter((ClientLevel) this.level, pos.x, pos.y, pos.z, effectRenderer));
     }
@@ -353,15 +353,15 @@ public class RocketSquidEntity extends AbstractSquidEntity {
         Entity passenger = this.getControllingPassenger();
         if(passenger == null || passenger != obstacle) {
             //Obstacle is not the rider, so apply collision
-            if (!obstacle.noClip && !this.noClip) {
-                Vec3 thisPos = this.getPositionVec();
+            if (!obstacle.noPhysics && !this.noPhysics) {
+                Vec3 thisPos = this.position();
                 if(!this.level.isClientSide && obstacle.getType() == RocketSquidsBase.SQUID_TYPE && this.breedCooldown == 0) {
                     this.breedCooldown = 3600;
                     Entity baby = RocketSquidsBase.BABY_SQUID_TYPE.create(this.level);
-                    baby.setLocationAndAngles(thisPos.x, thisPos.y, thisPos.z, 0.0F, 0.0F);
-                    this.level.addEntity(baby);
+                    baby.moveTo(thisPos.x, thisPos.y, thisPos.z, 0.0F, 0.0F);
+                    this.level.addFreshEntity(baby);
                 }
-                Vec3 obstaclePos = obstacle.getPositionVec();
+                Vec3 obstaclePos = obstacle.position();
                 double xDist = obstaclePos.x - thisPos.x;
                 double zDist = obstaclePos.z - thisPos.z;
                 double yDist = obstaclePos.y - thisPos.y;
@@ -385,8 +385,8 @@ public class RocketSquidEntity extends AbstractSquidEntity {
                     yDist *= 0.05000000074505806D;
                     zDist *= 0.05000000074505806D;
 
-                    this.addVelocity(-xDist * 0.02, -yDist * 0.02, -zDist * 0.02);
-                    obstacle.addVelocity(xDist * 0.98, yDist * 0.98, zDist * 0.98);
+                    this.push(-xDist * 0.02, -yDist * 0.02, -zDist * 0.02);
+                    obstacle.push(xDist * 0.98, yDist * 0.98, zDist * 0.98);
                 }
             }
         }
@@ -395,25 +395,25 @@ public class RocketSquidEntity extends AbstractSquidEntity {
     /**
      * Applies logic related to leashes, for example dragging the entity or breaking the leash.
      */
-    protected void updateLeashedState() {
-        super.updateLeashedState();
-        if(this.getLeashed()) {
+    protected void tickLeash() {
+        super.tickLeash();
+        if(this.isLeashed()) {
             Entity holder = this.getLeashHolder();
             if (holder != null && holder.level == this.level) {
-                float f = this.getDistance(holder);
+                float f = this.distanceTo(holder);
 
                 if (f > 8.0F) {
-                    this.setMotion(0.0F, 0.0F, 0.0F);
+                    this.setDeltaMovement(0.0F, 0.0F, 0.0F);
                 }
 
                 if (f > 6.0F) {
-                    Vec3 thisPos = this.getPositionVec();
-                    Vec3 holderPos = holder.getPositionVec();
+                    Vec3 thisPos = this.position();
+                    Vec3 holderPos = holder.position();
                     double d0 = (holderPos.x - thisPos.x) / (double) f;
                     double d1 = (holderPos.y - thisPos.y) / (double) f;
                     double d2 = (holderPos.z - thisPos.z) / (double) f;
-                    Vec3 motion = this.getMotion();
-                    this.setMotion(motion.x + d0 * Math.abs(d0) * 0.4D,
+                    Vec3 motion = this.getDeltaMovement();
+                    this.setDeltaMovement(motion.x + d0 * Math.abs(d0) * 0.4D,
                             motion.y + d1 * Math.abs(d1) * 0.4D,
                             motion.z + d2 * Math.abs(d2) * 0.4D);
                 }
@@ -449,10 +449,10 @@ public class RocketSquidEntity extends AbstractSquidEntity {
     public boolean hasVIPRider() {
         Entity passenger = this.getControllingPassenger();
         if (passenger instanceof Player) {
-            return ((Player) passenger).getHeldItem(InteractionHand.MAIN_HAND)
+            return ((Player) passenger).getMainHandItem()
                         .getItem() == RocketSquidsBase.SQUAVIGATOR
                     || ((Player) passenger)
-                        .getHeldItem(InteractionHand.OFF_HAND).getItem() == RocketSquidsBase.SQUAVIGATOR;
+                        .getOffhandItem().getItem() == RocketSquidsBase.SQUAVIGATOR;
         }
         return false;
     }
@@ -462,11 +462,11 @@ public class RocketSquidEntity extends AbstractSquidEntity {
      * Between these angles the player would appear to hit the ground first so the player should be hurt.
      */
     @Override
-    public boolean onLivingFall(float distance, float damageMultiplier) {
-        if (this.isBeingRidden()) {
+    public boolean causeFallDamage(float distance, float damageMultiplier) {
+        if (this.isVehicle()) {
             if(Math.sin(this.squidCap.getRotPitch()) < -0.7071067811865) {
                 for(Entity entity : this.getPassengers()) {
-                    entity.onLivingFall(distance, damageMultiplier);
+                    entity.causeFallDamage(distance, damageMultiplier);
                 }
             }
         }
@@ -505,11 +505,11 @@ public class RocketSquidEntity extends AbstractSquidEntity {
 
     @Override
     protected boolean canRide(Entity entityIn) {
-        return this.getPassengers().isEmpty();
+        return this.isVehicle();
     }
 
     public boolean getSaddled() {
-        return ((Boolean)this.dataManager.get(SADDLED)).booleanValue();
+        return ((Boolean)this.entityData.get(SADDLED)).booleanValue();
     }
 
     /**
@@ -517,10 +517,10 @@ public class RocketSquidEntity extends AbstractSquidEntity {
      */
     private void setSaddled(boolean saddled) {
         if (saddled) {
-            this.dataManager.set(SADDLED, Boolean.valueOf(true));
+            this.entityData.set(SADDLED, Boolean.valueOf(true));
         }
         else {
-            this.dataManager.set(SADDLED, Boolean.valueOf(false));
+            this.entityData.set(SADDLED, Boolean.valueOf(false));
         }
     }
 
@@ -528,10 +528,10 @@ public class RocketSquidEntity extends AbstractSquidEntity {
      * dropEquipment
      */
     @Override
-    protected void dropInventory() {
-        super.dropInventory();
+    protected void dropEquipment() {
+        super.dropEquipment();
         if (this.getSaddled()) {
-            this.entityDropItem(Items.SADDLE);
+            this.spawnAtLocation(Items.SADDLE);
         }
     }
 
@@ -566,7 +566,7 @@ public class RocketSquidEntity extends AbstractSquidEntity {
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void addRotation(RenderPlayerEvent.Pre event) {
-        if(this.isPassenger(event.getPlayer())) {
+        if(event.getPlayer().isPassenger()) {
             double prevPitch_r = this.squidCap.getPrevRotPitch();
             double pitch_r = this.squidCap.getRotPitch();
 			float partialTick = event.getPartialRenderTick();
@@ -574,10 +574,10 @@ public class RocketSquidEntity extends AbstractSquidEntity {
 			double yaw_r = this.squidCap.getRotYaw();
             this.riderRotated = true;
             PoseStack stack = event.getMatrixStack();
-            stack.push();
+            stack.pushPose();
             Quaternion quat = Vector3f.YP.rotation((float) -yaw_r);
-            quat.multiply(Vector3f.XP.rotation((float) (exactPitch_r - (Math.PI / 2))));
-            stack.rotate(quat);
+            quat.mul(Vector3f.XP.rotation((float) (exactPitch_r - (Math.PI / 2))));
+            stack.mulPose(quat);
         }
     }
 
@@ -585,7 +585,7 @@ public class RocketSquidEntity extends AbstractSquidEntity {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void popRotation(RenderPlayerEvent.Post event) {
         if(this.riderRotated) {
-            event.getMatrixStack().pop();
+            event.getMatrixStack().popPose();
             this.riderRotated = false;
         }
     }
@@ -594,18 +594,18 @@ public class RocketSquidEntity extends AbstractSquidEntity {
     //NBT//
     ///////
     @Override
-    public void writeAdditional(CompoundTag compound) {
-        super.writeAdditional(compound);
+    public void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
         compound.putString("id", EntityType.getKey(RocketSquidsBase.SQUID_TYPE).toString());
-        Vec3 motion = this.getMotion();
+        Vec3 motion = this.getDeltaMovement();
         compound.putDouble("force", Math.sqrt(motion.x * motion.x + motion.y * motion.y + motion.z * motion.z));
         compound.putBoolean("Saddle", this.getSaddled());
         compound.putShort("Breed Cooldown", this.breedCooldown);
     }
 
     @Override
-    public void readAdditional(CompoundTag compound) {
-        super.readAdditional(compound);
+    public void readAdditionalSaveData(CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
         //Force comes from reading motion tags
         this.setSaddled(compound.getBoolean("Saddle"));
         this.breedCooldown = compound.getShort("Breed Cooldown");

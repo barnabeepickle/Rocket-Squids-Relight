@@ -51,46 +51,46 @@ public class BabyRocketSquidEntity extends AbstractSquidEntity {
      * use this to react to sunlight and start to burn.
      */
     @Override
-    public void livingTick() {
-        super.livingTick();
-        if(this.ticksExisted > 72000) {
+    public void aiStep() {
+        super.aiStep();
+        if(this.tickCount > 72000) {
             if(!this.level.isClientSide) {
                 this.remove();
                 RocketSquidEntity adult = new RocketSquidEntity(this.level);
-                Vec3 pos = this.getPositionVec();
-                adult.setLocationAndAngles(pos.x, pos.y, pos.z, (float) this.squidCap.getRotYaw(), (float) this.squidCap.getRotPitch());
-                this.world.addEntity(adult);
+                Vec3 pos = this.position();
+                adult.moveTo(pos.x, pos.y, pos.z, (float) this.squidCap.getRotYaw(), (float) this.squidCap.getRotPitch());
+                this.level.addFreshEntity(adult);
             }
         }
         else {
             //Do on client and server
             //Fraction of distance to target rotation to rotate by each server tick
             double rotateSpeed;
-            if(this.inWater) {
-                Vec3 motion = this.getMotion();
-                this.setMotion(motion.x * 0.9, motion.y * 0.9, motion.z * 0.9);
+            if(this.wasTouchingWater) {
+                Vec3 motion = this.getDeltaMovement();
+                this.setDeltaMovement(motion.x * 0.9, motion.y * 0.9, motion.z * 0.9);
                 rotateSpeed = 0.06;
             }
             else {
-                Vec3 oldMotion = this.getMotion();
+                Vec3 oldMotion = this.getDeltaMovement();
                 double motionX = oldMotion.x;
                 double motionY = oldMotion.y;
                 double motionZ = oldMotion.z;
-                if(this.recentlyHit > 0) {
+                if(this.hurtTime > 0) {
                     motionX = 0.0D;
                     motionZ = 0.0D;
                 }
-                if (this.isPotionActive(MobEffects.LEVITATION)) {
-                    motionY += 0.05D * (double)(this.getActivePotionEffect(MobEffects.LEVITATION).getAmplifier() + 1) - motionY;
+                if (this.hasEffect(MobEffects.LEVITATION)) {
+                    motionY += 0.05D * (double)(this.getEffect(MobEffects.LEVITATION).getAmplifier() + 1) - motionY;
                 }
-                else if (!this.hasNoGravity()) {
+                else if (!this.isNoGravity()) {
                     motionY -= 0.08D;
                 }
                 motionX *= 0.9800000190734863D;
                 motionY *= 0.9800000190734863D;
                 motionZ *= 0.9800000190734863D;
                 rotateSpeed = 0.15;
-                this.setMotion(motionX, motionY, motionZ);
+                this.setDeltaMovement(motionX, motionY, motionZ);
             }
 
             //Rotate towards target pitch
@@ -118,7 +118,7 @@ public class BabyRocketSquidEntity extends AbstractSquidEntity {
                 //Handles tentacle angles
                 this.lastTentacleAngle = this.tentacleAngle;
                 //If in water, tentacles oscillate normally
-                this.tentacleAngle = this.inWater ? (float) ((Math.PI / 6) + (Mth.sin((float) Math.toRadians(4 * (this.ticksExisted % 360))) * Math.PI / 6)) : 0;
+                this.tentacleAngle = this.wasTouchingWater ? (float) ((Math.PI / 6) + (Mth.sin((float) Math.toRadians(4 * (this.tickCount % 360))) * Math.PI / 6)) : 0;
             }
             else {
                 //Server side
@@ -126,8 +126,8 @@ public class BabyRocketSquidEntity extends AbstractSquidEntity {
                     this.moveToWherePointing();
                 }
                 if(this.newPacketRequired) {
-                    Vec3 pos = this.getPositionVec();
-                    MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, 64, this.world.getDimensionKey())), new MessageBabyCapData(this.getUniqueID(), this.squidCap));
+                    Vec3 pos = this.position();
+                    MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, 64, this.level.dimension())), new MessageBabyCapData(this.getUUID(), this.squidCap));
                     this.newPacketRequired = false;
                 }
             }
@@ -135,14 +135,22 @@ public class BabyRocketSquidEntity extends AbstractSquidEntity {
     }
 
     /**
-     * Entity won't drop items or experience points if this returns false
+     * Entity won't drop experience orbs if this returns false
      */
     @Override
-    protected boolean canDropLoot() {return false;}
+    protected boolean shouldDropExperience() {return false;}
+
+    /**
+     * Entity won't drop items if this returns false
+     */
+    @Override
+    protected boolean shouldDropLoot() {return false;}
+
+    // since this is a baby we don't want it to drop items or xp
 
     @Override
-    public void writeAdditional(CompoundTag compound) {
-        super.writeAdditional(compound);
+    public void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
         compound.putString("id", RocketSquidsBase.BABY_SQUID_TYPE.toString());
     }
 
