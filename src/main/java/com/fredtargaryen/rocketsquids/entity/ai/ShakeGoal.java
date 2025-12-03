@@ -11,7 +11,7 @@ public class ShakeGoal extends Goal {
     public ShakeGoal(RocketSquidEntity ers) {
         super();
         this.squid = ers;
-        this.setMutexFlags(EnumSet.of(Flag.MOVE));
+        this.setFlags(EnumSet.of(Flag.MOVE));
     }
 
     @Override

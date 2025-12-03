@@ -18,7 +18,7 @@ public class BlastoffGoal extends Goal {
     {
         super();
         this.squid = ers;
-        this.setMutexFlags(EnumSet.of(Flag.MOVE));
+        this.setFlags(EnumSet.of(Flag.MOVE));
         this.blastStarted = false;
         this.horizontal = true;
     }
@@ -41,7 +41,7 @@ public class BlastoffGoal extends Goal {
                 //Squid has blasted but slowed down, i.e. end of blast
                 this.squid.setShaking(false);
                 this.squid.setBlasting(false);
-                this.squid.isAirBorne = false;
+                this.squid.hasImpulse = false;
                 this.blastStarted = false;
                 if(this.squid.getForcedBlast())
                 {

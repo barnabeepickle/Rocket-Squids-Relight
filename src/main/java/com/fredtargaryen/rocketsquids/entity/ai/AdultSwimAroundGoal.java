@@ -4,9 +4,10 @@ import com.fredtargaryen.rocketsquids.entity.RocketSquidEntity;
 import com.fredtargaryen.rocketsquids.network.MessageHandler;
 import com.fredtargaryen.rocketsquids.network.message.MessageSquidNote;
 import com.fredtargaryen.rocketsquids.world.StatueManager;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.phys.Vec3;
+import com.mojang.math.Vector3d;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.EnumSet;
@@ -32,8 +33,8 @@ public class AdultSwimAroundGoal extends Goal {
     public AdultSwimAroundGoal(RocketSquidEntity ers) {
         super();
         this.squid = ers;
-        this.setMutexFlags(EnumSet.of(Flag.MOVE));
-        this.r = this.squid.getRNG();
+        this.setFlags(EnumSet.of(Flag.MOVE));
+        this.r = this.squid.getRandom();
         this.swimForce = 0.25;
         this.noteIndex = 0;
         this.statueBlastStage = StatueBlastStage.NONE;
@@ -45,7 +46,7 @@ public class AdultSwimAroundGoal extends Goal {
     }
 
     @Override
-    public boolean shouldExecute() {
+    public boolean canUse() {
         return this.squid.isInWater() && !this.squid.getShaking() && !this.squid.getBlasting();
     }
 
@@ -61,8 +62,8 @@ public class AdultSwimAroundGoal extends Goal {
             //Therefore need to work in terms of this range, or risk squids spinning ridiculous amounts if they have
             //turned around many times before being ridden.
             Entity pass = this.squid.getControllingPassenger();
-            float pp = (float) ((pass.rotationPitch + 90.0F) * Math.PI / 180.0F);
-            float py = (float) (pass.getRotationYawHead() * Math.PI / 180.0F);
+            float pp = (float) ((pass.xRot + 90.0F) * Math.PI / 180.0F);
+            float py = (float) (pass.getYHeadRot() * Math.PI / 180.0F);
             float unclamped_sp = (float) this.squid.getRotPitch();
             float unclamped_sy = (float) this.squid.getRotYaw();
             //Clamp them to [-2PI, 2PI]
@@ -86,8 +87,8 @@ public class AdultSwimAroundGoal extends Goal {
         else {
             if(blocked) {
                 //Just point the opposite way
-                Vector3d direction = this.squid.getDirectionAsVector();
-                this.squid.pointToVector(new Vector3d(-direction.x, -direction.y, -direction.z), Math.PI / 3.0);
+                Vec3 direction = this.squid.getDirectionAsVec3();
+                this.squid.pointToVector(new Vec3(-direction.x, -direction.y, -direction.z), Math.PI / 3.0);
             }
             else {
                 //Random doubles between -PI and PI, added to current rotation
@@ -127,8 +128,8 @@ public class AdultSwimAroundGoal extends Goal {
                     break;
                 case LOCATE:
                     //Find nearest statue
-                    Vector3d pos = this.squid.getPositionVec();
-                    int[] statueCoords = StatueManager.forWorld(this.squid.world).getNearestStatuePos(pos.x, pos.y, pos.z);
+                    Vec3 pos = this.squid.position();
+                    int[] statueCoords = StatueManager.forWorld(this.squid.level).getNearestStatuePos(pos.x, pos.y, pos.z);
                     if(statueCoords[3] < 1) {
                         //StatueManager doesn't have any statues loaded
                         this.statueBlastStage = StatueBlastStage.NONE;
@@ -136,7 +137,7 @@ public class AdultSwimAroundGoal extends Goal {
                     }
                     else {
                         //TargetPoint for playing notes related to distance
-                        PacketDistributor.TargetPoint squidPoint = new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, 16.0F, this.squid.world.getDimensionKey());
+                        PacketDistributor.TargetPoint squidPoint = new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, 16.0F, this.squid.level.dimension());
                         double zDistance = statueCoords[4] - pos.z;
                         double xDistance = statueCoords[2] - pos.x;
                         double hozDistanceSquared = zDistance * zDistance + xDistance * xDistance;
@@ -212,8 +213,8 @@ public class AdultSwimAroundGoal extends Goal {
 
     private void playNextNote() {
         byte note = this.squid.getTargetNote(this.noteIndex);
-        Vector3d pos = this.squid.getPositionVec();
-        MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, 16.0F, this.squid.world.getDimensionKey())), new MessageSquidNote(note));
+        Vec3 pos = this.squid.position();
+        MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, 16.0F, this.squid.level.dimension())), new MessageSquidNote(note));
         if(this.noteIndex == 2) {
             this.noteIndex = 0;
         }
