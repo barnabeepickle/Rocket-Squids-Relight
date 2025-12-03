@@ -3,40 +3,42 @@ package com.fredtargaryen.rocketsquids.item;
 import com.fredtargaryen.rocketsquids.RocketSquidsBase;
 import com.fredtargaryen.rocketsquids.entity.AbstractSquidEntity;
 import com.fredtargaryen.rocketsquids.entity.projectile.ThrownSacEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.*;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.world.World;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.phys.Vec3;
+import com.mojang.math.Vector3f;
+import net.minecraft.world.level.Level;
 
 public class ItemNitroInkSac extends Item {
     public ItemNitroInkSac() {
-        super(new Item.Properties().group(RocketSquidsBase.SQUIDS_TAB));
+        super(new Item.Properties().tab(RocketSquidsBase.SQUIDS_TAB));
     }
 
     /**
      * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
      */
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-        ItemStack stack = player.getHeldItem(hand);
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
         if (!player.isCreative()) {
             stack.grow(-1);
         }
-        Vector3d pos = player.getPositionVec();
+        Vec3 pos = player.position();
         world.playSound(null, pos.x, pos.y, pos.z,
-                SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.NEUTRAL, 0.5F, 0.4F);
-        if (!world.isRemote) {
+                SoundEvents.ARROW_SHOOT, SoundSource.NEUTRAL, 0.5F, 0.4F);
+        if (!world.isClientSide) {
             ThrownSacEntity sac = new ThrownSacEntity(player, world);
             Vector3f aimPos = RocketSquidsBase.getPlayerAimVector(player);
-            sac.shoot(aimPos.getX(), aimPos.getY(), aimPos.getZ(), 1.5F, 1.0F);
-            world.addEntity(sac);
+            sac.shoot(aimPos.x(), aimPos.y(), aimPos.z(), 1.5F, 1.0F);
+            world.addFreshEntity(sac);
         }
-        return new ActionResult<ItemStack>(ActionResultType.SUCCESS, stack);
+        return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, stack);
 	}
 }
