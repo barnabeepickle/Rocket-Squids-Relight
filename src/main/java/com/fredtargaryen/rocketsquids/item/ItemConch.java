@@ -5,49 +5,57 @@ import com.fredtargaryen.rocketsquids.RocketSquidsBase;
 import com.fredtargaryen.rocketsquids.block.StatueBlock;
 import com.fredtargaryen.rocketsquids.world.StatueManager;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SoundType;
-import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.*;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ItemConch extends ArmorItem {
-    public static final IArmorMaterial MATERIAL_CONCH = new IArmorMaterial() {
+    public static final ArmorMaterial MATERIAL_CONCH = new ArmorMaterial() {
         @Override
-        public int getDurability(EquipmentSlotType slotIn) {
+        public int getDurabilityForSlot(EquipmentSlot slotIn) {
             return 2;
         }
 
         @Override
-        public int getDamageReductionAmount(EquipmentSlotType slotIn) {
+        public int getDefenseForSlot(EquipmentSlot slotIn) {
             return 0;
         }
 
         @Override
-        public int getEnchantability() {
+        public int getEnchantmentValue() {
             return 0;
         }
 
         @Override
-        public SoundEvent getSoundEvent() {
-            return SoundEvents.ITEM_ARMOR_EQUIP_GENERIC;
+        public SoundEvent getEquipSound() {
+            return SoundEvents.ARMOR_EQUIP_GENERIC;
         }
 
         @Override
-        public Ingredient getRepairMaterial() {
+        public Ingredient getRepairIngredient() {
             return null;
         }
 
@@ -68,20 +76,20 @@ public class ItemConch extends ArmorItem {
     };
 
     public ItemConch() {
-        super(MATERIAL_CONCH, EquipmentSlotType.HEAD, new Item.Properties().group(RocketSquidsBase.SQUIDS_TAB).maxStackSize(4));
+        super(MATERIAL_CONCH, EquipmentSlot.HEAD, new Item.Properties().tab(RocketSquidsBase.SQUIDS_TAB).stacksTo(4));
     }
 
     /**
      * Called when the equipped item is right clicked.
      */
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-        if (worldIn.isRemote && !playerIn.isSneaking()) RocketSquidsBase.proxy.openConchClient((byte) 1);
-        return new ActionResult<>(ActionResultType.PASS, playerIn.getHeldItem(handIn));
+    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+        if (worldIn.isClientSide && !playerIn.isCrouching()) RocketSquidsBase.proxy.openConchClient((byte) 1);
+        return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
         //FOR CONCH ARMOUR DEBUGGING
 //        System.out.println("Yaw = "+playerIn.rotationYaw);
 //        System.out.println("Head Yaw = "+playerIn.getRotationYawHead());
-//        Vector3d look = playerIn.getLookVec();
+//        Vec3 look = playerIn.getLookVec();
 //        System.out.println("Math.atan2 = "+Math.atan2(look.z, look.x));
 //        return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
     }
@@ -90,34 +98,34 @@ public class ItemConch extends ArmorItem {
      * Called when a Block is right-clicked with this Item
      */
     @Override
-    public ActionResultType onItemUse(ItemUseContext context) {
-        World worldIn = context.getWorld();
-        PlayerEntity player = context.getPlayer();
-        BlockPos pos = context.getPos();
-        Direction facing = context.getFace();
-        if(!worldIn.isRemote && player.isSneaking()) {
+    public InteractionResult useOn(UseOnContext context) {
+        Level worldIn = context.getLevel();
+        Player player = context.getPlayer();
+        BlockPos pos = context.getClickedPos();
+        Direction facing = context.getClickedFace();
+        if(!worldIn.isClientSide && player.isCrouching()) {
             BlockState iblockstate = worldIn.getBlockState(pos);
             Block block = iblockstate.getBlock();
             if (block == RocketSquidsBase.BLOCK_STATUE) {
-                if (iblockstate.get(BlockStateProperties.FACING) == Direction.UP) {
+                if (iblockstate.getValue(BlockStateProperties.FACING) == Direction.UP) {
                     StatueManager.forWorld(worldIn).removeStatue(pos);
                     if (facing == Direction.NORTH) {
-                        worldIn.setBlockState(pos, iblockstate.with(BlockStateProperties.FACING, Direction.NORTH));
-                        context.getItem().grow(-1);
+                        worldIn.setBlockAndUpdate(pos, iblockstate.setValue(BlockStateProperties.FACING, Direction.NORTH));
+                        context.getItemInHand().grow(-1);
                         ((StatueBlock) block).dispenseGift(worldIn, pos, facing);
-                        return ActionResultType.SUCCESS;
+                        return InteractionResult.SUCCESS;
                     }
                 }
             } else {
                 if (!iblockstate.getMaterial().isReplaceable()) {
-                    pos = pos.offset(facing);
+                    pos = pos.relative(facing);
                 }
 
-                ItemStack itemstack = context.getItem();
+                ItemStack itemstack = context.getItemInHand();
 
-                BlockItemUseContext blockContext = new BlockItemUseContext(context);
-                if (!itemstack.isEmpty() && player.canPlayerEdit(pos, facing, itemstack) && blockContext.canPlace()) {
-                    Vector3d hitVec = context.getHitVec();
+                BlockPlaceContext blockContext = new BlockPlaceContext(context);
+                if (!itemstack.isEmpty() && player.mayUseItemAt(pos, facing, itemstack) && blockContext.canPlace()) {
+                    Vec3 hitVec = context.getClickLocation();
                     float hitX = (float) hitVec.x;
                     float hitY = (float) hitVec.y;
                     float hitZ = (float) hitVec.z;
@@ -126,20 +134,20 @@ public class ItemConch extends ArmorItem {
                     if (placeBlockAt(itemstack, player, worldIn, pos, facing, hitX, hitY, hitZ, conchstate)) {
                         BlockState iblockstate1 = worldIn.getBlockState(pos);
                         SoundType soundtype = iblockstate1.getBlock().getSoundType(iblockstate1, worldIn, pos, player);
-                        worldIn.playSound(player, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
+                        worldIn.playSound(player, pos, soundtype.getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
                         itemstack.shrink(1);
                     }
 
-                    return ActionResultType.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 } else {
-                    return ActionResultType.FAIL;
+                    return InteractionResult.FAIL;
                 }
             }
         }
         else {
-            this.onItemRightClick(context.getWorld(), context.getPlayer(), Hand.MAIN_HAND);
+            this.use(context.getLevel(), context.getPlayer(), InteractionHand.MAIN_HAND);
         }
-        return ActionResultType.FAIL;
+        return InteractionResult.FAIL;
     }
 
     /**
@@ -150,15 +158,15 @@ public class ItemConch extends ArmorItem {
      * @param player The player who is placing the block. Can be null if the block is not being placed by a player.
      * @param side The side the player (or machine) right-clicked on.
      */
-    public boolean placeBlockAt(ItemStack stack, PlayerEntity player, World world, BlockPos pos, Direction side, float hitX, float hitY, float hitZ, BlockState newState) {
-        if (!world.setBlockState(pos, newState, 11)) return false;
+    public boolean placeBlockAt(ItemStack stack, Player player, Level world, BlockPos pos, Direction side, float hitX, float hitY, float hitZ, BlockState newState) {
+        if (!world.setBlock(pos, newState, 11)) return false;
 
         BlockState state = world.getBlockState(pos);
         if (state.getBlock() == RocketSquidsBase.BLOCK_CONCH) {
-            RocketSquidsBase.BLOCK_CONCH.onBlockPlacedBy(world, pos, state, player, stack);
+            RocketSquidsBase.BLOCK_CONCH.setPlacedBy(world, pos, state, player, stack);
 
-            if (player instanceof ServerPlayerEntity)
-                CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayerEntity)player, pos, stack);
+            if (player instanceof ServerPlayer)
+                CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer)player, pos, stack);
         }
 
         return true;
@@ -166,17 +174,17 @@ public class ItemConch extends ArmorItem {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public BipedModel getArmorModel(LivingEntity entityLiving, ItemStack stack, EquipmentSlotType armorSlot, BipedModel defaultModel) {
+    public HumanoidModel getArmorModel(LivingEntity entityLiving, ItemStack stack, EquipmentSlot armorSlot, HumanoidModel defaultModel) {
         if(stack != null) {
             if (stack.getItem() == this) {
-                EquipmentSlotType type = ((ArmorItem) stack.getItem()).getEquipmentSlot();
-                BipedModel armorModel;
-                if (type == EquipmentSlotType.HEAD) {
+                EquipmentSlot type = ((ArmorItem) stack.getItem()).getSlot();
+                HumanoidModel armorModel;
+                if (type == EquipmentSlot.HEAD) {
                     armorModel = RocketSquidsBase.proxy.getConchModel();
-                    armorModel.bipedHead.showModel = defaultModel.bipedHead.showModel; //Head, I hope
-                    armorModel.bipedHeadwear.showModel = armorSlot == EquipmentSlotType.HEAD;
+                    armorModel.head.visible = defaultModel.head.visible; //Head, I hope // I think that it's Head -Pickle
+                    armorModel.hat.visible = armorSlot == EquipmentSlot.HEAD;
 
-                    armorModel.isSneak = defaultModel.isSneak;
+                    armorModel.crouching = defaultModel.crouching;
                     armorModel.rightArmPose = defaultModel.rightArmPose;
                     armorModel.leftArmPose = defaultModel.leftArmPose;
 
