@@ -102,9 +102,9 @@ public class BabyRocketSquidModel extends EntityModel<BabyRocketSquidEntity> {
      * This is a helper function from Tabula to set the rotation of model parts
      */
     public void setRotateAngle(ModelPart modelParts, float x, float y, float z) {
-        modelParts.x = x;
-        modelParts.y = y;
-        modelParts.z = z;
+        modelParts.xRot = x;
+        modelParts.yRot = y;
+        modelParts.zRot = z;
     }
 
     @Override
