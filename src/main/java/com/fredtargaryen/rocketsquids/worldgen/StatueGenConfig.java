@@ -1,9 +1,9 @@
 package com.fredtargaryen.rocketsquids.worldgen;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.world.gen.feature.IFeatureConfig;
+import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 
-public class StatueGenConfig implements IFeatureConfig {
+public class StatueGenConfig implements FeatureConfiguration {
 
     public static final Codec<StatueGenConfig> FACTORY;
 
