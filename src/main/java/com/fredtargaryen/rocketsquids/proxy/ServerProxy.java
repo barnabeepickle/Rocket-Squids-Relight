@@ -1,6 +1,6 @@
 package com.fredtargaryen.rocketsquids.proxy;
 
-import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.model.HumanoidModel;
 
 public class ServerProxy implements IProxy {
     @Override
@@ -13,7 +13,7 @@ public class ServerProxy implements IProxy {
     public void openConchClient(byte conchStage){}
 
     @Override
-    public BipedModel getConchModel() { return null; }
+    public HumanoidModel getConchModel() { return null; }
 
     @Override
     public void playNoteFromMessage(byte note) {}
