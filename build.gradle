@@ -12,6 +12,9 @@ base {
 
 loom {
     silentMojangMappingsLicense()
+
+    forge {
+    }
 }
 
 repositories {
