@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "rocketsquidsft:items/squeleporter_active"
+    "layer0": "rocketsquids:items/squeleporter_active"
   }
 }

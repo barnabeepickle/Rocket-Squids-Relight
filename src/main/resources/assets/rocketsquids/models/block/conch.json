@@ -1,8 +1,8 @@
 {
   "ambientocclusion": false,
   "textures": {
-    "all": "rocketsquidsft:blocks/conch",
-    "particle": "rocketsquidsft:blocks/conch"
+    "all": "rocketsquids:blocks/conch",
+    "particle": "rocketsquids:blocks/conch"
   },
   "elements": [
     {"__comment": "Long end",

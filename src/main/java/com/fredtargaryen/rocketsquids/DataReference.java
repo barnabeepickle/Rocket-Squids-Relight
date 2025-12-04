@@ -20,8 +20,8 @@ import java.util.Random;
  */
 public class DataReference {
     //MAIN MOD DETAILS
-    public static final String MODID = "rocketsquidsft";
-    public static final String MODNAME = "Rocket Squids";
+    public static final String MODID = "rocketsquids";
+    public static final String MODNAME = "Rocket Squids Relight";
 
     public static final ResourceLocation SQUELEPORTER_LOCATION = new ResourceLocation(DataReference.MODID, "isqueleporter");
     public static final ResourceLocation BABY_CAP_LOCATION = new ResourceLocation(DataReference.MODID, "ibaby");

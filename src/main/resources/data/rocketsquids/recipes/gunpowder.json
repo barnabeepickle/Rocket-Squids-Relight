@@ -1,9 +1,9 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "group": "rocketsquidsft",
+  "group": "rocketsquids",
   "ingredients": [
     {
-      "item": "rocketsquidsft:turbotube"
+      "item": "rocketsquids:turbotube"
     }
   ],
   "result": {

@@ -2,7 +2,7 @@
     "parent": "minecraft:block/block",
     "ambientocclusion": false,
     "textures": {
-        "particle": "rocketsquidsft:blocks/statue_north"
+        "particle": "rocketsquids:blocks/statue_north"
     },
     "elements": [
         {   "__comment": "Tentacle42",
