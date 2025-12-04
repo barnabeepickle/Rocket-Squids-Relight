@@ -1,9 +1,9 @@
 package com.fredtargaryen.rocketsquids.worldgen;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.world.gen.placement.IPlacementConfig;
+import net.minecraft.world.level.levelgen.feature.configurations.DecoratorConfiguration;
 
-public class ConchPlacementConfig implements IPlacementConfig {
+public class ConchPlacementConfig implements DecoratorConfiguration {
     public static final Codec<ConchPlacementConfig> FACTORY = null;
 
     public int genChance;

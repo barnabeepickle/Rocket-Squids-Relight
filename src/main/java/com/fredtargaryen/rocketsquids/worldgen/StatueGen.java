@@ -4,11 +4,11 @@ import com.fredtargaryen.rocketsquids.RocketSquidsBase;
 import com.fredtargaryen.rocketsquids.config.GeneralConfig;
 import com.fredtargaryen.rocketsquids.world.StatueManager;
 import com.mojang.serialization.Codec;
-import net.minecraft.block.Blocks;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ISeedReader;
-import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.feature.Feature;
 
 import java.util.List;
 import java.util.Random;
@@ -29,19 +29,19 @@ public class StatueGen extends Feature<StatueGenConfig> {
      * @return
      */
     @Override
-    public boolean generate(ISeedReader world, ChunkGenerator chunkGen, Random random, BlockPos pos, StatueGenConfig config) {
+    public boolean place(WorldGenLevel world, ChunkGenerator chunkGen, Random random, BlockPos pos, StatueGenConfig config) {
         // First check the config to see if this dimension is allowed
         if(GeneralConfig.STATUE_USE_WHITELIST.get())
         {
             List<? extends String> allowedDimensions = GeneralConfig.STATUE_WHITELIST.get();
-            if(!allowedDimensions.contains(world.getWorld().getDimensionKey().getLocation().toString())) return false;
+            if(!allowedDimensions.contains(world.getLevel().dimension().location().toString())) return false;
         }
         else
         {
             List<? extends String> blockedDimensions = GeneralConfig.STATUE_BLACKLIST.get();
-            if(blockedDimensions.contains(world.getWorld().getDimensionKey().getLocation().toString())) return false;
+            if(blockedDimensions.contains(world.getLevel().dimension().location().toString())) return false;
         }
-        StatueManager statueManager = StatueManager.forWorld(world.getWorld());
+        StatueManager statueManager = StatueManager.forWorld(world.getLevel());
         int frequency = GeneralConfig.STATUE_FREQUENCY.get();
         int chunkX = pos.getX() / 16;
         int chunkZ = pos.getZ() / 16;
@@ -55,7 +55,7 @@ public class StatueGen extends Feature<StatueGenConfig> {
                     (chunkAreaX * frequency + random.nextInt(frequency))
                             //Random block in the 16x16 chunk
                             * 16 + random.nextInt(16),
-                    random.nextInt(chunkGen.getMaxBuildHeight() - 3) + 1,
+                    random.nextInt(chunkGen.getGenDepth() - 3) + 1,
                     (chunkAreaZ * frequency + random.nextInt(frequency))
                             * 16 + random.nextInt(16)};
             statueManager.addStatue(new BlockPos(statueLocation[2], statueLocation[3], statueLocation[4]));
@@ -66,9 +66,9 @@ public class StatueGen extends Feature<StatueGenConfig> {
             //Simulate the block falling down onto a solid block
             statueManager.removeStatue(placePos);
             BlockPos pos2;
-            for(pos2 = placePos; !world.getBlockState(pos2.down()).getMaterial().isSolid(); pos2 = pos2.down());
-            world.setBlockState(pos2.up(), Blocks.AIR.getDefaultState(), 3);
-            world.setBlockState(pos2, RocketSquidsBase.BLOCK_STATUE.getDefaultState(), 3);
+            for(pos2 = placePos; !world.getBlockState(pos2.below()).getMaterial().isSolid(); pos2 = pos2.below());
+            world.setBlock(pos2.above(), Blocks.AIR.defaultBlockState(), 3);
+            world.setBlock(pos2, RocketSquidsBase.BLOCK_STATUE.defaultBlockState(), 3);
             statueManager.addStatue(pos2);
             return true;
         }
