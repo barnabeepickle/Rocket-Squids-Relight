@@ -5,13 +5,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.Model;
-import net.minecraft.world.entity.Entity;
 
 /**
  * BabyRocketSquidModel - FredTargaryen
  * Created using Tabula 7.0.0
  */
+// further manually edited by barnabeepickle on 12-4-2025
 public class BabyRocketSquidModel extends EntityModel<BabyRocketSquidEntity> {
     public ModelPart Head;
     public ModelPart[] tent = new ModelPart[8];
@@ -42,41 +41,29 @@ public class BabyRocketSquidModel extends EntityModel<BabyRocketSquidEntity> {
         }
     }
 
-//    @Override
-//    public void render(BabyRocketSquidEntity entity, float f, float f1, float f2, float f3, float f4, float f5) {
-//        super.render(entity, f, f1, f2, f3, f4, f5);
-//        setRotationAngles(entity, f, f1, f2, f3, f4, f5);
-//        this.Head.render(f5);
-//        this.Tent1.render(f5);
-//        this.Tent2.render(f5);
-//        this.Tent3.render(f5);
-//        this.Tent4.render(f5);
-//        this.Tent5.render(f5);
-//        this.Tent6.render(f5);
-//        this.Tent7.render(f5);
-//        this.Tent8.render(f5);
-//    }
 
     public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float r, float g, float b, float a) {
         this.Head.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
-        for (int t = 0; t < this.tent.length; t++) {
-            this.tent[t].render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
-        }
+        this.tent[0].render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
+        this.tent[1].render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
+        this.tent[2].render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
+        this.tent[3].render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
+        this.tent[4].render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
+        this.tent[5].render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
+        this.tent[6].render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
+        this.tent[7].render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
     }
 
-    /**
-     * This is a helper function from Tabula to set the rotation of model parts
-     */
-    public void setRotateAngle(ModelPart modelParts, float x, float y, float z) {
-        modelParts.xRot = x;
-        modelParts.yRot = y;
-        modelParts.zRot = z;
-    }
 
     @Override
     public void setupAnim(BabyRocketSquidEntity entity, float time, float maxSpeed, float whatever, float rotationYaw, float rotationPitch) {
-        for (int t = 0; t < this.tent.length; t++) {
-            this.tent[t].x = whatever;
-        }
+        this.tent[0].x = whatever;
+        this.tent[1].x = whatever;
+        this.tent[2].x = whatever;
+        this.tent[3].x = whatever;
+        this.tent[4].x = whatever;
+        this.tent[5].x = whatever;
+        this.tent[6].x = whatever;
+        this.tent[7].x = whatever;
     }
 }
