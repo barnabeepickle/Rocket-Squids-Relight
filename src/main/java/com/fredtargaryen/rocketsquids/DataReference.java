@@ -1,7 +1,7 @@
 package com.fredtargaryen.rocketsquids;
 
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import 	net.minecraft.resources.ResourceLocation;
 
 import java.util.Random;
 
