@@ -14,61 +14,32 @@ import net.minecraft.world.entity.Entity;
  */
 public class BabyRocketSquidModel extends EntityModel<BabyRocketSquidEntity> {
     public ModelPart Head;
-    public ModelPart Tent1;
-    public ModelPart Tent2;
-    public ModelPart Tent3;
-    public ModelPart Tent4;
-    public ModelPart Tent5;
-    public ModelPart Tent6;
-    public ModelPart Tent7;
-    public ModelPart Tent8;
+    public ModelPart[] tent = new ModelPart[8];
 
     public BabyRocketSquidModel() {
         this.texWidth = 32;
         this.texHeight = 32;
+
+        // we make the head
         this.Head = new ModelPart(this, 0, 6);
         this.Head.mirror = true;
         this.Head.setPos(0.0F, 0.0F, 0.0F);
         this.Head.addBox(-2.0F, -3.0F, -2.0F, 5, 7, 5, 0.0F);
 
-        this.Tent1 = new ModelPart(this, 0, 0);
-        this.Tent1.setPos(-0.5F, 4.0F, -0.5F);
-        this.Tent1.addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F);
-        this.setRotateAngle(Tent1, 0.0F, -2.356194490192345F, 0.0F);
+        // then we make the tenticles
+        for (int t = 0; t < this.tent.length; t++) {
+            this.tent[t].mirror = true;
 
-        this.Tent2 = new ModelPart(this, 0, 0);
-        this.Tent2.setPos(0.5F, 4.0F, -1.0F);
-        this.Tent2.addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F);
-        this.setRotateAngle(Tent2, 0.0F, 3.141592653589793F, 0.0F);
+            this.tent[t].addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F);
 
-        this.Tent3 = new ModelPart(this, 0, 0);
-        this.Tent3.setPos(1.5F, 4.0F, -0.5F);
-        this.Tent3.addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F);
-        this.setRotateAngle(Tent3, 0.0F, 2.356194490192345F, 0.0F);
+            double doubletentrot = t * Math.PI * 2.0 / this.tent.length;
+            float floatx = (float)Math.cos(doubletentrot) * 5.0F;
+            float floatz = (float)Math.sin(doubletentrot) * 5.0F;
+            this.tent[t].setPos(floatx, 4.0F, floatz);
 
-        this.Tent4 = new ModelPart(this, 0, 0);
-        this.Tent4.setPos(2.0F, 4.0F, 0.5F);
-        this.Tent4.addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F);
-        this.setRotateAngle(Tent4, 0.0F, 1.5707963267948966F, 0.0F);
-
-        this.Tent5 = new ModelPart(this, 0, 0);
-        this.Tent5.setPos(1.5F, 4.0F, 1.5F);
-        this.Tent5.addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F);
-        this.setRotateAngle(Tent5, 0.0F, 0.7853981633974483F, 0.0F);
-
-        this.Tent6 = new ModelPart(this, 0, 0);
-        this.Tent6.setPos(0.5F, 4.0F, 2.0F);
-        this.Tent6.addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F);
-
-        this.Tent7 = new ModelPart(this, 0, 0);
-        this.Tent7.setPos(-0.5F, 4.0F, 1.5F);
-        this.Tent7.addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F);
-        this.setRotateAngle(Tent7, 0.0F, -0.7853981633974483F, 0.0F);
-
-        this.Tent8 = new ModelPart(this, 0, 0);
-        this.Tent8.setPos(-1.0F, 4.0F, 0.5F);
-        this.Tent8.addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F);
-        this.setRotateAngle(Tent8, 0.0F, -1.5707963267948966F, 0.0F);
+            doubletentrot = t * Math.PI * -2.0 / this.tent.length + (Math.PI / 2);
+            this.tent[t].yRot = (float) doubletentrot;
+        }
     }
 
 //    @Override
@@ -88,14 +59,9 @@ public class BabyRocketSquidModel extends EntityModel<BabyRocketSquidEntity> {
 
     public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float r, float g, float b, float a) {
         this.Head.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
-        this.Tent1.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
-        this.Tent2.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
-        this.Tent3.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
-        this.Tent4.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
-        this.Tent5.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
-        this.Tent6.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
-        this.Tent7.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
-        this.Tent8.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
+        for (int t = 0; t < this.tent.length; t++) {
+            this.tent[t].render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
+        }
     }
 
     /**
@@ -109,13 +75,8 @@ public class BabyRocketSquidModel extends EntityModel<BabyRocketSquidEntity> {
 
     @Override
     public void setupAnim(BabyRocketSquidEntity entity, float time, float maxSpeed, float whatever, float rotationYaw, float rotationPitch) {
-        this.Tent1.x = whatever;
-        this.Tent2.x = whatever;
-        this.Tent3.x = whatever;
-        this.Tent4.x = whatever;
-        this.Tent5.x = whatever;
-        this.Tent6.x = whatever;
-        this.Tent7.x = whatever;
-        this.Tent8.x = whatever;
+        for (int t = 0; t < this.tent.length; t++) {
+            this.tent[t].x = whatever;
+        }
     }
 }
