@@ -4,8 +4,8 @@ import com.fredtargaryen.rocketsquids.RocketSquidsBase;
 import com.fredtargaryen.rocketsquids.entity.capability.adult.IAdultCapability;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.Iterator;
@@ -15,23 +15,23 @@ import java.util.function.Supplier;
 
 public class MessageAdultCapData {
     private UUID squidToUpdate;
-    private CompoundNBT capData;
+    private CompoundTag capData;
 
     public MessageAdultCapData() {}
 
     public MessageAdultCapData(UUID id, IAdultCapability cap) {
         this.squidToUpdate = id;
-        this.capData = (CompoundNBT) RocketSquidsBase.ADULTCAP.writeNBT(cap, null);
+        this.capData = (CompoundTag) RocketSquidsBase.ADULTCAP.writeNBT(cap, null);
     }
 
     public void onMessage(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            Iterable<Entity> l = Minecraft.getInstance().world.getAllEntities();
+            Iterable<Entity> l = Minecraft.getInstance().level.entitiesForRendering();
             Iterator<Entity> squidFinder = l.iterator();
             Entity e;
             while(squidFinder.hasNext()) {
                 e = squidFinder.next();
-                if(e.getUniqueID().equals(this.squidToUpdate)) {
+                if(e.getUUID().equals(this.squidToUpdate)) {
                     e.getCapability(RocketSquidsBase.ADULTCAP).ifPresent(cap ->
                         //Can assume e is a rocket squid
                         RocketSquidsBase.ADULTCAP.readNBT(cap, null, this.capData));
@@ -47,7 +47,7 @@ public class MessageAdultCapData {
     public MessageAdultCapData(ByteBuf buf) {
         this.squidToUpdate = new UUID(buf.readLong(), buf.readLong());
         //Unfortunately have to manually read from the buffer now
-        this.capData = new CompoundNBT();
+        this.capData = new CompoundTag();
         this.capData.putDouble("pitch", buf.readDouble());
         this.capData.putDouble("yaw", buf.readDouble());
         this.capData.putDouble("targetPitch", buf.readDouble());
