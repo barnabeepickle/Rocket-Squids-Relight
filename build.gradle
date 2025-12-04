@@ -12,10 +12,6 @@ base {
 
 loom {
     silentMojangMappingsLicense()
-
-    forge {
-        mixinConfig 'rocketsquidrelight.mixins.json'
-    }
 }
 
 repositories {
