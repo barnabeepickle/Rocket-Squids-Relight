@@ -20,7 +20,7 @@ import com.mojang.math.Vector3f;
 
 import java.util.Random;
 
-public class RenderRS extends MobRenderer<RocketSquidEntity, RocketSquidModel> {
+public class RenderRS extends MobRenderer<RocketSquidEntity, RocketSquidModel<RocketSquidEntity>> {
     private static final ResourceLocation normal = new ResourceLocation(DataReference.MODID + ":textures/entity/rs.png");
     private static final ResourceLocation blasting = new ResourceLocation(DataReference.MODID + ":textures/entity/rsb.png");
 

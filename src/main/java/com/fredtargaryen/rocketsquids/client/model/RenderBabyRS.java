@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import com.mojang.math.Vector3f;
 
-public class RenderBabyRS extends MobRenderer<BabyRocketSquidEntity, BabyRocketSquidModel> {
+public class RenderBabyRS extends MobRenderer<BabyRocketSquidEntity, BabyRocketSquidModel<BabyRocketSquidEntity>> {
     private static final ResourceLocation normal = new ResourceLocation(DataReference.MODID + ":textures/entity/brs.png");
     public RenderBabyRS(EntityRenderDispatcher rm, BabyRocketSquidModel model)
     {

@@ -1,31 +1,39 @@
 package com.fredtargaryen.rocketsquids.client.model;
 
 import com.fredtargaryen.rocketsquids.entity.BabyRocketSquidEntity;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.EntityModel;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+
+import net.minecraft.client.model.ListModel;
 import net.minecraft.client.model.geom.ModelPart;
+
+import java.util.Arrays;
 
 /**
  * BabyRocketSquidModel - FredTargaryen
  * Created using Tabula 7.0.0
  */
 // further manually edited by barnabeepickle on 12-4-2025
-public class BabyRocketSquidModel extends EntityModel<BabyRocketSquidEntity> {
-    public ModelPart Head;
-    public ModelPart[] tent = new ModelPart[8];
+public class BabyRocketSquidModel<T extends BabyRocketSquidEntity> extends ListModel<T> {
+    public final ModelPart head;
+    public final ModelPart[] tent = new ModelPart[8];
+    public final ImmutableList<ModelPart> parts;
 
     public BabyRocketSquidModel() {
+        // initial setup
         this.texWidth = 32;
         this.texHeight = 32;
+        ImmutableList.Builder<ModelPart> builder = ImmutableList.builder();
 
-        // we make the head
-        this.Head = new ModelPart(this, 0, 6);
-        this.Head.mirror = true;
-        this.Head.setPos(0.0F, 0.0F, 0.0F);
-        this.Head.addBox(-2.0F, -3.0F, -2.0F, 5, 7, 5, 0.0F);
+        // making the head
+        this.head = new ModelPart(this, 0, 6);
+        this.head.mirror = true;
+        this.head.setPos(0.0F, 0.0F, 0.0F);
+        this.head.addBox(-2.0F, -3.0F, -2.0F, 5, 7, 5, 0.0F);
+        builder.add(this.head);
 
-        // then we make the tenticles
+        // making the tenticles
         for (int t = 0; t < this.tent.length; t++) {
             this.tent[t].mirror = true;
 
@@ -39,31 +47,19 @@ public class BabyRocketSquidModel extends EntityModel<BabyRocketSquidEntity> {
             doubletentrot = t * Math.PI * -2.0 / this.tent.length + (Math.PI / 2);
             this.tent[t].yRot = (float) doubletentrot;
         }
+
+        this.parts = builder.build();
     }
-
-
-    public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float r, float g, float b, float a) {
-        this.Head.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
-        this.tent[0].render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
-        this.tent[1].render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
-        this.tent[2].render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
-        this.tent[3].render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
-        this.tent[4].render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
-        this.tent[5].render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
-        this.tent[6].render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
-        this.tent[7].render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
-    }
-
 
     @Override
     public void setupAnim(BabyRocketSquidEntity entity, float time, float maxSpeed, float whatever, float rotationYaw, float rotationPitch) {
-        this.tent[0].x = whatever;
-        this.tent[1].x = whatever;
-        this.tent[2].x = whatever;
-        this.tent[3].x = whatever;
-        this.tent[4].x = whatever;
-        this.tent[5].x = whatever;
-        this.tent[6].x = whatever;
-        this.tent[7].x = whatever;
+        for (int t = 0; t < this.tent.length; t++) {
+            this.tent[t].x = whatever;
+        }
+    }
+
+    @Override
+    public Iterable<ModelPart> parts() {
+        return this.parts;
     }
 }
