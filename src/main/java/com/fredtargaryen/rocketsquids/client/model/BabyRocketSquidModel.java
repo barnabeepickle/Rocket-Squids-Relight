@@ -37,6 +37,7 @@ public class BabyRocketSquidModel<T extends BabyRocketSquidEntity> extends ListM
 
         // making the tenticles
         for (int t = 0; t < this.tent.length; t++) {
+            this.tent[t] = new ModelPart(this, 0, 0);
             this.tent[t].mirror = true;
 
             double doubletentrot = t * Math.PI * 2.0 / this.tent.length;
