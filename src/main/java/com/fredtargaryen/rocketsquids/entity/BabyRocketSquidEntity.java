@@ -18,6 +18,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.network.PacketDistributor;
 
+import java.util.Objects;
+
 public class BabyRocketSquidEntity extends AbstractSquidEntity {
     private IBabyCapability squidCap;
 
@@ -81,7 +83,7 @@ public class BabyRocketSquidEntity extends AbstractSquidEntity {
                     motionZ = 0.0D;
                 }
                 if (this.hasEffect(MobEffects.LEVITATION)) {
-                    motionY += 0.05D * (double)(this.getEffect(MobEffects.LEVITATION).getAmplifier() + 1) - motionY;
+                    motionY += 0.05D * (double)(Objects.requireNonNull(this.getEffect(MobEffects.LEVITATION)).getAmplifier() + 1) - motionY;
                 }
                 else if (!this.isNoGravity()) {
                     motionY -= 0.08D;

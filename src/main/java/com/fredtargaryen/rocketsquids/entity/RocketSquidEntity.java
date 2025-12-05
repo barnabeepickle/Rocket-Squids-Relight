@@ -367,10 +367,10 @@ public class RocketSquidEntity extends AbstractSquidEntity {
                 double xDist = obstaclePos.x - thisPos.x;
                 double zDist = obstaclePos.z - thisPos.z;
                 double yDist = obstaclePos.y - thisPos.y;
-                double largerDist = Mth.absMax(xDist, Mth.absMax(yDist, zDist));
+                double largerDist = Mth.absMax(xDist, Mth.absMax(xDist, zDist));
 
                 if (largerDist >= 0.009999999776482582D) {
-                    largerDist = (double) Mth.sqrt(largerDist);
+                    largerDist = Mth.sqrt(largerDist);
                     xDist /= largerDist;
                     yDist /= largerDist;
                     zDist /= largerDist;
@@ -429,7 +429,7 @@ public class RocketSquidEntity extends AbstractSquidEntity {
 
     @Override
     protected void addPassenger(Entity p) {
-        if(this.getPassengers().size() == 0) {
+        if(this.getPassengers().isEmpty()) {
             super.addPassenger(p);
             if(this.level.isClientSide) {
                 MinecraftForge.EVENT_BUS.register(this);
@@ -439,7 +439,7 @@ public class RocketSquidEntity extends AbstractSquidEntity {
 
     @Nullable
     public Entity getControllingPassenger() {
-        List passengers = this.getPassengers();
+        List<Entity> passengers = this.getPassengers();
         if(passengers.isEmpty()) {
             return null;
         }
@@ -511,7 +511,7 @@ public class RocketSquidEntity extends AbstractSquidEntity {
     }
 
     public boolean getSaddled() {
-        return ((Boolean)this.entityData.get(SADDLED)).booleanValue();
+        return this.entityData.get(SADDLED);
     }
 
     /**
@@ -519,10 +519,10 @@ public class RocketSquidEntity extends AbstractSquidEntity {
      */
     private void setSaddled(boolean saddled) {
         if (saddled) {
-            this.entityData.set(SADDLED, Boolean.valueOf(true));
+            this.entityData.set(SADDLED, Boolean.TRUE);
         }
         else {
-            this.entityData.set(SADDLED, Boolean.valueOf(false));
+            this.entityData.set(SADDLED, Boolean.FALSE);
         }
     }
 

@@ -68,6 +68,7 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.ObjectHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -347,9 +348,9 @@ public class RocketSquidsBase {
                     new ICapabilitySerializable<CompoundTag>() {
                         final ISqueleporter inst = SQUELEPORTER_CAP.getDefaultInstance();
 
-                        @Nullable
+
                         @Override
-                        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
+                        public <T> @NotNull LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {
                             return capability == SQUELEPORTER_CAP ? LazyOptional.of(() -> (T) inst) : LazyOptional.empty();
                         }
 
@@ -376,7 +377,7 @@ public class RocketSquidsBase {
                         final IBabyCapability inst = BABYCAP.getDefaultInstance();
 
                         @Override
-                        public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {
+                        public <T> @NotNull LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {
                             return capability == BABYCAP ? LazyOptional.of(() -> (T) inst) : LazyOptional.empty();
                         }
 
@@ -398,7 +399,7 @@ public class RocketSquidsBase {
                         final IAdultCapability inst = ADULTCAP.getDefaultInstance();
 
                         @Override
-                        public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {
+                        public <T> @NotNull LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {
                             return capability == ADULTCAP ? LazyOptional.of(() -> (T)inst) : LazyOptional.empty();
                         }
 
