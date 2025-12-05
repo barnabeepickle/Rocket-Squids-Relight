@@ -39,12 +39,11 @@ public class BabyRocketSquidModel<T extends BabyRocketSquidEntity> extends ListM
         for (int t = 0; t < this.tent.length; t++) {
             this.tent[t].mirror = true;
 
-            this.tent[t].addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F);
-
             double doubletentrot = t * Math.PI * 2.0 / this.tent.length;
             float floatx = (float)Math.cos(doubletentrot) * 5.0F;
             float floatz = (float)Math.sin(doubletentrot) * 5.0F;
             this.tent[t].setPos(floatx, 4.0F, floatz);
+            this.tent[t].addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F);
 
             doubletentrot = t * Math.PI * -2.0 / this.tent.length + (Math.PI / 2);
             this.tent[t].yRot = (float) doubletentrot;
