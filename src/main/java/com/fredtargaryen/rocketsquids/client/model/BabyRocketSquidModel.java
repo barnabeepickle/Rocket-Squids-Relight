@@ -5,6 +5,8 @@ import com.fredtargaryen.rocketsquids.entity.BabyRocketSquidEntity;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.ListModel;
 import net.minecraft.client.model.geom.ModelPart;
 
@@ -49,6 +51,14 @@ public class BabyRocketSquidModel<T extends BabyRocketSquidEntity> extends ListM
         }
 
         this.parts = builder.build();
+    }
+
+    @Override
+    public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float r, float g, float b, float a) {
+        this.head.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
+        for (ModelPart modelPart : this.tent) {
+            modelPart.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
+        }
     }
 
     @Override
