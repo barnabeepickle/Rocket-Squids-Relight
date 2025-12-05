@@ -250,6 +250,7 @@ public class SquidFireworkParticle {
          */
         private void createParticle(double p_92034_1_, double p_92034_3_, double p_92034_5_, double p_92034_7_, double p_92034_9_, double p_92034_11_, int[] p_92034_13_, int[] p_92034_14_, boolean p_92034_15_, boolean p_92034_16_) {
             SquidFireworkParticle.Spark fireworkparticle$spark = (SquidFireworkParticle.Spark) this.manager.createParticle(RocketSquidsBase.FIREWORK_TYPE, p_92034_1_, p_92034_3_, p_92034_5_, p_92034_7_, p_92034_9_, p_92034_11_);
+            assert fireworkparticle$spark != null;
             fireworkparticle$spark.setTrail(p_92034_15_);
             fireworkparticle$spark.setTwinkle(p_92034_16_);
             fireworkparticle$spark.setSlightAlpha();

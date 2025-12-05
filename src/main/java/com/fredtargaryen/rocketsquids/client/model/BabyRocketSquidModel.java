@@ -53,8 +53,8 @@ public class BabyRocketSquidModel<T extends BabyRocketSquidEntity> extends ListM
 
     @Override
     public void setupAnim(BabyRocketSquidEntity entity, float time, float maxSpeed, float whatever, float rotationYaw, float rotationPitch) {
-        for (int t = 0; t < this.tent.length; t++) {
-            this.tent[t].x = whatever;
+        for (ModelPart modelPart : this.tent) {
+            modelPart.x = whatever;
         }
     }
 

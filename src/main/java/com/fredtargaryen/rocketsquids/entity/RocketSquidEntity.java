@@ -48,6 +48,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 
 public class RocketSquidEntity extends AbstractSquidEntity {
     private IAdultCapability squidCap;
@@ -114,7 +115,7 @@ public class RocketSquidEntity extends AbstractSquidEntity {
                 motionZ = 0.0D;
             }
             if (this.hasEffect(MobEffects.LEVITATION)) {
-                motionY += 0.05D * (double)(this.getEffect(MobEffects.LEVITATION).getAmplifier() + 1) - motionY; //levitation
+                motionY += 0.05D * (double)(Objects.requireNonNull(this.getEffect(MobEffects.LEVITATION)).getAmplifier() + 1) - motionY; //levitation
             }
             else if (!this.isNoGravity()) {
                 motionY -= 0.08D;
@@ -358,6 +359,7 @@ public class RocketSquidEntity extends AbstractSquidEntity {
                 if(!this.level.isClientSide && obstacle.getType() == RocketSquidsBase.SQUID_TYPE && this.breedCooldown == 0) {
                     this.breedCooldown = 3600;
                     Entity baby = RocketSquidsBase.BABY_SQUID_TYPE.create(this.level);
+                    assert baby != null;
                     baby.moveTo(thisPos.x, thisPos.y, thisPos.z, 0.0F, 0.0F);
                     this.level.addFreshEntity(baby);
                 }

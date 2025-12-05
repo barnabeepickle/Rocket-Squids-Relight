@@ -69,8 +69,8 @@ public class RocketSquidModel<T extends RocketSquidEntity> extends ListModel<T> 
 
     @Override
     public void setupAnim(RocketSquidEntity entity, float time, float maxSpeed, float whatever, float rotationYaw, float rotationPitch) {
-        for (int t = 0; t < this.tent.length; t++) {
-            this.tent[t].x = whatever;
+        for (ModelPart modelPart : this.tent) {
+            modelPart.x = whatever;
         }
         this.saddle.visible = entity.getSaddled();
         this.straps.visible = entity.getSaddled();
