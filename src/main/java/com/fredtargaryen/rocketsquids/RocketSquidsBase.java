@@ -46,6 +46,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneDecoratorConfiguration;
 import net.minecraft.world.level.levelgen.placement.FeatureDecorator;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -183,7 +184,7 @@ public class RocketSquidsBase {
         event.getRegistry().registerAll(
                 new ConchBlock()
                         .setRegistryName("conch"),
-                new StatueBlock()
+                new StatueBlock(Block.Properties.of(Material.STONE).noOcclusion())
                         .setRegistryName("statue")
         );
     }
