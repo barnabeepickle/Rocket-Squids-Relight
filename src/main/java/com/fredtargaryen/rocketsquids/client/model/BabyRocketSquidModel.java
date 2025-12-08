@@ -32,7 +32,7 @@ public class BabyRocketSquidModel<T extends BabyRocketSquidEntity> extends ListM
         this.head = new ModelPart(this, 0, 6);
         this.head.mirror = true;
         this.head.setPos(0.0F, 0.0F, 0.0F);
-        this.head.addBox(-2.0F, -3.0F, -2.0F, 5, 7, 5, 0.0F);
+        this.head.addBox(-3.0F, -3.0F, -2.0F, 5, 7, 5, 0.0F, true);
         builder.add(this.head);
 
         // making the tenticles
@@ -41,31 +41,37 @@ public class BabyRocketSquidModel<T extends BabyRocketSquidEntity> extends ListM
             this.tent[t].mirror = true;
 
             double doubletentrot = t * Math.PI * 2.0 / this.tent.length;
-            float floatx = (float)Math.cos(doubletentrot) * 5.0F;
-            float floatz = (float)Math.sin(doubletentrot) * 5.0F;
+            float floatx = (float)Math.cos(doubletentrot) * 1.5F;
+            float floatz = (float)Math.sin(doubletentrot) * 1.5F;
             this.tent[t].setPos(floatx, 4.0F, floatz);
-            this.tent[t].addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F);
+            this.tent[t].addBox(-0.5F, 0.0F, -0.5F, 1, 5, 1, 0.0F, true);
 
             doubletentrot = t * Math.PI * -2.0 / this.tent.length + (Math.PI / 2);
-            this.tent[t].yRot = (float) doubletentrot;
+            this.setRotationAngle(tent[t], 0.0F, (float) doubletentrot, 0.0F);
+
+            head.addChild(tent[t]);
         }
+        builder.addAll(Arrays.asList(this.tent));
 
         this.parts = builder.build();
     }
 
     @Override
-    public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float r, float g, float b, float a) {
-        this.head.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
+    public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         for (ModelPart modelPart : this.tent) {
-            modelPart.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, r, g, b, a);
+            modelPart.xRot = ageInTicks;
         }
     }
 
     @Override
-    public void setupAnim(BabyRocketSquidEntity entity, float time, float maxSpeed, float whatever, float rotationYaw, float rotationPitch) {
-        for (ModelPart modelPart : this.tent) {
-            modelPart.x = whatever;
-        }
+    public void renderToBuffer(PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
+        this.head.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+    }
+
+    public void setRotationAngle(ModelPart modelRenderer, float x, float y, float z) {
+        modelRenderer.xRot = x;
+        modelRenderer.yRot = y;
+        modelRenderer.zRot = z;
     }
 
     @Override
