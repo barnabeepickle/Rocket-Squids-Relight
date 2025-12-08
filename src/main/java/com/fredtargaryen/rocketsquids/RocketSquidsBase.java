@@ -156,8 +156,8 @@ public class RocketSquidsBase {
      *     |_TagIntArray    ("FadeColors")
      */
     public static final CompoundTag firework = new CompoundTag();
-	
-    /**   
+
+    /**
      * Says where the client and server 'proxy' code is loaded.
      */
     public static IProxy proxy = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
@@ -182,7 +182,7 @@ public class RocketSquidsBase {
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         event.getRegistry().registerAll(
-                new ConchBlock()
+                new ConchBlock(Block.Properties.of(Material.SAND))
                         .setRegistryName("conch"),
                 new StatueBlock(Block.Properties.of(Material.STONE).noOcclusion())
                         .setRegistryName("statue")
