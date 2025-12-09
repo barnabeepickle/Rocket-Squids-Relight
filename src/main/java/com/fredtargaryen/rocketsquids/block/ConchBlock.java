@@ -7,7 +7,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +18,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 
@@ -49,12 +47,14 @@ public class ConchBlock extends Block {
                 .setValue(WATERLOGGED, ctx.getLevel().getFluidState(ctx.getClickedPos()).getType() == Fluids.WATER);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     @Deprecated
     public FluidState getFluidState(BlockState state) {
         return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     @Deprecated
     public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
@@ -71,12 +71,14 @@ public class ConchBlock extends Block {
     @Override
     public Item asItem() { return RocketSquidsBase.ITEM_CONCH; }
 
+    @SuppressWarnings("deprecation")
     @Override
     @Deprecated
     public VoxelShape getCollisionShape(BlockState state, BlockGetter reader, BlockPos pos, CollisionContext context) {
         return this.getShape(state, reader, pos, context);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     @Deprecated
     public VoxelShape getShape(BlockState state, BlockGetter reader, BlockPos pos, CollisionContext context) {
@@ -97,6 +99,7 @@ public class ConchBlock extends Block {
      */
     @Override
     public void setPlacedBy(Level worldLevel, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+        assert placer != null;
         Direction facing = placer.getDirection();
         switch(facing) {
             case NORTH:
