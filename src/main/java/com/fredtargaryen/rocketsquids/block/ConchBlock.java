@@ -5,6 +5,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,28 +23,29 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 
 public class ConchBlock extends Block {
-    private static final VoxelShape CONCH_EAST = Block.box(3.0, 0.0, 2.0, 6.0, 2.0, 8.0);
-    private static final VoxelShape CONCH_SOUTH = Block.box(8.0, 0.0, 3.0, 14.0, 2.0, 6.0);
-    private static final VoxelShape CONCH_WEST = Block.box(10.0, 0.0, 8.0, 13.0, 2.0, 14.0);
-    private static final VoxelShape CONCH_NORTH = Block.box(2.0, 0.0, 10.0, 8.0, 2.0, 13.0);
-    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+    private static final DirectionProperty FACING = BlockStateProperties.FACING;
+    private static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+    private static final VoxelShape CONCH_NORTH = Block.box(3.5, 0, 5, 11.5, 3, 10);
+    private static final VoxelShape CONCH_SOUTH = Block.box(4.5, 0, 6, 12.5, 3, 11);
+    private static final VoxelShape CONCH_WEST = Block.box(5, 0, 4.5, 10, 3, 12.5);
+    private static final VoxelShape CONCH_EAST = Block.box(6, 0, 3.5, 11, 3, 11.5);
 
     public ConchBlock(Block.Properties properties) {
         super(properties);
         registerDefaultState(getStateDefinition().any()
-                .setValue(BlockStateProperties.FACING, Direction.UP)
+                .setValue(FACING, Direction.UP)
                 .setValue(WATERLOGGED, false));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(BlockStateProperties.FACING, BlockStateProperties.WATERLOGGED);
+        builder.add(FACING, BlockStateProperties.WATERLOGGED);
     }
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         return this.getStateDefinition().any()
-                .setValue(BlockStateProperties.FACING, ctx.getNearestLookingDirection().getOpposite())
+                .setValue(FACING, ctx.getNearestLookingDirection().getOpposite())
                 .setValue(WATERLOGGED, ctx.getLevel().getFluidState(ctx.getClickedPos()).getType() == Fluids.WATER);
     }
 
@@ -82,7 +84,7 @@ public class ConchBlock extends Block {
     @Override
     @Deprecated
     public VoxelShape getShape(BlockState state, BlockGetter reader, BlockPos pos, CollisionContext context) {
-        switch(state.getValue(BlockStateProperties.FACING)) {
+        switch(state.getValue(FACING)) {
             case NORTH:
                 return CONCH_NORTH;
             case SOUTH:
@@ -103,16 +105,16 @@ public class ConchBlock extends Block {
         Direction facing = placer.getDirection();
         switch(facing) {
             case NORTH:
-                worldLevel.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.FACING, Direction.EAST));
+                worldLevel.setBlockAndUpdate(pos, state.setValue(FACING, Direction.NORTH));
                 break;
             case SOUTH:
-                worldLevel.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.FACING, Direction.WEST));
+                worldLevel.setBlockAndUpdate(pos, state.setValue(FACING, Direction.SOUTH));
                 break;
             case WEST:
-                worldLevel.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.FACING, Direction.NORTH));
+                worldLevel.setBlockAndUpdate(pos, state.setValue(FACING, Direction.WEST));
                 break;
             default:
-                worldLevel.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.FACING, Direction.SOUTH));
+                worldLevel.setBlockAndUpdate(pos, state.setValue(FACING, Direction.EAST));
                 break;
         }
     }
