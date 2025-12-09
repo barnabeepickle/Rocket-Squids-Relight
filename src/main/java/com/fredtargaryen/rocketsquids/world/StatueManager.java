@@ -1,17 +1,17 @@
 package com.fredtargaryen.rocketsquids.world;
 
 import com.fredtargaryen.rocketsquids.DataReference;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.DimensionSavedDataManager;
-import net.minecraft.world.storage.WorldSavedData;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraft.world.level.saveddata.SavedData;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class StatueManager extends WorldSavedData {
+public class StatueManager extends SavedData {
     //5 integers; 2 integers for index of 100x100 chunk area; 3 integers for exact coords
     private ArrayList<int[]> statues;
 
@@ -20,14 +20,14 @@ public class StatueManager extends WorldSavedData {
         this.statues = new ArrayList<>();
     }
 
-    public static StatueManager forWorld(World world) {
-        ServerWorld serverWorld = world.getServer().getWorld(world.getDimensionKey());
-        DimensionSavedDataManager storage = serverWorld.getSavedData();
-        return storage.getOrCreate(StatueManager::new, DataReference.MODID);
+    public static StatueManager forWorld(Level world) {
+        ServerLevel serverWorld = world.getServer().getLevel(world.dimension());
+        DimensionDataStorage storage = serverWorld.getDataStorage();
+        return storage.computeIfAbsent(StatueManager::new, DataReference.MODID);
     }
 
     @Override
-    public void read(CompoundNBT nbt) {
+    public void load(CompoundTag nbt) {
         this.statues = new ArrayList<>();
         int amount = nbt.getInt("amount");
         for(int i = 0; i < amount; ++i) {
@@ -36,7 +36,7 @@ public class StatueManager extends WorldSavedData {
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT compound) {
+    public CompoundTag save(CompoundTag compound) {
         int amount = this.statues.size();
         compound.putInt("amount", this.statues.size());
         for(int i = 0; i < amount; ++i) {
@@ -59,7 +59,7 @@ public class StatueManager extends WorldSavedData {
         }
         if(!found) {
             this.statues.add(new int[] { targetX / 1600, targetZ / 1600, targetX, targetY, targetZ });
-            markDirty();
+            setDirty();
         }
     }
 
@@ -72,7 +72,7 @@ public class StatueManager extends WorldSavedData {
             int[] next = iter.next();
             if(next[2] == targetX && next[3] == targetY && next[4] == targetZ) {
                 iter.remove();
-                markDirty();
+                setDirty();
             }
         }
     }

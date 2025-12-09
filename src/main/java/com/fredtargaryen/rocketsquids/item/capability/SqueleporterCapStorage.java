@@ -1,8 +1,8 @@
 package com.fredtargaryen.rocketsquids.item.capability;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
+import net.minecraft.nbt.CompoundTag;
+import 	net.minecraft.nbt.Tag;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 
 /**
@@ -12,18 +12,18 @@ import net.minecraftforge.common.capabilities.Capability;
  */
 public class SqueleporterCapStorage implements Capability.IStorage<ISqueleporter> {
     @Override
-    public INBT writeNBT(Capability<ISqueleporter> capability, ISqueleporter instance, Direction side) {
-        CompoundNBT nbt = new CompoundNBT();
-        CompoundNBT normalSquidData = instance.getSquidData();
-        CompoundNBT capSquidData = instance.getSquidCapabilityData();
-        nbt.put("normal", normalSquidData == null ? new CompoundNBT() : normalSquidData);
-        nbt.put("capability", capSquidData == null ? new CompoundNBT() : instance.getSquidCapabilityData());
+    public Tag writeNBT(Capability<ISqueleporter> capability, ISqueleporter instance, Direction side) {
+        CompoundTag nbt = new CompoundTag();
+        CompoundTag normalSquidData = instance.getSquidData();
+        CompoundTag capSquidData = instance.getSquidCapabilityData();
+        nbt.put("normal", normalSquidData == null ? new CompoundTag() : normalSquidData);
+        nbt.put("capability", capSquidData == null ? new CompoundTag() : instance.getSquidCapabilityData());
         return nbt;
     }
 
     @Override
-    public void readNBT(Capability<ISqueleporter> capability, ISqueleporter instance, Direction side, INBT nbt) {
-        CompoundNBT comp = (CompoundNBT) nbt;
+    public void readNBT(Capability<ISqueleporter> capability, ISqueleporter instance, Direction side, Tag nbt) {
+        CompoundTag comp = (CompoundTag) nbt;
         instance.setSquidData(comp.getCompound("normal"));
         instance.setSquidCapabilityData(comp.getCompound("capability"));
     }

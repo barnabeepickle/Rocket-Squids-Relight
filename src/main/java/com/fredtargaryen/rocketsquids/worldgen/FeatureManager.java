@@ -1,11 +1,11 @@
 package com.fredtargaryen.rocketsquids.worldgen;
 
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.MobSpawnInfo;
-import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.placement.NoPlacementConfig;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneDecoratorConfiguration;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.event.RegistryEvent;
@@ -25,10 +25,10 @@ public class FeatureManager {
     public void registerFeatures(RegistryEvent.Register<Feature<?>> event) {
         CONCH_FEATURE = new ConchGen(ConchGenConfig.FACTORY);
         CONCH_FEATURE.setRegistryName("conchgen");
-        CONCH_PLACEMENT = new ConchPlacement(NoPlacementConfig.CODEC);
+        CONCH_PLACEMENT = new ConchPlacement(NoneDecoratorConfiguration.CODEC);
         STATUE_FEATURE = new StatueGen(StatueGenConfig.FACTORY);
         STATUE_FEATURE.setRegistryName("statuegen");
-        STATUE_PLACEMENT = new StatuePlacement(NoPlacementConfig.CODEC);
+        STATUE_PLACEMENT = new StatuePlacement(NoneDecoratorConfiguration.CODEC);
         event.getRegistry().registerAll(CONCH_FEATURE, STATUE_FEATURE);
     }
 
@@ -36,19 +36,19 @@ public class FeatureManager {
     public static void loadBiome(BiomeLoadingEvent ble)
     {
         MobSpawnInfoBuilder builder = ble.getSpawns();
-        List<MobSpawnInfo.Spawners> spawners = builder.getSpawner(EntityClassification.WATER_CREATURE);
+        List<MobSpawnSettings.SpawnerData> spawners = builder.getSpawner(MobCategory.WATER_CREATURE);
         boolean squidFound = false;
-        for (MobSpawnInfo.Spawners s : spawners) {
+        for (MobSpawnSettings.SpawnerData s : spawners) {
             if(s.type.getRegistryName().toString().equals("minecraft:squid")) {
                 squidFound = true;
             }
         }
-        if(squidFound) builder.withSpawner(EntityClassification.WATER_CREATURE, ROCKET_SQUID_SPAWN_INFO);
+        if(squidFound) builder.addSpawn(MobCategory.WATER_CREATURE, ROCKET_SQUID_SPAWN_INFO);
         BiomeGenerationSettingsBuilder bgsb = ble.getGeneration();
-        bgsb.getFeatures(GenerationStage.Decoration.RAW_GENERATION).add(() -> STATUE_FEATURE.withConfiguration(new StatueGenConfig()).withPlacement(STATUE_PLACEMENT.configure(NoPlacementConfig.INSTANCE)));
-        if(ble.getCategory() == Biome.Category.BEACH)
+        bgsb.getFeatures(GenerationStep.Decoration.RAW_GENERATION).add(() -> STATUE_FEATURE.configured(new StatueGenConfig()).decorated(STATUE_PLACEMENT.configured(NoneDecoratorConfiguration.INSTANCE)));
+        if(ble.getCategory() == Biome.BiomeCategory.BEACH)
         {
-            bgsb.getFeatures(GenerationStage.Decoration.TOP_LAYER_MODIFICATION).add(() -> CONCH_FEATURE.withConfiguration(new ConchGenConfig()).withPlacement(CONCH_PLACEMENT.configure(NoPlacementConfig.INSTANCE)));
+            bgsb.getFeatures(GenerationStep.Decoration.TOP_LAYER_MODIFICATION).add(() -> CONCH_FEATURE.configured(new ConchGenConfig()).decorated(CONCH_PLACEMENT.configured(NoneDecoratorConfiguration.INSTANCE)));
         }
     }
 }

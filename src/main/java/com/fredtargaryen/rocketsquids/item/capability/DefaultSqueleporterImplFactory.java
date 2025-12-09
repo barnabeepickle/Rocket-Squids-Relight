@@ -1,6 +1,6 @@
 package com.fredtargaryen.rocketsquids.item.capability;
 
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 import java.util.concurrent.Callable;
 
@@ -16,30 +16,30 @@ public class DefaultSqueleporterImplFactory implements Callable<ISqueleporter> {
     }
 
     private class DefaultSqueleporterImpl implements ISqueleporter {
-        private CompoundNBT squidData;
-        private CompoundNBT squidCapabilityData;
+        private CompoundTag squidData;
+        private CompoundTag squidCapabilityData;
 
         public DefaultSqueleporterImpl() {
 
         }
 
         @Override
-        public CompoundNBT getSquidData() {
+        public CompoundTag getSquidData() {
             return this.squidData;
         }
 
         @Override
-        public void setSquidData(CompoundNBT nbt) {
+        public void setSquidData(CompoundTag nbt) {
             this.squidData = nbt;
         }
 
         @Override
-        public CompoundNBT getSquidCapabilityData() {
+        public CompoundTag getSquidCapabilityData() {
             return this.squidCapabilityData;
         }
 
         @Override
-        public void setSquidCapabilityData(CompoundNBT nbt) {
+        public void setSquidCapabilityData(CompoundTag nbt) {
             this.squidCapabilityData = nbt;
         }
     }

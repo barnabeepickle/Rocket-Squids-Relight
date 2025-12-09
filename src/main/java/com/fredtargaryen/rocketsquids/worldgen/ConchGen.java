@@ -4,12 +4,12 @@ import com.fredtargaryen.rocketsquids.DataReference;
 import com.fredtargaryen.rocketsquids.RocketSquidsBase;
 import com.fredtargaryen.rocketsquids.config.GeneralConfig;
 import com.mojang.serialization.Codec;
-import net.minecraft.block.Blocks;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ISeedReader;
-import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.feature.Feature;
 
 import java.util.List;
 import java.util.Random;
@@ -30,21 +30,21 @@ public class ConchGen extends Feature<ConchGenConfig> {
      * @return
      */
     @Override
-    public boolean generate(ISeedReader world, ChunkGenerator chunkGen, Random random, BlockPos pos, ConchGenConfig config) {
+    public boolean place(WorldGenLevel world, ChunkGenerator chunkGen, Random random, BlockPos pos, ConchGenConfig config) {
         // First check the config to see if this dimension is allowed
         if(GeneralConfig.CONCH_USE_WHITELIST.get())
         {
             List<? extends String> allowedDimensions = GeneralConfig.CONCH_WHITELIST.get();
-            if(!allowedDimensions.contains(world.getWorld().getDimensionKey().getLocation().toString())) return false;
+            if(!allowedDimensions.contains(world.getLevel().dimension().location().toString())) return false;
         }
         else
         {
             List<? extends String> blockedDimensions = GeneralConfig.CONCH_BLACKLIST.get();
-            if(blockedDimensions.contains(world.getWorld().getDimensionKey().getLocation().toString())) return false;
+            if(blockedDimensions.contains(world.getLevel().dimension().location().toString())) return false;
         }
-        world.setBlockState(pos, RocketSquidsBase.BLOCK_CONCH.getDefaultState()
-                .with(BlockStateProperties.HORIZONTAL_FACING, DataReference.randomHorizontalFacing(random))
-                .with(BlockStateProperties.WATERLOGGED, world.getBlockState(pos).getBlock() == Blocks.WATER), 3);
+        world.setBlock(pos, RocketSquidsBase.BLOCK_CONCH.defaultBlockState()
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, DataReference.randomHorizontalFacing(random))
+                .setValue(BlockStateProperties.WATERLOGGED, world.getBlockState(pos).getBlock() == Blocks.WATER), 3);
         return true;
     }
 }

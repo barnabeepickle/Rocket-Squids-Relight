@@ -1,0 +1,30 @@
+{
+    "entity.rocketsquids.rocketsquid": "Rocket Squid",
+
+    "item.rocketsquids.conch": "Whistling Conch",
+    "item.rocketsquids.conchtwo": "Noteworthy Conch",
+    "item.rocketsquids.conchthree": "§6[[Conchzilla, Blessed Conch of the Squidseeker]]",
+    "item.rocketsquids.nitroinksac": "Nitro Ink Sac",
+    "item.rocketsquids.squeleporter_active": "Squeleporter",
+    "item.rocketsquids.squeleporter_inactive": "Squeleporter",
+    "item.rocketsquids.turbotube": "Turbo Tube",
+    "item.rocketsquids.squavigator": "Squavigator",
+    "item.rocketsquids.rs_spawn_egg": "Rocket Squid Spawn Egg",
+
+    "itemGroup.rocketsquids": "Rocket Squids",
+
+    "block.rocketsquids.blockconch": "Whistling Conch",
+    "block.rocketsquids.statue": "Squid Statue",
+
+    "subs.rocketsquids.blank": "",
+    "subs.rocketsquids.blastoff": "Rocket Squid blastoff",
+    "subs.rocketsquids.tpin": "Rocket Squid captured",
+    "subs.rocketsquids.tpout": "Rocket Squid released",
+    "subs.rocketsquids.conchc": "§6C",
+    "subs.rocketsquids.conchd": "§6D",
+    "subs.rocketsquids.conche": "§6E",
+    "subs.rocketsquids.conchf": "§6F",
+    "subs.rocketsquids.conchg": "§6G",
+    "subs.rocketsquids.concha": "§6A",
+    "subs.rocketsquids.conchb": "§6B"
+}

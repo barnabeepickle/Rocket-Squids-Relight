@@ -24,6 +24,7 @@ import com.fredtargaryen.rocketsquids.proxy.ClientProxy;
 import com.fredtargaryen.rocketsquids.proxy.IProxy;
 import com.fredtargaryen.rocketsquids.proxy.ServerProxy;
 import com.fredtargaryen.rocketsquids.worldgen.*;
+import com.mojang.math.Vector3f;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
@@ -43,8 +44,9 @@ import net.minecraft.core.Rotations;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.gen.placement.NoPlacementConfig;
-import net.minecraft.world.gen.placement.Placement;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneDecoratorConfiguration;
+import net.minecraft.world.level.levelgen.placement.FeatureDecorator;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -67,6 +69,7 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.ObjectHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -129,14 +132,14 @@ public class RocketSquidsBase {
 
     public static FeatureManager FEATURE_MANAGER;
 
-    public static MobSpawnSettings.Spawners ROCKET_SQUID_SPAWN_INFO;
+    public static MobSpawnSettings.SpawnerData ROCKET_SQUID_SPAWN_INFO;
 
     /**
      * The creative tab for all items from Rocket Squids.
      */
-    public static ItemGroup SQUIDS_TAB = new ItemGroup(DataReference.MODID) {
+    public static CreativeModeTab SQUIDS_TAB = new CreativeModeTab(DataReference.MODID) {
         @Override
-        public ItemStack createIcon() {
+        public ItemStack makeIcon() {
             return ITEM_CONCH.getDefaultInstance();
         }
     };
@@ -153,11 +156,11 @@ public class RocketSquidsBase {
      *     |_TagIntArray    ("FadeColors")
      */
     public static final CompoundTag firework = new CompoundTag();
-	
-    /**   
+
+    /**
      * Says where the client and server 'proxy' code is loaded.
      */
-    public static IProxy proxy = DistExecutor.runForDist(() -> () -> new ClientProxy(), () -> () -> new ServerProxy());
+    public static IProxy proxy = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
 
     public RocketSquidsBase() {
         //Register the config
@@ -179,17 +182,18 @@ public class RocketSquidsBase {
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         event.getRegistry().registerAll(
-                new ConchBlock()
+                new ConchBlock(Block.Properties.of(Material.SAND))
                         .setRegistryName("conch"),
-                new StatueBlock()
+                new StatueBlock(Block.Properties.of(Material.STONE).noOcclusion())
                         .setRegistryName("statue")
         );
     }
 
+    @SuppressWarnings("deprecation")
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        SQUID_EARLYREG = EntityType.Builder.create((type, world) -> new RocketSquidEntity(world), MobCategory.WATER_CREATURE)
-                .size(0.99F, 0.99F)
+        SQUID_EARLYREG = EntityType.Builder.of((type, world) -> new RocketSquidEntity(world), MobCategory.WATER_CREATURE)
+                .sized(0.99F, 0.99F)
                 .setTrackingRange(128)
                 .setUpdateInterval(10)
                 .setShouldReceiveVelocityUpdates(true)
@@ -206,15 +210,15 @@ public class RocketSquidsBase {
                         .setRegistryName("nitroinksac"),
                 new ItemTurboTube()
                         .setRegistryName("turbotube"),
-                new BlockItem(BLOCK_STATUE, new Item.Properties().group(SQUIDS_TAB).maxStackSize(1))
+                new BlockItem(BLOCK_STATUE, new Item.Properties().tab(SQUIDS_TAB).stacksTo(1))
                         .setRegistryName("statue"),
-                new Item(new Item.Properties().group(RocketSquidsBase.SQUIDS_TAB).maxStackSize(1))
+                new Item(new Item.Properties().tab(RocketSquidsBase.SQUIDS_TAB).stacksTo(1))
                         .setRegistryName("squavigator"),
                 new ItemSqueleporter(new Item.Properties())
                         .setRegistryName("squeleporter_active"),
-                new ItemSqueleporter(new Item.Properties().group(RocketSquidsBase.SQUIDS_TAB))
+                new ItemSqueleporter(new Item.Properties().tab(RocketSquidsBase.SQUIDS_TAB))
                         .setRegistryName("squeleporter_inactive"),
-                new SpawnEggItem(SQUID_EARLYREG,9838110, 16744192, new Item.Properties().group(SQUIDS_TAB))
+        new SpawnEggItem(SQUID_EARLYREG,9838110, 16744192, new Item.Properties().tab(SQUIDS_TAB))
                         .setRegistryName("rs_spawn_egg")
         );
     }
@@ -223,21 +227,21 @@ public class RocketSquidsBase {
     public static void registerEntities(RegistryEvent.Register<EntityType<?>> event) {
         event.getRegistry().registerAll(
                 SQUID_EARLYREG,
-                EntityType.Builder.create(BabyRocketSquidEntity::new, MobCategory.WATER_CREATURE)
-                        .size(0.4F, 0.4F)
+                EntityType.Builder.of(BabyRocketSquidEntity::new, MobCategory.WATER_CREATURE)
+                        .sized(0.4F, 0.4F)
                         .setTrackingRange(64)
                         .setUpdateInterval(10)
                         .setShouldReceiveVelocityUpdates(true)
                         .build(DataReference.MODID)
                         .setRegistryName("babyrs"),
-                EntityType.Builder.<ThrownSacEntity>create(ThrownSacEntity::new, MobCategory.MISC)
+                EntityType.Builder.<ThrownSacEntity>of(ThrownSacEntity::new, MobCategory.MISC)
                         .setTrackingRange(64)
                         .setUpdateInterval(10)
                         .setShouldReceiveVelocityUpdates(true)
                         .setCustomClientFactory(ThrownSacEntity::new)
                         .build(DataReference.MODID)
                         .setRegistryName("nitroinksac"),
-                EntityType.Builder.<ThrownTubeEntity>create(ThrownTubeEntity::new, MobCategory.MISC)
+                EntityType.Builder.<ThrownTubeEntity>of(ThrownTubeEntity::new, MobCategory.MISC)
                         .setTrackingRange(128)
                         .setUpdateInterval(10)
                         .setShouldReceiveVelocityUpdates(true)
@@ -257,7 +261,7 @@ public class RocketSquidsBase {
 
     @SubscribeEvent
     public static void registerFactories(ParticleFactoryRegisterEvent event) {
-        Minecraft.getInstance().particles.registerFactory(FIREWORK_TYPE, SquidFireworkParticle.SparkFactory::new);
+        Minecraft.getInstance().particleEngine.register(FIREWORK_TYPE, SquidFireworkParticle.SparkFactory::new);
     }
 
     @SubscribeEvent
@@ -267,11 +271,11 @@ public class RocketSquidsBase {
     }
 
     @SubscribeEvent
-    public static void registerDecorators(RegistryEvent.Register<Placement<?>> event) {
+    public static void registerDecorators(RegistryEvent.Register<FeatureDecorator<?>> event) {
         event.getRegistry().registerAll(
-                new ConchPlacement(NoPlacementConfig.CODEC)
+                new ConchPlacement(NoneDecoratorConfiguration.CODEC)
                 .setRegistryName("conchplace"),
-                new StatuePlacement(NoPlacementConfig.CODEC)
+                new StatuePlacement(NoneDecoratorConfiguration.CODEC)
                 .setRegistryName("statueplace")
         );
     }
@@ -290,12 +294,13 @@ public class RocketSquidsBase {
      * Called after all registry events. Runs in parallel with other SetupEvent handlers.
      * @param event
      */
+    @SuppressWarnings("deprecation")
     public void postRegistration(FMLCommonSetupEvent event) {
         MessageHandler.init();
 
         //Add entity attributes
-        event.enqueueWork(() -> DefaultAttributes.put(RocketSquidsBase.BABY_SQUID_TYPE, BabyRocketSquidEntity.prepareAttributes().create()));
-        event.enqueueWork(() -> DefaultAttributes.put(RocketSquidsBase.SQUID_TYPE, RocketSquidEntity.prepareAttributes().create()));
+        event.enqueueWork(() -> DefaultAttributes.put(RocketSquidsBase.BABY_SQUID_TYPE, BabyRocketSquidEntity.prepareAttributes().build()));
+        event.enqueueWork(() -> DefaultAttributes.put(RocketSquidsBase.SQUID_TYPE, RocketSquidEntity.prepareAttributes().build()));
 
         //Capability
         CapabilityManager.INSTANCE.register(IBabyCapability.class, new BabyCapStorage(), new DefaultBabyImplFactory());
@@ -319,8 +324,8 @@ public class RocketSquidsBase {
         }
 
         //Spawn info
-        SpawnPlacements.register(SQUID_TYPE, SpawnPlacements.PlacementType.IN_WATER, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, (type, world, reason, pos, random) -> true);
-        ROCKET_SQUID_SPAWN_INFO = new MobSpawnSettings.Spawners(SQUID_TYPE, GeneralConfig.SPAWN_PROB.get(), GeneralConfig.MIN_GROUP_SIZE.get(), GeneralConfig.MAX_GROUP_SIZE.get());
+        SpawnPlacements.register(SQUID_TYPE, SpawnPlacements.Type.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (type, world, reason, pos, random) -> true);
+        ROCKET_SQUID_SPAWN_INFO = new MobSpawnSettings.SpawnerData(SQUID_TYPE, GeneralConfig.SPAWN_PROB.get(), GeneralConfig.MIN_GROUP_SIZE.get(), GeneralConfig.MAX_GROUP_SIZE.get());
     }
 
     /////////////////
@@ -342,11 +347,11 @@ public class RocketSquidsBase {
         if(evt.getObject().getItem() == SQUELEPORTER_ACTIVE) {
             evt.addCapability(DataReference.SQUELEPORTER_LOCATION,
                     new ICapabilitySerializable<CompoundTag>() {
-                        ISqueleporter inst = SQUELEPORTER_CAP.getDefaultInstance();
+                        final ISqueleporter inst = SQUELEPORTER_CAP.getDefaultInstance();
 
-                        @Nullable
+
                         @Override
-                        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
+                        public <T> @NotNull LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {
                             return capability == SQUELEPORTER_CAP ? LazyOptional.of(() -> (T) inst) : LazyOptional.empty();
                         }
 
@@ -370,10 +375,10 @@ public class RocketSquidsBase {
             evt.addCapability(DataReference.BABY_CAP_LOCATION,
                     //Full name ICapabilitySerializableProvider
                     new ICapabilitySerializable<CompoundTag>() {
-                        IBabyCapability inst = BABYCAP.getDefaultInstance();
+                        final IBabyCapability inst = BABYCAP.getDefaultInstance();
 
                         @Override
-                        public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {
+                        public <T> @NotNull LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {
                             return capability == BABYCAP ? LazyOptional.of(() -> (T) inst) : LazyOptional.empty();
                         }
 
@@ -392,10 +397,10 @@ public class RocketSquidsBase {
             evt.addCapability(DataReference.ADULT_CAP_LOCATION,
                     //Full name ICapabilitySerializableProvider
                     new ICapabilitySerializable<CompoundTag>() {
-                        IAdultCapability inst = ADULTCAP.getDefaultInstance();
+                        final IAdultCapability inst = ADULTCAP.getDefaultInstance();
 
                         @Override
-                        public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {
+                        public <T> @NotNull LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {
                             return capability == ADULTCAP ? LazyOptional.of(() -> (T)inst) : LazyOptional.empty();
                         }
 
@@ -413,15 +418,15 @@ public class RocketSquidsBase {
         }
     }
 
-    public static Rotations getPlayerAimVector(Player player)
+    public static Vector3f getPlayerAimVector(Player player)
     {
-        double rp = Math.toRadians(player.rotationPitch);
-        double ry = Math.toRadians(player.rotationYaw);
+        double rp = Math.toRadians(player.xRot);
+        double ry = Math.toRadians(player.yRot);
         float y = (float) -Math.sin(rp);
         float hori = (float) Math.cos(rp);
         float x = (float) (hori * -Math.sin(ry));
         float z = (float) (hori * Math.cos(ry));
-        return new Rotations(x, y, z);
+        return new Vector3f(x, y, z);
     }
 
     ////////////////////////
@@ -430,88 +435,90 @@ public class RocketSquidsBase {
     @SubscribeEvent
     public void handleMissingMappings(RegistryEvent.MissingMappings evt) {
         String fullName = evt.getName().toString();
-        if(fullName.equals("minecraft:blocks")) {
-            for(Object mapping : evt.getAllMappings()) {
-                RegistryEvent.MissingMappings.Mapping trueMapping = (RegistryEvent.MissingMappings.Mapping) mapping;
-                if(trueMapping.key.getNamespace().equals("ftrsquids")) {
-                    switch (trueMapping.key.getPath()) {
-                        case "blockconch":
-                            trueMapping.remap(BLOCK_CONCH);
-                            break;
-                        case "statue":
-                            trueMapping.remap(BLOCK_STATUE);
-                            break;
-                        default:
-                            break;
+        switch (fullName) {
+            case "minecraft:blocks":
+                for (Object mapping : evt.getAllMappings()) {
+                    RegistryEvent.MissingMappings.Mapping trueMapping = (RegistryEvent.MissingMappings.Mapping) mapping;
+                    if (trueMapping.key.getNamespace().equals("ftrsquids")) {
+                        switch (trueMapping.key.getPath()) {
+                            case "blockconch":
+                                trueMapping.remap(BLOCK_CONCH);
+                                break;
+                            case "statue":
+                                trueMapping.remap(BLOCK_STATUE);
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
-            }
-        }
-        else if(fullName.equals("minecraft:entities")) {
-            for(Object mapping : evt.getAllMappings()) {
-                RegistryEvent.MissingMappings.Mapping trueMapping = (RegistryEvent.MissingMappings.Mapping) mapping;
-                if(trueMapping.key.getNamespace().equals("ftrsquids")) {
-                    switch (trueMapping.key.getPath()) {
-                        case "turbotube":
-                            trueMapping.remap(TUBE_TYPE);
-                            break;
-                        case "babyrocketsquid":
-                            trueMapping.remap(BABY_SQUID_TYPE);
-                            break;
-                        case "rocketsquid":
-                            trueMapping.remap(SQUID_TYPE);
-                            break;
-                        case "nitroinksac":
-                            trueMapping.remap(SAC_TYPE);
-                            break;
+                break;
+            case "minecraft:entities":
+                for (Object mapping : evt.getAllMappings()) {
+                    RegistryEvent.MissingMappings.Mapping trueMapping = (RegistryEvent.MissingMappings.Mapping) mapping;
+                    if (trueMapping.key.getNamespace().equals("ftrsquids")) {
+                        switch (trueMapping.key.getPath()) {
+                            case "turbotube":
+                                trueMapping.remap(TUBE_TYPE);
+                                break;
+                            case "babyrocketsquid":
+                                trueMapping.remap(BABY_SQUID_TYPE);
+                                break;
+                            case "rocketsquid":
+                                trueMapping.remap(SQUID_TYPE);
+                                break;
+                            case "nitroinksac":
+                                trueMapping.remap(SAC_TYPE);
+                                break;
+                        }
                     }
                 }
-            }
-        }
-        else if(fullName.equals("minecraft:items")) {
-            for(Object mapping : evt.getAllMappings()) {
-                RegistryEvent.MissingMappings.Mapping trueMapping = (RegistryEvent.MissingMappings.Mapping) mapping;
-                if (trueMapping.key.getNamespace().equals("ftrsquids")) {
-                    switch (trueMapping.key.getPath()) {
-                        case "conch":
-                            trueMapping.remap(ITEM_CONCH);
-                            break;
-                        case "conchtwo":
-                            trueMapping.remap(ITEM_CONCH2);
-                            break;
-                        case "conchthree":
-                            trueMapping.remap(ITEM_CONCH3);
-                            break;
-                        case "nitroinksac":
-                            trueMapping.remap(NITRO_SAC);
-                            break;
-                        case "turbotube":
-                            trueMapping.remap(TURBO_TUBE);
-                            break;
-                        case "statue":
-                            trueMapping.remap(ITEM_STATUE);
-                        default:
-                            break;
+                break;
+            case "minecraft:items":
+                for (Object mapping : evt.getAllMappings()) {
+                    RegistryEvent.MissingMappings.Mapping trueMapping = (RegistryEvent.MissingMappings.Mapping) mapping;
+                    if (trueMapping.key.getNamespace().equals("ftrsquids")) {
+                        switch (trueMapping.key.getPath()) {
+                            case "conch":
+                                trueMapping.remap(ITEM_CONCH);
+                                break;
+                            case "conchtwo":
+                                trueMapping.remap(ITEM_CONCH2);
+                                break;
+                            case "conchthree":
+                                trueMapping.remap(ITEM_CONCH3);
+                                break;
+                            case "nitroinksac":
+                                trueMapping.remap(NITRO_SAC);
+                                break;
+                            case "turbotube":
+                                trueMapping.remap(TURBO_TUBE);
+                                break;
+                            case "statue":
+                                trueMapping.remap(ITEM_STATUE);
+                            default:
+                                break;
+                        }
                     }
                 }
-            }
-        }
-        else if(fullName.equals("minecraft:soundevents")) {
-            for(Object mapping : evt.getAllMappings()) {
-                RegistryEvent.MissingMappings.Mapping trueMapping = (RegistryEvent.MissingMappings.Mapping) mapping;
-                if (trueMapping.key.getNamespace().equals("ftrsquids")) {
-                    String soundName = trueMapping.key.getPath();
-                    if(soundName.equals("blastoff")) trueMapping.remap(Sounds.BLASTOFF);
-                    else {
-                        for (int i = 0; i < 36; ++i) {
-                            //Check the note name (e.g. "concha#5") of the missing mapping is equal to the note name of any notes
-                            if (soundName.equals(Sounds.CONCH_NOTES[i].getName().getPath().replace('s', '#'))) {
-                                trueMapping.remap(Sounds.CONCH_NOTES[i]);
+                break;
+            case "minecraft:soundevents":
+                for (Object mapping : evt.getAllMappings()) {
+                    RegistryEvent.MissingMappings.Mapping trueMapping = (RegistryEvent.MissingMappings.Mapping) mapping;
+                    if (trueMapping.key.getNamespace().equals("ftrsquids")) {
+                        String soundName = trueMapping.key.getPath();
+                        if (soundName.equals("blastoff")) trueMapping.remap(Sounds.BLASTOFF);
+                        else {
+                            for (int i = 0; i < 36; ++i) {
+                                //Check the note name (e.g. "concha#5") of the missing mapping is equal to the note name of any notes
+                                if (soundName.equals(Sounds.CONCH_NOTES[i].getLocation().getPath().replace('s', '#'))) {
+                                    trueMapping.remap(Sounds.CONCH_NOTES[i]);
+                                }
                             }
                         }
                     }
                 }
-            }
+                break;
         }
     }
 
@@ -519,7 +526,5 @@ public class RocketSquidsBase {
     //LOGGER METHODS//
     //////////////////
     public static void info(String message) { LOGGER.info(message); }
-    public static void warn(String message) {
-        LOGGER.warn(message);
-    }
+    public static void warn(String message) { LOGGER.warn(message); }
 }

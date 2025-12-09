@@ -1,9 +1,9 @@
 package com.fredtargaryen.rocketsquids.worldgen;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.world.gen.feature.IFeatureConfig;
+import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 
-public class ConchGenConfig implements IFeatureConfig {
+public class ConchGenConfig implements FeatureConfiguration {
 
     public static final Codec<ConchGenConfig> FACTORY;
 

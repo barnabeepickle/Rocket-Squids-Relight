@@ -1,17 +1,17 @@
 package com.fredtargaryen.rocketsquids.entity;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.passive.WaterMobEntity;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Direction;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 
-public abstract class AbstractSquidEntity extends WaterMobEntity {
+public abstract class AbstractSquidEntity extends WaterAnimal {
     protected boolean newPacketRequired;
 
     ///////////////
@@ -20,7 +20,7 @@ public abstract class AbstractSquidEntity extends WaterMobEntity {
     public float tentacleAngle;
     public float lastTentacleAngle;
 
-    public AbstractSquidEntity(EntityType<? extends AbstractSquidEntity> type, World world) {
+    public AbstractSquidEntity(EntityType<? extends AbstractSquidEntity> type, Level world) {
         super(type, world);
     }
 
@@ -47,9 +47,9 @@ public abstract class AbstractSquidEntity extends WaterMobEntity {
      * @return Whether a solid block is in the way in all directions pointed, so the squid can't move much
      */
     public boolean areBlocksInWay() {
-        BlockPos squidPos = this.getPosition();
+        BlockPos squidPos = this.blockPosition();
         for(Direction dir : this.getDirectionsPointing()) {
-            if(!this.world.getBlockState(squidPos.offset(dir)).getMaterial().isSolid()) {
+            if(!this.level.getBlockState(squidPos.relative(dir)).getMaterial().isSolid()) {
                 return false;
             }
         }
@@ -58,7 +58,7 @@ public abstract class AbstractSquidEntity extends WaterMobEntity {
 
     public ArrayList<Direction> getDirectionsPointing() {
         ArrayList<Direction> directions = new ArrayList<>();
-        Vector3d direction = this.getDirectionAsVector();
+        Vec3 direction = this.getDirectionAsVec3();
         //A threshold; if a component is beyond this the squid is considered pointing in that direction
         double t = 0.45;//0.3125;
         if(direction.y > t) {
@@ -84,26 +84,25 @@ public abstract class AbstractSquidEntity extends WaterMobEntity {
         return directions;
     }
 
-    public Vector3d getDirectionAsVector() {
+    public Vec3 getDirectionAsVec3() {
         double rp = this.getRotPitch();
         double ry = this.getRotYaw();
         double yDir = Math.cos(rp);
         double hozDir = Math.sin(rp);
         double zDir = hozDir * Math.cos(ry);
         double xDir = hozDir * -Math.sin(ry);
-        return new Vector3d(xDir, yDir, zDir);
+        return new Vec3(xDir, yDir, zDir);
     }
 
     public void addForce(double force) {
-        if(!this.world.isRemote) {
-            Vector3d motion = this.getMotion();
-            Vector3d direction = this.getDirectionAsVector();
-            this.setMotion(
+        if(!this.level.isClientSide) {
+            Vec3 motion = this.getDeltaMovement();
+            Vec3 direction = this.getDirectionAsVec3();
+            this.setDeltaMovement(
                     motion.x + direction.x * force,
                     motion.y + direction.y * force,
                     motion.z + direction.z * force);
             this.onGround = false;
-            this.isAirBorne = true;
         }
     }
 
@@ -111,15 +110,14 @@ public abstract class AbstractSquidEntity extends WaterMobEntity {
      * Get the current force, and recalculate the motion based on the current angle of the squid
      */
     public void moveToWherePointing() {
-        Vector3d motion = this.getMotion();
+        Vec3 motion = this.getDeltaMovement();
         double force = Math.sqrt(motion.x * motion.x + motion.y * motion.y + motion.z * motion.z);
-        Vector3d direction = this.getDirectionAsVector();
-        this.setMotion(
+        Vec3 direction = this.getDirectionAsVec3();
+        this.setDeltaMovement(
                 direction.x * force,
                 direction.y * force,
                 direction.z * force);
         this.onGround = false;
-        this.isAirBorne = true;
     }
 
     /**
@@ -127,17 +125,17 @@ public abstract class AbstractSquidEntity extends WaterMobEntity {
      * @param vec normalised vector representing intended squid direction
      * @param deviation random addition to the angles so it doesn't look too perfect
      */
-    public void pointToVector(Vector3d vec, double deviation) {
+    public void pointToVector(Vec3 vec, double deviation) {
         double hozDir = Math.sqrt(vec.x * vec.x + vec.z * vec.z);
-        this.setTargetRotYaw(Math.acos(vec.z / hozDir) + deviation * (this.rand.nextBoolean() ? 1 : -1));
-        this.setTargetRotPitch(Math.acos(vec.y) + deviation * (this.rand.nextBoolean() ? 1 : -1));
+        this.setTargetRotYaw(Math.acos(vec.z / hozDir) + deviation * (this.random.nextBoolean() ? 1 : -1));
+        this.setTargetRotPitch(Math.acos(vec.y) + deviation * (this.random.nextBoolean() ? 1 : -1));
     }
 
     /**
      * Turn the entity based on its motion vector
      */
     public void pointToWhereMoving() {
-        Vector3d motion = this.getMotion();
+        Vec3 motion = this.getDeltaMovement();
         if(!(Math.abs(motion.y) < 0.0785 && motion.x == 0.0 && motion.z == 0.0)) {
             //The aim is to find the local z movement to decide if the squid should pitch backwards or forwards.
             //The global z movement is given by this.motionZ.

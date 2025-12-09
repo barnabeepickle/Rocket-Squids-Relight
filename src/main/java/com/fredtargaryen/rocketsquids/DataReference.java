@@ -1,7 +1,7 @@
 package com.fredtargaryen.rocketsquids;
 
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import 	net.minecraft.resources.ResourceLocation;
 
 import java.util.Random;
 
@@ -20,8 +20,8 @@ import java.util.Random;
  */
 public class DataReference {
     //MAIN MOD DETAILS
-    public static final String MODID = "rocketsquidsft";
-    public static final String MODNAME = "Rocket Squids";
+    public static final String MODID = "rocketsquids";
+    public static final String MODNAME = "Rocket Squids Relight";
 
     public static final ResourceLocation SQUELEPORTER_LOCATION = new ResourceLocation(DataReference.MODID, "isqueleporter");
     public static final ResourceLocation BABY_CAP_LOCATION = new ResourceLocation(DataReference.MODID, "ibaby");

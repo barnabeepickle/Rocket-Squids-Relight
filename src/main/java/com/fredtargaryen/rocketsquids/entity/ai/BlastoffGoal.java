@@ -2,9 +2,9 @@ package com.fredtargaryen.rocketsquids.entity.ai;
 
 import com.fredtargaryen.rocketsquids.Sounds;
 import com.fredtargaryen.rocketsquids.entity.RocketSquidEntity;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -18,20 +18,20 @@ public class BlastoffGoal extends Goal {
     {
         super();
         this.squid = ers;
-        this.setMutexFlags(EnumSet.of(Flag.MOVE));
+        this.setFlags(EnumSet.of(Flag.MOVE));
         this.blastStarted = false;
         this.horizontal = true;
     }
 
     @Override
-    public boolean shouldExecute()
+    public boolean canUse()
     {
         return this.squid.getBlasting() || this.squid.getForcedBlast();
     }
 
     @Override
     public void tick() {
-        Vector3d motion = this.squid.getMotion();
+        Vec3 motion = this.squid.getDeltaMovement();
         if (this.blastStarted) {
             //The squid is part of the way through a blast
             if((this.horizontal
@@ -41,7 +41,7 @@ public class BlastoffGoal extends Goal {
                 //Squid has blasted but slowed down, i.e. end of blast
                 this.squid.setShaking(false);
                 this.squid.setBlasting(false);
-                this.squid.isAirBorne = false;
+                this.squid.hasImpulse = false;
                 this.blastStarted = false;
                 if(this.squid.getForcedBlast())
                 {

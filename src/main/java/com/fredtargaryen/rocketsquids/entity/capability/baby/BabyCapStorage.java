@@ -1,8 +1,8 @@
 package com.fredtargaryen.rocketsquids.entity.capability.baby;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 
 /**
@@ -12,8 +12,8 @@ import net.minecraftforge.common.capabilities.Capability;
  */
 public class BabyCapStorage implements Capability.IStorage<IBabyCapability> {
     @Override
-    public INBT writeNBT(Capability<IBabyCapability> capability, IBabyCapability instance, Direction side) {
-        CompoundNBT comp = new CompoundNBT();
+    public Tag writeNBT(Capability<IBabyCapability> capability, IBabyCapability instance, Direction side) {
+        CompoundTag comp = new CompoundTag();
         comp.putDouble("pitch", instance.getRotPitch());
         comp.putDouble("yaw", instance.getRotYaw());
         comp.putDouble("targetPitch", instance.getTargetRotPitch());
@@ -22,8 +22,8 @@ public class BabyCapStorage implements Capability.IStorage<IBabyCapability> {
     }
 
     @Override
-    public void readNBT(Capability<IBabyCapability> capability, IBabyCapability instance, Direction side, INBT nbt) {
-        CompoundNBT comp = (CompoundNBT) nbt;
+    public void readNBT(Capability<IBabyCapability> capability, IBabyCapability instance, Direction side, Tag nbt) {
+        CompoundTag comp = (CompoundTag) nbt;
         instance.setRotPitch(comp.getDouble("pitch"));
         instance.setRotYaw(comp.getDouble("yaw"));
         instance.setTargetRotPitch(comp.getDouble("targetPitch"));

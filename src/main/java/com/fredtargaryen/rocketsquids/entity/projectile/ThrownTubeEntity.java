@@ -1,35 +1,38 @@
 package com.fredtargaryen.rocketsquids.entity.projectile;
 
 import com.fredtargaryen.rocketsquids.RocketSquidsBase;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.ProjectileItemEntity;
-import net.minecraft.item.Item;
-import net.minecraft.network.IPacket;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import net.minecraft.world.item.Item;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import com.mojang.math.Vector3d;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-public class ThrownTubeEntity extends ProjectileItemEntity {
-    public ThrownTubeEntity(EntityType<? extends ThrownTubeEntity> type, World w) {
+public class ThrownTubeEntity extends ThrowableItemProjectile {
+    public ThrownTubeEntity(EntityType<? extends ThrownTubeEntity> type, Level w) {
         super(RocketSquidsBase.TUBE_TYPE, w);
     }
-    public ThrownTubeEntity(LivingEntity elb, World w)
+    public ThrownTubeEntity(LivingEntity elb, Level w)
     {
         super(RocketSquidsBase.TUBE_TYPE, elb, w);
     }
-    public ThrownTubeEntity(FMLPlayMessages.SpawnEntity spawn, World world) {
+    public ThrownTubeEntity(FMLPlayMessages.SpawnEntity spawn, Level world) {
         this(RocketSquidsBase.TUBE_TYPE, world);
     }
 
     @Override
-    protected void onImpact(RayTraceResult result) {
-        if (!this.world.isRemote) {
-            Vector3d pos = this.getPositionVec();
-            this.world.createExplosion(this.func_234616_v_(), pos.x, pos.y, pos.z, 1.0F, Explosion.Mode.NONE);
+    protected void onHit(HitResult result) {
+        if (!this.level.isClientSide) {
+            Vec3 pos = this.position();
+            this.level.explode(this.getOwner(), pos.x, pos.y, pos.z, 1.0F, Explosion.BlockInteraction.NONE);
             this.remove();
         }
     }
@@ -44,7 +47,7 @@ public class ThrownTubeEntity extends ProjectileItemEntity {
      * Without this, they will not spawn on the client.
      */
     @Override
-    public IPacket<?> createSpawnPacket() {
+    public Packet<?> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 }

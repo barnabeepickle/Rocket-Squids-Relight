@@ -1,7 +1,7 @@
 package com.fredtargaryen.rocketsquids.entity.ai;
 
 import com.fredtargaryen.rocketsquids.entity.RocketSquidEntity;
-import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.Goal;
 
 import java.util.EnumSet;
 
@@ -11,11 +11,11 @@ public class ShakeGoal extends Goal {
     public ShakeGoal(RocketSquidEntity ers) {
         super();
         this.squid = ers;
-        this.setMutexFlags(EnumSet.of(Flag.MOVE));
+        this.setFlags(EnumSet.of(Flag.MOVE));
     }
 
     @Override
-    public boolean shouldExecute()
+    public boolean canUse()
     {
         return this.squid.getShaking();
     }

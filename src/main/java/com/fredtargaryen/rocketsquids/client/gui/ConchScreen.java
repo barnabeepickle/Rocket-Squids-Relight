@@ -4,20 +4,20 @@ import com.fredtargaryen.rocketsquids.DataReference;
 import com.fredtargaryen.rocketsquids.Sounds;
 import com.fredtargaryen.rocketsquids.network.MessageHandler;
 import com.fredtargaryen.rocketsquids.network.message.MessagePlayNoteServer;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,22 +33,22 @@ public class ConchScreen extends Screen {
     private static final ResourceLocation NOTE = new ResourceLocation(DataReference.MODID+":textures/gui/note.png");
     private static final ResourceLocation NUMBER = new ResourceLocation(DataReference.MODID+":textures/gui/numbernote.png");
 
-    private static final ITextComponent[] buttonNames = {
-            new StringTextComponent("C"),
-            new StringTextComponent("C#"),
-            new StringTextComponent("D"),
-            new StringTextComponent("D#"),
-            new StringTextComponent("E"),
-            new StringTextComponent("F"),
-            new StringTextComponent("F#"),
-            new StringTextComponent("G"),
-            new StringTextComponent("G#"),
-            new StringTextComponent("A"),
-            new StringTextComponent("A#"),
-            new StringTextComponent("B")
+    private static final Component[] buttonNames = {
+            new TextComponent("C"),
+            new TextComponent("C#"),
+            new TextComponent("D"),
+            new TextComponent("D#"),
+            new TextComponent("E"),
+            new TextComponent("F"),
+            new TextComponent("F#"),
+            new TextComponent("G"),
+            new TextComponent("G#"),
+            new TextComponent("A"),
+            new TextComponent("A#"),
+            new TextComponent("B")
     };
 
-    private static final ITextComponent questionMark = new StringTextComponent("?");
+    private static final Component questionMark = new TextComponent("?");
 
     private int[] notes = new int[10];
     private List<ConchNumberButton> conchNumberButtons;
@@ -56,10 +56,10 @@ public class ConchScreen extends Screen {
     private float[] playingNotes = new float[36];
 
     public ConchScreen(byte conchStage) {
-        super(StringTextComponent.EMPTY);
+        super(TextComponent.EMPTY);
         this.conchStage = conchStage;
-        PlayerEntity ep = Minecraft.getInstance().player;
-        Vector3d vec = ep.getPositionVec();
+        Player ep = Minecraft.getInstance().player;
+        Vec3 vec = ep.position();
         this.x = vec.x;
         this.y = vec.y;
         this.z = vec.z;
@@ -123,7 +123,7 @@ public class ConchScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(matrixStack);
         for(int i = 0; i < this.playingNotes.length; i++)
         {
@@ -138,7 +138,7 @@ public class ConchScreen extends Screen {
             int index = keyCode - 48; // So alpha key 0 = button 0, alpha key 1 = button 1 etc.
             if(index > -1 && index < 10) {
                 ConchNumberButton cnb = this.conchNumberButtons.get(index == 0 ? 9 : index - 1);
-                cnb.playDownSound(Minecraft.getInstance().getSoundHandler());
+                cnb.playDownSound(Minecraft.getInstance().getSoundManager());
             }
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
@@ -149,7 +149,7 @@ public class ConchScreen extends Screen {
         private Minecraft mc;
         
         public ConchButton(int buttonId, int x, int y, String buttonText, ConchScreen screen) {
-            super(x, y, 20, 20, new StringTextComponent(buttonText), (button) -> {
+            super(x, y, 20, 20, new TextComponent(buttonText), (button) -> {
                 if(screen.changingNumberNote > -1)
                 {
                     screen.notes[screen.changingNumberNote] = buttonId;
@@ -164,9 +164,9 @@ public class ConchScreen extends Screen {
         }
 
         @Override
-        public void playDownSound(SoundHandler soundHandlerIn) {
+        public void playDownSound(SoundManager soundHandlerIn) {
             if(ConchScreen.this.playingNotes[this.id] <= 0f) {
-                soundHandlerIn.play(SimpleSound.master(Sounds.CONCH_NOTES[this.id], 1.0F));
+                soundHandlerIn.play(SimpleSoundInstance.forUI(Sounds.CONCH_NOTES[this.id], 1.0F));
                 MessageHandler.INSTANCE.sendToServer(new MessagePlayNoteServer((byte) this.id, ConchScreen.this.x, ConchScreen.this.y, ConchScreen.this.z));
                 ConchScreen.this.playingNotes[this.id] = 10f;
             }
@@ -176,8 +176,8 @@ public class ConchScreen extends Screen {
          * Draws this button to the screen.
          */
         @Override
-        public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
-            FontRenderer fontrenderer = mc.fontRenderer;
+        public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
+            Font fontrenderer = mc.font;
             this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
             float red, green, blue;
             if(ConchScreen.this.playingNotes[this.id] > 0f)
@@ -206,12 +206,12 @@ public class ConchScreen extends Screen {
             drawCenteredString(stack, fontrenderer, this.getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, j);
         }
 
-        private void drawNote(MatrixStack stack, int x, int y, float red, float green, float blue) {
-            mc.getTextureManager().bindTexture(NOTE);
+        private void drawNote(PoseStack stack, int x, int y, float red, float green, float blue) {
+            mc.getTextureManager().bind(NOTE);
             RenderSystem.color4f(red, green, blue, 1f);
             //Draw the quaver; see gui/note.png
             //Parameters are: top-left x; top-left y; top-left u, top-left v, width, height, texture width, texture height (will repeat if texture dimensions are smaller than region dimensions)
-            AbstractGui.blit(stack, x + 2, y - 37, 0, 0, 27, 54, 27, 54);
+            GuiComponent.blit(stack, x + 2, y - 37, 0, 0, 27, 54, 27, 54);
         }
     }
 
@@ -220,7 +220,7 @@ public class ConchScreen extends Screen {
         private Minecraft mc;
 
         public ConchNumberButton(int buttonId, int x, int y, String buttonText, ConchScreen screen) {
-            super(x, y, 32, 32, new StringTextComponent(buttonText), (button) -> {
+            super(x, y, 32, 32, new TextComponent(buttonText), (button) -> {
                 if(screen.changingNumberNote == -1) {
                     screen.changingNumberNote = buttonId;
                     button.setMessage(questionMark);
@@ -231,10 +231,10 @@ public class ConchScreen extends Screen {
         }
 
         @Override
-        public void playDownSound(SoundHandler soundHandlerIn) {
+        public void playDownSound(SoundManager soundHandlerIn) {
             int noteId = ConchScreen.this.notes[this.id];
             if(noteId > -1 && ConchScreen.this.playingNotes[noteId] <= 0f) {
-                soundHandlerIn.play(SimpleSound.master(Sounds.CONCH_NOTES[noteId], 1.0F));
+                soundHandlerIn.play(SimpleSoundInstance.forUI(Sounds.CONCH_NOTES[noteId], 1.0F));
                 MessageHandler.INSTANCE.sendToServer(new MessagePlayNoteServer((byte) noteId, ConchScreen.this.x, ConchScreen.this.y, ConchScreen.this.z));
                 ConchScreen.this.playingNotes[noteId] = 10f;
             }
@@ -244,8 +244,8 @@ public class ConchScreen extends Screen {
          * Draws this button to the screen.
          */
         @Override
-        public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
-            FontRenderer fontrenderer = mc.fontRenderer;
+        public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
+            Font fontrenderer = mc.font;
             this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
             float red, green, blue;
             int noteId = ConchScreen.this.notes[this.id];
@@ -283,16 +283,16 @@ public class ConchScreen extends Screen {
 
             drawCenteredString(stack, fontrenderer, this.getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, j);
             drawCenteredString(stack, fontrenderer,
-                    new StringTextComponent("" + (this.id == 9 ? 0: this.id + 1)),
+                    new TextComponent("" + (this.id == 9 ? 0: this.id + 1)),
                     this.x + this.width / 2, this.y + 34, j);
         }
 
-        private void drawButton(MatrixStack stack, int x, int y, float red, float green, float blue) {
-            mc.getTextureManager().bindTexture(NUMBER);
+        private void drawButton(PoseStack stack, int x, int y, float red, float green, float blue) {
+            mc.getTextureManager().bind(NUMBER);
             RenderSystem.color4f(red, green, blue, 1f);
             //Draw the button; see gui/numbernote.png
             //Parameters are: top-left x; top-left y; top-left u, top-left v, width, height, texture width, texture height (will repeat if texture dimensions are smaller than region dimensions)
-            AbstractGui.blit(stack, x, y, 0, 0, 32, 32, 32, 32);
+            GuiComponent.blit(stack, x, y, 0, 0, 32, 32, 32, 32);
         }
     }
 

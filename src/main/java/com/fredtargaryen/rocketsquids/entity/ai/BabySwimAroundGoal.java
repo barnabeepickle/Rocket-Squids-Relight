@@ -1,8 +1,9 @@
 package com.fredtargaryen.rocketsquids.entity.ai;
 
 import com.fredtargaryen.rocketsquids.entity.BabyRocketSquidEntity;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.ai.goal.Goal;
+import com.mojang.math.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.EnumSet;
 import java.util.Random;
@@ -18,8 +19,8 @@ public class BabySwimAroundGoal extends Goal {
     public BabySwimAroundGoal(BabyRocketSquidEntity ebrs, double swimForce) {
         super();
         this.squid = ebrs;
-        this.setMutexFlags(EnumSet.of(Flag.MOVE));
-        this.r = this.squid.getRNG();
+        this.setFlags(EnumSet.of(Flag.MOVE));
+        this.r = this.squid.getRandom();
         this.swimForce = swimForce;
         this.tickCounter = 0;
         this.nextScheduledMove = 0;
@@ -28,7 +29,7 @@ public class BabySwimAroundGoal extends Goal {
     }
 
     @Override
-    public boolean shouldExecute() {
+    public boolean canUse() {
         return this.squid.isInWater();
     }
 
@@ -39,8 +40,8 @@ public class BabySwimAroundGoal extends Goal {
     public boolean doTurn(boolean blocked) {
         if(blocked) {
             //Just point the opposite way
-            Vector3d direction = this.squid.getDirectionAsVector();
-            this.squid.pointToVector(new Vector3d(-direction.x, -direction.y, -direction.z), Math.PI / 3.0);
+            Vec3 direction = this.squid.getDirectionAsVec3();
+            this.squid.pointToVector(new Vec3(-direction.x, -direction.y, -direction.z), Math.PI / 3.0);
         }
         else {
             //Random doubles between -PI and PI, added to current rotation
