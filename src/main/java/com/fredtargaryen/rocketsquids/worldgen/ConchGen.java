@@ -27,7 +27,7 @@ public class ConchGen extends Feature<ConchGenConfig> {
      * @param random
      * @param pos
      * @param config
-     * @return
+     * @return always returns true
      */
     @Override
     public boolean place(WorldGenLevel world, ChunkGenerator chunkGen, Random random, BlockPos pos, ConchGenConfig config) {
@@ -42,8 +42,8 @@ public class ConchGen extends Feature<ConchGenConfig> {
             List<? extends String> blockedDimensions = GeneralConfig.CONCH_BLACKLIST.get();
             if(blockedDimensions.contains(world.getLevel().dimension().location().toString())) return false;
         }
-        world.setBlock(pos, RocketSquidsBase.BLOCK_CONCH.defaultBlockState()
-                .setValue(BlockStateProperties.HORIZONTAL_FACING, DataReference.randomHorizontalFacing(random))
+        world.setBlock(pos, RocketSquidsBase.BLOCK_CONCH.get().defaultBlockState()
+                .setValue(BlockStateProperties.FACING, DataReference.randomHorizontalFacing(random))
                 .setValue(BlockStateProperties.WATERLOGGED, world.getBlockState(pos).getBlock() == Blocks.WATER), 3);
         return true;
     }

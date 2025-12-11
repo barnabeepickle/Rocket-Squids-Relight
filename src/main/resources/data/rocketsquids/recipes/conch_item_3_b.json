@@ -2,17 +2,19 @@
   "type": "minecraft:crafting_shaped",
   "group": "rocketsquids",
   "pattern": [
-    "sss",
-    "sss",
-    "sss"
+    "2 ",
+    " 1"
   ],
   "key": {
-    "s": {
+    "1": {
       "item": "rocketsquids:conch_item_1"
+    },
+    "2": {
+      "item": "rocketsquids:conch_item_2"
     }
   },
   "result": {
-    "item": "minecraft:sand",
+    "item": "rocketsquids:conch_item_3",
     "count": 1
   }
 }

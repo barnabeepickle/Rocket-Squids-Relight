@@ -17,8 +17,8 @@ import com.mojang.math.Vector3f;
 import net.minecraft.world.level.Level;
 
 public class ItemNitroInkSac extends Item {
-    public ItemNitroInkSac() {
-        super(new Item.Properties().tab(RocketSquidsBase.SQUIDS_TAB));
+    public ItemNitroInkSac(Item.Properties properties) {
+        super(properties);
     }
 
     /**

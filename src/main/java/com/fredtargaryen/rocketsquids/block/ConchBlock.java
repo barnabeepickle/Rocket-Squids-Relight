@@ -71,7 +71,7 @@ public class ConchBlock extends Block {
      * Get the Item that this Block should drop when harvested.
      */
     @Override
-    public Item asItem() { return RocketSquidsBase.ITEM_CONCH; }
+    public Item asItem() { return RocketSquidsBase.ITEM_CONCH.get(); }
 
     @SuppressWarnings("deprecation")
     @Override

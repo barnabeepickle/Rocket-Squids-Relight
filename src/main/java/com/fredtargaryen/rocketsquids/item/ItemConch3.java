@@ -12,8 +12,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ItemConch3 extends Item {
-    public ItemConch3() {
-        super(new Item.Properties().tab(RocketSquidsBase.SQUIDS_TAB).stacksTo(1));
+    public ItemConch3(Item.Properties properties) {
+        super(properties);
     }
 
     /**

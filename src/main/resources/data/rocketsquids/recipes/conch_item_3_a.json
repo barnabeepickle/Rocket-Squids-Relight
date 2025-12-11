@@ -4,15 +4,15 @@
   "pattern": [
     "  1",
     " 1 ",
-    "1  "
+    "1 1"
   ],
   "key": {
     "1": {
-      "item": "rocketsquids:conch"
+      "item": "rocketsquids:conch_item_1"
     }
   },
   "result": {
-    "item": "rocketsquids:conchtwo",
+    "item": "rocketsquids:conch_item_3",
     "count": 1
   }
 }

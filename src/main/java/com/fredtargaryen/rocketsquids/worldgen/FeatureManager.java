@@ -14,6 +14,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.fredtargaryen.rocketsquids.RocketSquidsBase.*;
 
@@ -39,7 +40,7 @@ public class FeatureManager {
         List<MobSpawnSettings.SpawnerData> spawners = builder.getSpawner(MobCategory.WATER_CREATURE);
         boolean squidFound = false;
         for (MobSpawnSettings.SpawnerData s : spawners) {
-            if(s.type.getRegistryName().toString().equals("minecraft:squid")) {
+            if(Objects.requireNonNull(s.type.getRegistryName()).toString().equals("minecraft:squid")) {
                 squidFound = true;
             }
         }

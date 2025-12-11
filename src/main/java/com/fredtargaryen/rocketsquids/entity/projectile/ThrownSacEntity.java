@@ -21,16 +21,18 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import java.util.List;
 
 public class ThrownSacEntity extends ThrowableItemProjectile {
-    private static final MobEffect blindnessPotion = MobEffects.BLINDNESS;
-
-    public ThrownSacEntity(EntityType<? extends ThrownSacEntity> type, Level w) { super(type, w); }
+    public ThrownSacEntity(final EntityType<? extends ThrownSacEntity> type, final Level world) {
+        super(type, world);
+    }
     public ThrownSacEntity(LivingEntity elb, Level w)
     {
-        super(RocketSquidsBase.SAC_TYPE, elb, w);
+        super(RocketSquidsBase.SAC_TYPE.get(), elb, w);
     }
     public ThrownSacEntity(FMLPlayMessages.SpawnEntity spawn, Level world) {
-        this(RocketSquidsBase.SAC_TYPE, world);
+        this(RocketSquidsBase.SAC_TYPE.get(), world);
     }
+
+    private static final MobEffect blindnessPotion = MobEffects.BLINDNESS;
 
     @Override
     protected void onHit(HitResult result) {
@@ -55,7 +57,7 @@ public class ThrownSacEntity extends ThrowableItemProjectile {
 
     @Override
     protected Item getDefaultItem() {
-        return RocketSquidsBase.NITRO_SAC;
+        return RocketSquidsBase.NITRO_SAC.get();
     }
 
     /**

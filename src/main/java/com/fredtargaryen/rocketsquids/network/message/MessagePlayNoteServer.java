@@ -32,6 +32,7 @@ public class MessagePlayNoteServer {
             Player player = ctx.get().getSender();
             if(note > -1 && note < 36) {
                 MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(this.x, this.y, this.z, 64.0, player.level.dimension())), new MessagePlayNoteClient(this.note));
+                assert player != null;
                 ((ServerLevel) player.level).getEntities().forEach(e ->
                         e.getCapability(RocketSquidsBase.ADULTCAP).ifPresent(cap -> cap.processNote(this.note)));
             }

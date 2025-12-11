@@ -64,7 +64,7 @@ public class RocketSquidEntity extends AbstractSquidEntity {
     private static final EntityDataAccessor<Boolean> SADDLED = SynchedEntityData.defineId(RocketSquidEntity.class, EntityDataSerializers.BOOLEAN);
 
     public RocketSquidEntity(Level par1World) {
-        super(RocketSquidsBase.SQUID_TYPE, par1World);
+        super(RocketSquidsBase.SQUID_TYPE.get(), par1World);
         this.getCapability(RocketSquidsBase.ADULTCAP).ifPresent(cap -> RocketSquidEntity.this.squidCap = cap);
         this.riderRotated = false;
     }
@@ -244,9 +244,9 @@ public class RocketSquidEntity extends AbstractSquidEntity {
             }
             else {
                 Item i = stack.getItem();
-                if(i == RocketSquidsBase.SQUELEPORTER_INACTIVE) {
+                if(i == RocketSquidsBase.SQUELEPORTER_INACTIVE.get()) {
                     //The squeleporter is inactive so store the squid here
-                    ItemStack newStack = RocketSquidsBase.SQUELEPORTER_ACTIVE.getDefaultInstance();
+                    ItemStack newStack = RocketSquidsBase.SQUELEPORTER_ACTIVE.get().getDefaultInstance();
                     newStack.getCapability(RocketSquidsBase.SQUELEPORTER_CAP).ifPresent(squeleporterCap -> {
                         Vec3 pos = player.position();
                         player.level.playSound(null, pos.x, pos.y, pos.z, Sounds.SQUIDTP_IN, SoundSource.PLAYERS, 1.0F, 1.0F);
@@ -303,7 +303,7 @@ public class RocketSquidEntity extends AbstractSquidEntity {
             int noSacs = 3 + this.random.nextInt(3);
             int noTubes = 2 + this.random.nextInt(3);
             for (int x = 0; x < noSacs; ++x) {
-                ItemEntity entityitem = new ItemEntity(this.level, pos.x, pos.y, pos.z, new ItemStack(RocketSquidsBase.NITRO_SAC));
+                ItemEntity entityitem = new ItemEntity(this.level, pos.x, pos.y, pos.z, new ItemStack(RocketSquidsBase.NITRO_SAC.get()));
                 double motionX = this.random.nextDouble() * 1.5F * (this.random.nextBoolean() ? 1 : -1);
                 double motionY = -0.2;
                 double motionZ = this.random.nextDouble() * 1.5F * (this.random.nextBoolean() ? 1 : -1);
@@ -311,7 +311,7 @@ public class RocketSquidEntity extends AbstractSquidEntity {
                 this.level.addFreshEntity(entityitem);
             }
             for (int x = 0; x < noTubes; ++x) {
-                ItemEntity entityitem = new ItemEntity(this.level, pos.x, pos.y, pos.z, new ItemStack(RocketSquidsBase.TURBO_TUBE));
+                ItemEntity entityitem = new ItemEntity(this.level, pos.x, pos.y, pos.z, new ItemStack(RocketSquidsBase.TURBO_TUBE.get()));
                 double motionX = this.random.nextDouble() * 1.5F * (this.random.nextBoolean() ? 1 : -1);
                 double motionY = -0.2;
                 double motionZ = this.random.nextDouble() * 1.5F * (this.random.nextBoolean() ? 1 : -1);
@@ -356,9 +356,9 @@ public class RocketSquidEntity extends AbstractSquidEntity {
             //Obstacle is not the rider, so apply collision
             if (!obstacle.noPhysics && !this.noPhysics) {
                 Vec3 thisPos = this.position();
-                if(!this.level.isClientSide && obstacle.getType() == RocketSquidsBase.SQUID_TYPE && this.breedCooldown == 0) {
+                if(!this.level.isClientSide && obstacle.getType() == RocketSquidsBase.SQUID_TYPE.get() && this.breedCooldown == 0) {
                     this.breedCooldown = 3600;
-                    Entity baby = RocketSquidsBase.BABY_SQUID_TYPE.create(this.level);
+                    Entity baby = RocketSquidsBase.BABY_SQUID_TYPE.get().create(this.level);
                     assert baby != null;
                     baby.moveTo(thisPos.x, thisPos.y, thisPos.z, 0.0F, 0.0F);
                     this.level.addFreshEntity(baby);
@@ -452,9 +452,9 @@ public class RocketSquidEntity extends AbstractSquidEntity {
         Entity passenger = this.getControllingPassenger();
         if (passenger instanceof Player) {
             return ((Player) passenger).getMainHandItem()
-                        .getItem() == RocketSquidsBase.SQUAVIGATOR
+                        .getItem() == RocketSquidsBase.SQUAVIGATOR.get()
                     || ((Player) passenger)
-                        .getOffhandItem().getItem() == RocketSquidsBase.SQUAVIGATOR;
+                        .getOffhandItem().getItem() == RocketSquidsBase.SQUAVIGATOR.get();
         }
         return false;
     }
@@ -598,7 +598,7 @@ public class RocketSquidEntity extends AbstractSquidEntity {
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putString("id", EntityType.getKey(RocketSquidsBase.SQUID_TYPE).toString());
+        compound.putString("id", EntityType.getKey(RocketSquidsBase.SQUID_TYPE.get()).toString());
         Vec3 motion = this.getDeltaMovement();
         compound.putDouble("force", Math.sqrt(motion.x * motion.x + motion.y * motion.y + motion.z * motion.z));
         compound.putBoolean("Saddle", this.getSaddled());

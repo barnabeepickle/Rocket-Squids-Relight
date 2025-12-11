@@ -45,7 +45,7 @@ public class StatueBlock extends FallingBlock implements SimpleWaterloggedBlock 
      * Get the Item that this Block should drop when harvested.
      */
     @Override
-    public Item asItem() { return RocketSquidsBase.ITEM_STATUE; }
+    public Item asItem() { return RocketSquidsBase.ITEM_STATUE.get(); }
 
     @Override
     @Deprecated
@@ -115,12 +115,12 @@ public class StatueBlock extends FallingBlock implements SimpleWaterloggedBlock 
         switch(facing) {
             case NORTH:
                 ItemEntity squav = new ItemEntity(world,x + 0.5D, y + 0.5D, z - 0.5D);
-                squav.setItem(RocketSquidsBase.SQUAVIGATOR.getDefaultInstance());
+                squav.setItem(RocketSquidsBase.SQUAVIGATOR.get().getDefaultInstance());
                 //North is negative Z I think
                 squav.setDeltaMovement(0.0, 0.05, -0.1);
                 world.addFreshEntity(squav);
                 ItemEntity squel = new ItemEntity(world,x + 0.5D, y + 0.5D, z - 0.5D);
-                squel.setItem(RocketSquidsBase.SQUELEPORTER_INACTIVE.getDefaultInstance());
+                squel.setItem(RocketSquidsBase.SQUELEPORTER_INACTIVE.get().getDefaultInstance());
                 squel.setDeltaMovement(0.0, 0.05, -0.1);
                 world.addFreshEntity(squel);
                 break;

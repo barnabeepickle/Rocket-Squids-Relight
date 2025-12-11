@@ -31,16 +31,16 @@ import java.util.Iterator;
 public class ClientProxy implements IProxy {
     @Override
     public void registerRenderers() {
-        RenderingRegistry.registerEntityRenderingHandler(RocketSquidsBase.SQUID_TYPE, new RenderRSFactory());
-        RenderingRegistry.registerEntityRenderingHandler(RocketSquidsBase.SAC_TYPE, manager -> new ThrownItemRenderer<ThrownSacEntity>(manager, Minecraft.getInstance().getItemRenderer()));
-        RenderingRegistry.registerEntityRenderingHandler(RocketSquidsBase.TUBE_TYPE, manager -> new ThrownItemRenderer<ThrownTubeEntity>(manager, Minecraft.getInstance().getItemRenderer()));
-        RenderingRegistry.registerEntityRenderingHandler(RocketSquidsBase.BABY_SQUID_TYPE, new RenderBabyRSFactory());
+        RenderingRegistry.registerEntityRenderingHandler(RocketSquidsBase.SQUID_TYPE.get(), new RenderRSFactory());
+        RenderingRegistry.registerEntityRenderingHandler(RocketSquidsBase.SAC_TYPE.get(), manager -> new ThrownItemRenderer<ThrownSacEntity>(manager, Minecraft.getInstance().getItemRenderer()));
+        RenderingRegistry.registerEntityRenderingHandler(RocketSquidsBase.TUBE_TYPE.get(), manager -> new ThrownItemRenderer<ThrownTubeEntity>(manager, Minecraft.getInstance().getItemRenderer()));
+        RenderingRegistry.registerEntityRenderingHandler(RocketSquidsBase.BABY_SQUID_TYPE.get(), new RenderBabyRSFactory());
     }
 
     @Override
     public void registerRenderTypes() {
-        ItemBlockRenderTypes.setRenderLayer(RocketSquidsBase.BLOCK_CONCH, RenderType.cutoutMipped());
-        ItemBlockRenderTypes.setRenderLayer(RocketSquidsBase.BLOCK_STATUE, RenderType.cutoutMipped());
+        ItemBlockRenderTypes.setRenderLayer(RocketSquidsBase.BLOCK_CONCH.get(), RenderType.cutoutMipped());
+        ItemBlockRenderTypes.setRenderLayer(RocketSquidsBase.BLOCK_STATUE.get(), RenderType.cutoutMipped());
     }
 
     @Override
@@ -56,6 +56,7 @@ public class ClientProxy implements IProxy {
     @Override
     public void playNoteFromMessage(byte note) {
         Player ep = Minecraft.getInstance().player;
+        assert ep != null;
         Vec3 pos = ep.position();
         ep.level.playLocalSound(pos.x, pos.y, pos.z, Sounds.CONCH_NOTES[note], SoundSource.PLAYERS, 1.0F, 1.0F, true);
     }
@@ -64,13 +65,14 @@ public class ClientProxy implements IProxy {
     public void playNoteFromMessageConchNeeded(byte note) {
         Player ep = Minecraft.getInstance().player;
         //Check player is wearing the conch
+        assert ep != null;
         Iterable<ItemStack> armour = ep.getArmorSlots();
         Iterator<ItemStack> iter = armour.iterator();
         iter.next();
         iter.next();
         iter.next();
         ItemStack helmet = iter.next();
-        if(helmet.getItem() == RocketSquidsBase.ITEM_CONCH) {
+        if(helmet.getItem() == RocketSquidsBase.ITEM_CONCH.get()) {
             Vec3 pos = ep.position();
             ep.level.playLocalSound(pos.x, pos.y, pos.z, Sounds.CONCH_NOTES[note], SoundSource.NEUTRAL, 1.0F, 1.0F, true);
         }

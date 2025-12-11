@@ -68,7 +68,7 @@ public class StatueGen extends Feature<StatueGenConfig> {
             BlockPos pos2;
             for(pos2 = placePos; !world.getBlockState(pos2.below()).getMaterial().isSolid(); pos2 = pos2.below());
             world.setBlock(pos2.above(), Blocks.AIR.defaultBlockState(), 3);
-            world.setBlock(pos2, RocketSquidsBase.BLOCK_STATUE.defaultBlockState(), 3);
+            world.setBlock(pos2, RocketSquidsBase.BLOCK_STATUE.get().defaultBlockState(), 3);
             statueManager.addStatue(pos2);
             return true;
         }

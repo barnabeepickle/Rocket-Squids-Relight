@@ -18,8 +18,8 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.LazyOptional;
 
 public class ItemSqueleporter extends Item {
-    public ItemSqueleporter(Item.Properties props) {
-        super(props.stacksTo(1));
+    public ItemSqueleporter(Item.Properties properties) {
+        super(properties);
     }
 
     /**
@@ -29,7 +29,7 @@ public class ItemSqueleporter extends Item {
     public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
         if (!worldIn.isClientSide) {
             ItemStack stack = playerIn.getItemInHand(handIn);
-            if(stack.getItem() == RocketSquidsBase.SQUELEPORTER_ACTIVE) {
+            if(stack.getItem() == RocketSquidsBase.SQUELEPORTER_ACTIVE.get()) {
                 //The squeleporter is active so squid data is stored.
                 stack.getCapability(RocketSquidsBase.SQUELEPORTER_CAP).ifPresent(cap -> {
                     CompoundTag squidTags = cap.getSquidData();
@@ -51,7 +51,7 @@ public class ItemSqueleporter extends Item {
                         }
                         worldIn.playSound(null, playerPos.x, playerPos.y, playerPos.z, Sounds.SQUIDTP_OUT, SoundSource.PLAYERS, 1.0F, 1.0F);
                         //Set the squeleporter to inactive
-                        playerIn.setItemInHand(handIn, RocketSquidsBase.SQUELEPORTER_INACTIVE.getDefaultInstance());
+                        playerIn.setItemInHand(handIn, RocketSquidsBase.SQUELEPORTER_INACTIVE.get().getDefaultInstance());
                         playerIn.getCooldowns().addCooldown(this, 10);
                     });
                 });

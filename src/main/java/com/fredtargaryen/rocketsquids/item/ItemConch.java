@@ -32,6 +32,8 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.util.Objects;
+
 public class ItemConch extends ArmorItem {
     public static final ArmorMaterial MATERIAL_CONCH = new ArmorMaterial() {
         @Override
@@ -61,7 +63,7 @@ public class ItemConch extends ArmorItem {
 
         @Override
         public String getName() {
-            return DataReference.MODID + ":conch";
+            return DataReference.MODID + ":conch_item_1";
         }
 
         @Override
@@ -75,8 +77,8 @@ public class ItemConch extends ArmorItem {
         }
     };
 
-    public ItemConch() {
-        super(MATERIAL_CONCH, EquipmentSlot.HEAD, new Item.Properties().tab(RocketSquidsBase.SQUIDS_TAB).stacksTo(4));
+    public ItemConch(Item.Properties properties) {
+        super(MATERIAL_CONCH, EquipmentSlot.HEAD, properties);
     }
 
     /**
@@ -103,10 +105,10 @@ public class ItemConch extends ArmorItem {
         Player player = context.getPlayer();
         BlockPos pos = context.getClickedPos();
         Direction facing = context.getClickedFace();
-        if(!worldIn.isClientSide && player.isCrouching()) {
+        if(!worldIn.isClientSide && Objects.requireNonNull(player).isCrouching()) {
             BlockState iblockstate = worldIn.getBlockState(pos);
             Block block = iblockstate.getBlock();
-            if (block == RocketSquidsBase.BLOCK_STATUE) {
+            if (block == RocketSquidsBase.BLOCK_STATUE.get()) {
                 if (iblockstate.getValue(BlockStateProperties.FACING) == Direction.UP) {
                     StatueManager.forWorld(worldIn).removeStatue(pos);
                     if (facing == Direction.NORTH) {
@@ -129,7 +131,7 @@ public class ItemConch extends ArmorItem {
                     float hitX = (float) hitVec.x;
                     float hitY = (float) hitVec.y;
                     float hitZ = (float) hitVec.z;
-                    BlockState conchstate = RocketSquidsBase.BLOCK_CONCH.getStateForPlacement(blockContext);
+                    BlockState conchstate = RocketSquidsBase.BLOCK_CONCH.get().getStateForPlacement(blockContext);
 
                     if (placeBlockAt(itemstack, player, worldIn, pos, facing, hitX, hitY, hitZ, conchstate)) {
                         BlockState iblockstate1 = worldIn.getBlockState(pos);
@@ -162,8 +164,8 @@ public class ItemConch extends ArmorItem {
         if (!world.setBlock(pos, newState, 11)) return false;
 
         BlockState state = world.getBlockState(pos);
-        if (state.getBlock() == RocketSquidsBase.BLOCK_CONCH) {
-            RocketSquidsBase.BLOCK_CONCH.setPlacedBy(world, pos, state, player, stack);
+        if (state.getBlock() == RocketSquidsBase.BLOCK_CONCH.get()) {
+            RocketSquidsBase.BLOCK_CONCH.get().setPlacedBy(world, pos, state, player, stack);
 
             if (player instanceof ServerPlayer)
                 CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer)player, pos, stack);

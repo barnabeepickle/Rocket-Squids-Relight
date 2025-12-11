@@ -24,6 +24,7 @@ import com.fredtargaryen.rocketsquids.proxy.ClientProxy;
 import com.fredtargaryen.rocketsquids.proxy.IProxy;
 import com.fredtargaryen.rocketsquids.proxy.ServerProxy;
 import com.fredtargaryen.rocketsquids.worldgen.*;
+import com.fredtargaryen.rocketsquids.util.ColorHelper;
 import com.mojang.math.Vector3f;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
@@ -40,7 +41,6 @@ import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.core.Rotations;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -60,73 +60,109 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import static com.fredtargaryen.rocketsquids.DataReference.MODID;
 
-@Mod(value = DataReference.MODID)
+@Mod(value = MODID)
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class RocketSquidsBase {
     // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
 
-    //Declare all blocks here
-    @ObjectHolder("conch")
-    public static Block BLOCK_CONCH;
-    @ObjectHolder("statue")
-    public static Block BLOCK_STATUE;
+    /**
+     * The creative tab for all items from Rocket Squids.
+     */
+    public static CreativeModeTab SQUIDS_TAB = new CreativeModeTab(MODID) {
+        @Override
+        public ItemStack makeIcon() {
+            return ITEM_CONCH.get().getDefaultInstance();
+        }
+    };
 
-    //Declare all items here
-    @ObjectHolder("conch")
-    public static Item ITEM_CONCH;
-    @ObjectHolder("conchtwo")
-    public static Item ITEM_CONCH2;
-    @ObjectHolder("conchthree")
-    public static Item ITEM_CONCH3;
-    @ObjectHolder("nitroinksac")
-    public static Item NITRO_SAC;
-    @ObjectHolder("turbotube")
-    public static Item TURBO_TUBE;
-    @ObjectHolder("statue")
-    public static Item ITEM_STATUE;
-    @ObjectHolder("squavigator")
-    public static Item SQUAVIGATOR;
-    @ObjectHolder("squeleporter_active")
-    public static Item SQUELEPORTER_ACTIVE;
-    @ObjectHolder("squeleporter_inactive")
-    public static Item SQUELEPORTER_INACTIVE;
-    @ObjectHolder("rs_spawn_egg")
-    public static Item SQUID_EGG;
+    // Blocks
+    private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
+    // Register all blocks here
+    public static final RegistryObject<ConchBlock> BLOCK_CONCH = BLOCKS.register("conch", () -> new ConchBlock(Block.Properties.of(Material.SAND).noCollission()));
+    public static final RegistryObject<StatueBlock> BLOCK_STATUE = BLOCKS.register("statue", () -> new StatueBlock(Block.Properties.of(Material.STONE).noOcclusion()));
 
-    //Declare all EntityTypes here
-    @ObjectHolder("nitroinksac")
-    public static EntityType SAC_TYPE;
-    @ObjectHolder("turbotube")
-    public static EntityType TUBE_TYPE;
-    @ObjectHolder("rocketsquid")
-    public static EntityType SQUID_TYPE;
-    @ObjectHolder("babyrs")
-    public static EntityType BABY_SQUID_TYPE;
+    // Items
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+    // Register all items here
+    public static final RegistryObject<Item> ITEM_CONCH = ITEMS.register("conch_item_1", () -> new ItemConch(new Item.Properties().tab(RocketSquidsBase.SQUIDS_TAB).stacksTo(4)));
+    public static final RegistryObject<Item> ITEM_CONCH2 = ITEMS.register("conch_item_2", () -> new ItemConch2(new Item.Properties().tab(RocketSquidsBase.SQUIDS_TAB).stacksTo(1)));
+    public static final RegistryObject<Item> ITEM_CONCH3 = ITEMS.register("conch_item_3", () -> new ItemConch3(new Item.Properties().tab(RocketSquidsBase.SQUIDS_TAB).stacksTo(1)));
+    public static final RegistryObject<Item> NITRO_SAC = ITEMS.register("nitro_ink_sac", () -> new ItemNitroInkSac(new Item.Properties().tab(RocketSquidsBase.SQUIDS_TAB).stacksTo(16)));
+    public static final RegistryObject<Item> TURBO_TUBE = ITEMS.register("turbo_tube", () -> new ItemTurboTube(new Item.Properties().tab(SQUIDS_TAB).stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_STATUE = ITEMS.register("statue", () -> new BlockItem(BLOCK_STATUE.get(), new Item.Properties().tab(RocketSquidsBase.SQUIDS_TAB).stacksTo(4)));
+    public static final RegistryObject<Item> SQUAVIGATOR = ITEMS.register("squavigator", () -> new Item(new Item.Properties().tab(SQUIDS_TAB).stacksTo(1)));
+    public static final RegistryObject<Item> SQUELEPORTER_ACTIVE = ITEMS.register("squeleporter_active", () -> new ItemSqueleporter(new Item.Properties().tab(SQUIDS_TAB).stacksTo(1)));
+    public static final RegistryObject<Item> SQUELEPORTER_INACTIVE = ITEMS.register("squeleporter_inactive", () -> new ItemSqueleporter(new Item.Properties().tab(SQUIDS_TAB).stacksTo(1)));
 
-    private static EntityType SQUID_EARLYREG;
+    // Entities
+    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, MODID);
+    // Register all EntityTypes here
+    public static final RegistryObject<EntityType<ThrownSacEntity>> SAC_TYPE = ENTITIES.register("thrown_nitro_ink_sac",
+            () -> EntityType.Builder.<ThrownSacEntity>of(ThrownSacEntity::new, MobCategory.MISC)
+                    .sized(0.4F, 0.4F)
+                    .setTrackingRange(64)
+                    .setUpdateInterval(10)
+                    .setShouldReceiveVelocityUpdates(true)
+                    .build(MODID)
+    );
+    public static final RegistryObject<EntityType<ThrownTubeEntity>> TUBE_TYPE = ENTITIES.register("turbo_tube",
+            () -> EntityType.Builder.<ThrownTubeEntity>of(ThrownTubeEntity::new, MobCategory.MISC)
+                    .sized(0.4F, 0.4F)
+                    .setTrackingRange(128)
+                    .setUpdateInterval(10)
+                    .setShouldReceiveVelocityUpdates(true)
+                    .setCustomClientFactory(ThrownTubeEntity::new)
+                    .build(MODID)
+    );
+    public static final RegistryObject<EntityType<RocketSquidEntity>> SQUID_TYPE = ENTITIES.register("rocket_squid",
+            () -> EntityType.Builder.<RocketSquidEntity>of((type, world) -> new RocketSquidEntity(world), MobCategory.WATER_CREATURE)
+                    .sized(0.99F, 0.99F)
+                    .setTrackingRange(128)
+                    .setUpdateInterval(10)
+                    .setShouldReceiveVelocityUpdates(true)
+                    .build(MODID)
+    );
+    public static final RegistryObject<EntityType<BabyRocketSquidEntity>> BABY_SQUID_TYPE = ENTITIES.register("baby_rocket_squid",
+            () -> EntityType.Builder.<BabyRocketSquidEntity>of(BabyRocketSquidEntity::new, MobCategory.WATER_CREATURE)
+                    .sized(0.4F, 0.4F)
+                    .setTrackingRange(64)
+                    .setUpdateInterval(10)
+                    .setShouldReceiveVelocityUpdates(true)
+                    .build(MODID)
+    );
 
-    //Declare all Features here
+    // Spawn Egg Items
+    private static final DeferredRegister<Item> SPAWNEGGITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+    // Register Spawn Egg Items here
+    public static final RegistryObject<ForgeSpawnEggItem> SQUID_SPAWN_EGG = SPAWNEGGITEMS.register("rockets_squid_spawn_egg",
+            () -> new ForgeSpawnEggItem(SQUID_TYPE, ColorHelper.getColor(150, 30, 30), ColorHelper.getColor(255, 127, 0), new Item.Properties().tab(SQUIDS_TAB))
+    ); // Hey if you wanted to know do not use SpawnEggItem use ForgeSpawnEggItem
+
+    // Register all Features here
     @ObjectHolder("conchgen")
     public static Feature<ConchGenConfig> CONCH_FEATURE;
     @ObjectHolder("statuegen")
     public static Feature<StatueGenConfig> STATUE_FEATURE;
 
-    //Declare all ParticleTypes here
+    // Register all ParticleTypes here
     @ObjectHolder("firework")
     public static SimpleParticleType FIREWORK_TYPE;
 
@@ -134,15 +170,6 @@ public class RocketSquidsBase {
 
     public static MobSpawnSettings.SpawnerData ROCKET_SQUID_SPAWN_INFO;
 
-    /**
-     * The creative tab for all items from Rocket Squids.
-     */
-    public static CreativeModeTab SQUIDS_TAB = new CreativeModeTab(DataReference.MODID) {
-        @Override
-        public ItemStack makeIcon() {
-            return ITEM_CONCH.getDefaultInstance();
-        }
-    };
 
     /**
      * A custom firework that looks like a Rocket Squid.
@@ -163,10 +190,19 @@ public class RocketSquidsBase {
     public static IProxy proxy = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
 
     public RocketSquidsBase() {
-        //Register the config
+
+        final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        // Register the config
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG_SPEC);
 
-        //Event bus
+        // Register DeferredRegister stuff
+        BLOCKS.register(modEventBus);
+        ITEMS.register(modEventBus);
+        ENTITIES.register(modEventBus);
+        SPAWNEGGITEMS.register(modEventBus);
+
+        // Event bus
         IEventBus loadingBus = FMLJavaModLoadingContext.get().getModEventBus();
         // Register the setup method for modloading
         loadingBus.addListener(this::postRegistration);
@@ -175,80 +211,8 @@ public class RocketSquidsBase {
         // Register ourselves for server, registry and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
 
-        //Register and load the config
-        Config.loadConfig(FMLPaths.CONFIGDIR.get().resolve(DataReference.MODID + ".toml"));
-    }
-
-    @SubscribeEvent
-    public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        event.getRegistry().registerAll(
-                new ConchBlock(Block.Properties.of(Material.SAND))
-                        .setRegistryName("conch"),
-                new StatueBlock(Block.Properties.of(Material.STONE).noOcclusion())
-                        .setRegistryName("statue")
-        );
-    }
-
-    @SuppressWarnings("deprecation")
-    @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> event) {
-        SQUID_EARLYREG = EntityType.Builder.of((type, world) -> new RocketSquidEntity(world), MobCategory.WATER_CREATURE)
-                .sized(0.99F, 0.99F)
-                .setTrackingRange(128)
-                .setUpdateInterval(10)
-                .setShouldReceiveVelocityUpdates(true)
-                .build(DataReference.MODID)
-                .setRegistryName("rocketsquid");
-        event.getRegistry().registerAll(
-                new ItemConch()
-                        .setRegistryName("conch"),
-                new ItemConch2()
-                        .setRegistryName("conchtwo"),
-                new ItemConch3()
-                        .setRegistryName("conchthree"),
-                new ItemNitroInkSac()
-                        .setRegistryName("nitroinksac"),
-                new ItemTurboTube()
-                        .setRegistryName("turbotube"),
-                new BlockItem(BLOCK_STATUE, new Item.Properties().tab(SQUIDS_TAB).stacksTo(1))
-                        .setRegistryName("statue"),
-                new Item(new Item.Properties().tab(RocketSquidsBase.SQUIDS_TAB).stacksTo(1))
-                        .setRegistryName("squavigator"),
-                new ItemSqueleporter(new Item.Properties())
-                        .setRegistryName("squeleporter_active"),
-                new ItemSqueleporter(new Item.Properties().tab(RocketSquidsBase.SQUIDS_TAB))
-                        .setRegistryName("squeleporter_inactive"),
-        new SpawnEggItem(SQUID_EARLYREG,9838110, 16744192, new Item.Properties().tab(SQUIDS_TAB))
-                        .setRegistryName("rs_spawn_egg")
-        );
-    }
-
-    @SubscribeEvent
-    public static void registerEntities(RegistryEvent.Register<EntityType<?>> event) {
-        event.getRegistry().registerAll(
-                SQUID_EARLYREG,
-                EntityType.Builder.of(BabyRocketSquidEntity::new, MobCategory.WATER_CREATURE)
-                        .sized(0.4F, 0.4F)
-                        .setTrackingRange(64)
-                        .setUpdateInterval(10)
-                        .setShouldReceiveVelocityUpdates(true)
-                        .build(DataReference.MODID)
-                        .setRegistryName("babyrs"),
-                EntityType.Builder.<ThrownSacEntity>of(ThrownSacEntity::new, MobCategory.MISC)
-                        .setTrackingRange(64)
-                        .setUpdateInterval(10)
-                        .setShouldReceiveVelocityUpdates(true)
-                        .setCustomClientFactory(ThrownSacEntity::new)
-                        .build(DataReference.MODID)
-                        .setRegistryName("nitroinksac"),
-                EntityType.Builder.<ThrownTubeEntity>of(ThrownTubeEntity::new, MobCategory.MISC)
-                        .setTrackingRange(128)
-                        .setUpdateInterval(10)
-                        .setShouldReceiveVelocityUpdates(true)
-                        .setCustomClientFactory(ThrownTubeEntity::new)
-                        .build(DataReference.MODID)
-                        .setRegistryName("turbotube")
-        );
+        // Register and load the config
+        Config.loadConfig(FMLPaths.CONFIGDIR.get().resolve(MODID + ".toml"));
     }
 
     @SubscribeEvent
@@ -292,15 +256,15 @@ public class RocketSquidsBase {
 
     /**
      * Called after all registry events. Runs in parallel with other SetupEvent handlers.
-     * @param event
+     * @param event FMLCommonSetupEvent
      */
     @SuppressWarnings("deprecation")
     public void postRegistration(FMLCommonSetupEvent event) {
         MessageHandler.init();
 
         //Add entity attributes
-        event.enqueueWork(() -> DefaultAttributes.put(RocketSquidsBase.BABY_SQUID_TYPE, BabyRocketSquidEntity.prepareAttributes().build()));
-        event.enqueueWork(() -> DefaultAttributes.put(RocketSquidsBase.SQUID_TYPE, RocketSquidEntity.prepareAttributes().build()));
+        event.enqueueWork(() -> DefaultAttributes.put(RocketSquidsBase.BABY_SQUID_TYPE.get(), BabyRocketSquidEntity.prepareAttributes().build()));
+        event.enqueueWork(() -> DefaultAttributes.put(RocketSquidsBase.SQUID_TYPE.get(), RocketSquidEntity.prepareAttributes().build()));
 
         //Capability
         CapabilityManager.INSTANCE.register(IBabyCapability.class, new BabyCapStorage(), new DefaultBabyImplFactory());
@@ -324,8 +288,8 @@ public class RocketSquidsBase {
         }
 
         //Spawn info
-        SpawnPlacements.register(SQUID_TYPE, SpawnPlacements.Type.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (type, world, reason, pos, random) -> true);
-        ROCKET_SQUID_SPAWN_INFO = new MobSpawnSettings.SpawnerData(SQUID_TYPE, GeneralConfig.SPAWN_PROB.get(), GeneralConfig.MIN_GROUP_SIZE.get(), GeneralConfig.MAX_GROUP_SIZE.get());
+        SpawnPlacements.register(SQUID_TYPE.get(), SpawnPlacements.Type.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (type, world, reason, pos, random) -> true);
+        ROCKET_SQUID_SPAWN_INFO = new MobSpawnSettings.SpawnerData(SQUID_TYPE.get(), GeneralConfig.SPAWN_PROB.get(), GeneralConfig.MIN_GROUP_SIZE.get(), GeneralConfig.MAX_GROUP_SIZE.get());
     }
 
     /////////////////
@@ -344,7 +308,7 @@ public class RocketSquidsBase {
 
     @SubscribeEvent
     public void onItemStackConstruct(AttachCapabilitiesEvent<ItemStack> evt) {
-        if(evt.getObject().getItem() == SQUELEPORTER_ACTIVE) {
+        if(evt.getObject().getItem() == SQUELEPORTER_ACTIVE.get()) {
             evt.addCapability(DataReference.SQUELEPORTER_LOCATION,
                     new ICapabilitySerializable<CompoundTag>() {
                         final ISqueleporter inst = SQUELEPORTER_CAP.getDefaultInstance();
@@ -427,99 +391,6 @@ public class RocketSquidsBase {
         float x = (float) (hori * -Math.sin(ry));
         float z = (float) (hori * Math.cos(ry));
         return new Vector3f(x, y, z);
-    }
-
-    ////////////////////////
-    //FOR THE MODID CHANGE//
-    ////////////////////////
-    @SubscribeEvent
-    public void handleMissingMappings(RegistryEvent.MissingMappings evt) {
-        String fullName = evt.getName().toString();
-        switch (fullName) {
-            case "minecraft:blocks":
-                for (Object mapping : evt.getAllMappings()) {
-                    RegistryEvent.MissingMappings.Mapping trueMapping = (RegistryEvent.MissingMappings.Mapping) mapping;
-                    if (trueMapping.key.getNamespace().equals("ftrsquids")) {
-                        switch (trueMapping.key.getPath()) {
-                            case "blockconch":
-                                trueMapping.remap(BLOCK_CONCH);
-                                break;
-                            case "statue":
-                                trueMapping.remap(BLOCK_STATUE);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
-                break;
-            case "minecraft:entities":
-                for (Object mapping : evt.getAllMappings()) {
-                    RegistryEvent.MissingMappings.Mapping trueMapping = (RegistryEvent.MissingMappings.Mapping) mapping;
-                    if (trueMapping.key.getNamespace().equals("ftrsquids")) {
-                        switch (trueMapping.key.getPath()) {
-                            case "turbotube":
-                                trueMapping.remap(TUBE_TYPE);
-                                break;
-                            case "babyrocketsquid":
-                                trueMapping.remap(BABY_SQUID_TYPE);
-                                break;
-                            case "rocketsquid":
-                                trueMapping.remap(SQUID_TYPE);
-                                break;
-                            case "nitroinksac":
-                                trueMapping.remap(SAC_TYPE);
-                                break;
-                        }
-                    }
-                }
-                break;
-            case "minecraft:items":
-                for (Object mapping : evt.getAllMappings()) {
-                    RegistryEvent.MissingMappings.Mapping trueMapping = (RegistryEvent.MissingMappings.Mapping) mapping;
-                    if (trueMapping.key.getNamespace().equals("ftrsquids")) {
-                        switch (trueMapping.key.getPath()) {
-                            case "conch":
-                                trueMapping.remap(ITEM_CONCH);
-                                break;
-                            case "conchtwo":
-                                trueMapping.remap(ITEM_CONCH2);
-                                break;
-                            case "conchthree":
-                                trueMapping.remap(ITEM_CONCH3);
-                                break;
-                            case "nitroinksac":
-                                trueMapping.remap(NITRO_SAC);
-                                break;
-                            case "turbotube":
-                                trueMapping.remap(TURBO_TUBE);
-                                break;
-                            case "statue":
-                                trueMapping.remap(ITEM_STATUE);
-                            default:
-                                break;
-                        }
-                    }
-                }
-                break;
-            case "minecraft:soundevents":
-                for (Object mapping : evt.getAllMappings()) {
-                    RegistryEvent.MissingMappings.Mapping trueMapping = (RegistryEvent.MissingMappings.Mapping) mapping;
-                    if (trueMapping.key.getNamespace().equals("ftrsquids")) {
-                        String soundName = trueMapping.key.getPath();
-                        if (soundName.equals("blastoff")) trueMapping.remap(Sounds.BLASTOFF);
-                        else {
-                            for (int i = 0; i < 36; ++i) {
-                                //Check the note name (e.g. "concha#5") of the missing mapping is equal to the note name of any notes
-                                if (soundName.equals(Sounds.CONCH_NOTES[i].getLocation().getPath().replace('s', '#'))) {
-                                    trueMapping.remap(Sounds.CONCH_NOTES[i]);
-                                }
-                            }
-                        }
-                    }
-                }
-                break;
-        }
     }
 
     //////////////////

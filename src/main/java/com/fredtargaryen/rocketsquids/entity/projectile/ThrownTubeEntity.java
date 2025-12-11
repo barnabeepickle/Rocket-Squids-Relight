@@ -6,10 +6,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import com.mojang.math.Vector3d;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
@@ -17,15 +14,15 @@ import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 public class ThrownTubeEntity extends ThrowableItemProjectile {
-    public ThrownTubeEntity(EntityType<? extends ThrownTubeEntity> type, Level w) {
-        super(RocketSquidsBase.TUBE_TYPE, w);
+    public ThrownTubeEntity(EntityType<? extends ThrownTubeEntity> type, Level world) {
+        super(type, world);
     }
-    public ThrownTubeEntity(LivingEntity elb, Level w)
+    public ThrownTubeEntity(LivingEntity elb, Level world)
     {
-        super(RocketSquidsBase.TUBE_TYPE, elb, w);
+        super(RocketSquidsBase.TUBE_TYPE.get(), elb, world);
     }
     public ThrownTubeEntity(FMLPlayMessages.SpawnEntity spawn, Level world) {
-        this(RocketSquidsBase.TUBE_TYPE, world);
+        this(RocketSquidsBase.TUBE_TYPE.get(), world);
     }
 
     @Override
@@ -39,7 +36,7 @@ public class ThrownTubeEntity extends ThrowableItemProjectile {
 
     @Override
     protected Item getDefaultItem() {
-        return RocketSquidsBase.TURBO_TUBE;
+        return RocketSquidsBase.TURBO_TUBE.get();
     }
 
     /**

@@ -1,15 +1,15 @@
 {
     "entity.rocketsquids.rocketsquid": "Rocket Squid",
 
-    "item.rocketsquids.conch": "Whistling Conch",
-    "item.rocketsquids.conchtwo": "Noteworthy Conch",
-    "item.rocketsquids.conchthree": "§6[[Conchzilla, Blessed Conch of the Squidseeker]]",
-    "item.rocketsquids.nitroinksac": "Nitro Ink Sac",
+    "item.rocketsquids.conch_item_1": "Whistling Conch",
+    "item.rocketsquids.conch_item_2": "Noteworthy Conch",
+    "item.rocketsquids.conch_item_3": "§6[[Conchzilla, Blessed Conch of the Squidseeker]]",
+    "item.rocketsquids.nitro_ink_sac": "Nitro Ink Sac",
     "item.rocketsquids.squeleporter_active": "Squeleporter",
     "item.rocketsquids.squeleporter_inactive": "Squeleporter",
-    "item.rocketsquids.turbotube": "Turbo Tube",
+    "item.rocketsquids.turbo_tube": "Turbo Tube",
     "item.rocketsquids.squavigator": "Squavigator",
-    "item.rocketsquids.rs_spawn_egg": "Rocket Squid Spawn Egg",
+    "item.rocketsquids.rockets_squid_spawn_egg": "Rocket Squid Spawn Egg",
 
     "itemGroup.rocketsquids": "Rocket Squids",
 

@@ -10,8 +10,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 
 public class ItemConch2 extends Item {
-    public ItemConch2() {
-        super(new Item.Properties().tab(RocketSquidsBase.SQUIDS_TAB).stacksTo(1));
+    public ItemConch2(Item.Properties properties) {
+        super(properties);
     }
 
     /**
