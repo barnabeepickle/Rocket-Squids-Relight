@@ -6,21 +6,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.util.Mth;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import javax.annotation.Nullable;
 
 /**
  * Almost all code here was copied from FireworkParticle as I couldn't extend
@@ -95,8 +89,8 @@ public class SquidFireworkParticle {
     public static class SparkFactory implements ParticleProvider<SimpleParticleType> {
         private final SpriteSet spriteSet;
 
-        public SparkFactory(SpriteSet p_i50883_1_) {
-            this.spriteSet = p_i50883_1_;
+        public SparkFactory(SpriteSet spriteSetIn) {
+            this.spriteSet = spriteSetIn;
         }
 
         @Override
@@ -248,16 +242,16 @@ public class SquidFireworkParticle {
         /**
          * Creates a single particle.
          */
-        private void createParticle(double p_92034_1_, double p_92034_3_, double p_92034_5_, double p_92034_7_, double p_92034_9_, double p_92034_11_, int[] p_92034_13_, int[] p_92034_14_, boolean p_92034_15_, boolean p_92034_16_) {
-            SquidFireworkParticle.Spark fireworkparticle$spark = (SquidFireworkParticle.Spark) this.manager.createParticle(RocketSquidsBase.FIREWORK_TYPE, p_92034_1_, p_92034_3_, p_92034_5_, p_92034_7_, p_92034_9_, p_92034_11_);
+        private void createParticle(double x, double y, double z, double xMotion, double yMotion, double zMotion, int[] colorSpark, int[] colorSparkFade, boolean trail, boolean twinkle) {
+            SquidFireworkParticle.Spark fireworkparticle$spark = (SquidFireworkParticle.Spark) this.manager.createParticle((ParticleOptions) RocketSquidsBase.FIREWORK_TYPE.get(), x, y, z, xMotion, yMotion, zMotion);
             assert fireworkparticle$spark != null;
-            fireworkparticle$spark.setTrail(p_92034_15_);
-            fireworkparticle$spark.setTwinkle(p_92034_16_);
+            fireworkparticle$spark.setTrail(trail);
+            fireworkparticle$spark.setTwinkle(twinkle);
             fireworkparticle$spark.setSlightAlpha();
-            int i = this.random.nextInt(p_92034_13_.length);
-            fireworkparticle$spark.setColor(p_92034_13_[i]);
-            if (p_92034_14_.length > 0) {
-                fireworkparticle$spark.setFadeColor(p_92034_14_[this.random.nextInt(p_92034_14_.length)]);
+            int i = this.random.nextInt(colorSpark.length);
+            fireworkparticle$spark.setColor(colorSpark[i]);
+            if (colorSparkFade.length > 0) {
+                fireworkparticle$spark.setFadeColor(colorSparkFade[this.random.nextInt(colorSparkFade.length)]);
             }
         }
     }
