@@ -156,15 +156,30 @@ public class RocketSquidsBase {
             () -> new ForgeSpawnEggItem(SQUID_TYPE, ColorHelper.getColor(150, 30, 30), ColorHelper.getColor(255, 127, 0), new Item.Properties().tab(SQUIDS_TAB))
     ); // Hey if you wanted to know do not use SpawnEggItem use ForgeSpawnEggItem
 
-    // Register all Features here
-    @ObjectHolder("conchgen")
-    public static Feature<ConchGenConfig> CONCH_FEATURE;
-    @ObjectHolder("statuegen")
-    public static Feature<StatueGenConfig> STATUE_FEATURE;
-
+    private static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, MODID);
     // Register all ParticleTypes here
-    @ObjectHolder("firework")
-    public static SimpleParticleType FIREWORK_TYPE;
+    public static final RegistryObject<ParticleType<SimpleParticleType>> FIREWORK_TYPE = PARTICLE_TYPES.register("firework",
+            () -> new SimpleParticleType(false));
+
+    // WorldGen Features
+    private static final DeferredRegister<Feature<?>> WORLDGEN_FEATURES = DeferredRegister.create(ForgeRegistries.FEATURES, MODID);
+    // Register all Features here
+    public static final RegistryObject<Feature<ConchGenConfig>> CONCH_FEATURE = WORLDGEN_FEATURES.register("conchgen",
+            () -> new ConchGen(ConchGenConfig.FACTORY)
+    );
+    public static final RegistryObject<Feature<StatueGenConfig>> STATUE_FEATURE = WORLDGEN_FEATURES.register("statuegen",
+            () -> new StatueGen(StatueGenConfig.FACTORY)
+    );
+
+    // WorldGen Decorators
+    private static final DeferredRegister<FeatureDecorator<?>> WORLDGEN_DECORATORS = DeferredRegister.create(ForgeRegistries.DECORATORS, MODID);
+    // Register all Decorators here
+    public static final RegistryObject<ConchPlacement> CONCH_PLACEMENT = WORLDGEN_DECORATORS.register("conchplace",
+            () -> new ConchPlacement(NoneDecoratorConfiguration.CODEC)
+    );
+    public static final RegistryObject<StatuePlacement> STATUE_PLACEMENT = WORLDGEN_DECORATORS.register("statueplace",
+            () -> new StatuePlacement(NoneDecoratorConfiguration.CODEC)
+    );
 
     public static FeatureManager FEATURE_MANAGER;
 
@@ -202,6 +217,11 @@ public class RocketSquidsBase {
         ENTITIES.register(modEventBus);
         SPAWNEGGITEMS.register(modEventBus);
 
+        PARTICLE_TYPES.register(modEventBus);
+
+        WORLDGEN_FEATURES.register(modEventBus);
+        WORLDGEN_DECORATORS.register(modEventBus);
+
         // Event bus
         IEventBus loadingBus = FMLJavaModLoadingContext.get().getModEventBus();
         // Register the setup method for modloading
@@ -216,32 +236,13 @@ public class RocketSquidsBase {
     }
 
     @SubscribeEvent
-    public static void registerParticleTypes(RegistryEvent.Register<ParticleType<?>> event) {
-        event.getRegistry().register(
-                new SimpleParticleType(false)
-                        .setRegistryName("firework")
-        );
-    }
-
-    @SubscribeEvent
     public static void registerFactories(ParticleFactoryRegisterEvent event) {
-        Minecraft.getInstance().particleEngine.register(FIREWORK_TYPE, SquidFireworkParticle.SparkFactory::new);
+        Minecraft.getInstance().particleEngine.register(FIREWORK_TYPE.get(), SquidFireworkParticle.SparkFactory::new);
     }
 
     @SubscribeEvent
     public static void registerFeatures(RegistryEvent.Register<Feature<?>> event) {
         FEATURE_MANAGER = new FeatureManager();
-        FEATURE_MANAGER.registerFeatures(event);
-    }
-
-    @SubscribeEvent
-    public static void registerDecorators(RegistryEvent.Register<FeatureDecorator<?>> event) {
-        event.getRegistry().registerAll(
-                new ConchPlacement(NoneDecoratorConfiguration.CODEC)
-                .setRegistryName("conchplace"),
-                new StatuePlacement(NoneDecoratorConfiguration.CODEC)
-                .setRegistryName("statueplace")
-        );
     }
 
     @SubscribeEvent
