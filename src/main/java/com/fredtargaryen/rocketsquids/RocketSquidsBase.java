@@ -156,6 +156,7 @@ public class RocketSquidsBase {
             () -> new ForgeSpawnEggItem(SQUID_TYPE, ColorHelper.getColor(150, 30, 30), ColorHelper.getColor(255, 127, 0), new Item.Properties().tab(SQUIDS_TAB))
     ); // Hey if you wanted to know do not use SpawnEggItem use ForgeSpawnEggItem
 
+    // Particles
     private static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, MODID);
     // Register all ParticleTypes here
     public static final RegistryObject<ParticleType<SimpleParticleType>> FIREWORK_TYPE = PARTICLE_TYPES.register("firework",
