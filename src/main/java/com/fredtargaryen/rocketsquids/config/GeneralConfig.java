@@ -30,14 +30,16 @@ public class GeneralConfig {
 
     public static ForgeConfigSpec.IntValue STATUE_FREQUENCY;
 
+    public static ForgeConfigSpec.IntValue BREED_COOLDOWN;
+
     public static void init(ForgeConfigSpec.Builder serverBuilder) {
         DEFAULT_WHITELIST.add("minecraft:overworld");
         SPAWN_PROB = serverBuilder.comment("Weighted probability of a group of Rocket Squids spawning.")
-                .defineInRange("spawn.prob", 4, 1, 100);
+                .defineInRange("spawn.prob", 3, 1, 100);
         MIN_GROUP_SIZE = serverBuilder.comment("Smallest possible size of a group.")
-                .defineInRange("spawn.min", 2, 1, 20);
+                .defineInRange("spawn.min", 1, 1, 20);
         MAX_GROUP_SIZE = serverBuilder.comment("Largest possible size of a group.")
-                .defineInRange("spawn.max", 5, 1, 40);
+                .defineInRange("spawn.max", 4, 1, 40);
         CONCH_USE_WHITELIST = serverBuilder.comment("If true, uses the conch whitelist. If false, uses the blacklist.")
                 .define("worldgen.conch.usewhitelist", true);
         CONCH_WHITELIST = serverBuilder.comment("The list of dimensions where conches can appear.")
@@ -52,5 +54,7 @@ public class GeneralConfig {
                 .defineList("worldgen.statue.blacklist", DEFAULT_BLACKLIST, string -> true);
         STATUE_FREQUENCY = serverBuilder.comment("One statue will appear in every nxn chunk area. Changing this in an existing world is not recommended.")
                 .defineInRange("worldgen.statue.frequency", 32, 8, 2000);
+        BREED_COOLDOWN = serverBuilder.comment("How much time in ticks do Rocket Squids have to wait before being able to bread again.")
+                .defineInRange("entity.breeding.cooldown", 3600, 20, 72000);
     }
 }

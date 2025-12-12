@@ -3,6 +3,7 @@ package com.fredtargaryen.rocketsquids.entity;
 import com.fredtargaryen.rocketsquids.RocketSquidsBase;
 import com.fredtargaryen.rocketsquids.Sounds;
 import com.fredtargaryen.rocketsquids.client.particle.SquidFireworkParticle;
+import com.fredtargaryen.rocketsquids.config.GeneralConfig;
 import com.fredtargaryen.rocketsquids.entity.ai.AdultFlopAroundGoal;
 import com.fredtargaryen.rocketsquids.entity.ai.AdultSwimAroundGoal;
 import com.fredtargaryen.rocketsquids.entity.ai.BlastoffGoal;
@@ -58,7 +59,7 @@ public class RocketSquidEntity extends AbstractSquidEntity {
     ///////////////
     public boolean riderRotated;
 
-    protected short breedCooldown;
+    protected int breedCooldown;
 
     //May have to remove and use capability instead
     private static final EntityDataAccessor<Boolean> SADDLED = SynchedEntityData.defineId(RocketSquidEntity.class, EntityDataSerializers.BOOLEAN);
@@ -347,9 +348,9 @@ public class RocketSquidEntity extends AbstractSquidEntity {
             if (!obstacle.noPhysics && !this.noPhysics) {
                 Vec3 thisPos = this.position();
                 if(!this.level.isClientSide && obstacle.getType() == RocketSquidsBase.SQUID_TYPE.get() && this.breedCooldown == 0) {
-                    this.breedCooldown = 3600;
+                    this.breedCooldown = GeneralConfig.BREED_COOLDOWN.get(); // the breed cooldown is changed in the config
                     Entity baby = RocketSquidsBase.BABY_SQUID_TYPE.get().create(this.level);
-                    assert baby != null;
+                    assert baby != null; // TODO: decouple the baby spawning from the entity so that we can make only one spawn
                     baby.moveTo(thisPos.x, thisPos.y, thisPos.z, 0.0F, 0.0F);
                     this.level.addFreshEntity(baby);
                 }
@@ -373,6 +374,7 @@ public class RocketSquidEntity extends AbstractSquidEntity {
                     xDist *= d3;
                     yDist *= d3;
                     zDist *= d3;
+                    // magic numbers
                     xDist *= 0.05000000074505806D;
                     yDist *= 0.05000000074505806D;
                     zDist *= 0.05000000074505806D;
@@ -592,7 +594,7 @@ public class RocketSquidEntity extends AbstractSquidEntity {
         Vec3 motion = this.getDeltaMovement();
         compound.putDouble("force", Math.sqrt(motion.x * motion.x + motion.y * motion.y + motion.z * motion.z));
         compound.putBoolean("Saddle", this.getSaddled());
-        compound.putShort("Breed Cooldown", this.breedCooldown);
+        compound.putInt("Breed Cooldown", this.breedCooldown);
     }
 
     @Override
