@@ -136,6 +136,11 @@ public class BabyRocketSquidEntity extends AbstractSquidEntity {
         }
     }
 
+    @Override
+    public boolean isBaby() {
+        return true;
+    }
+
     /**
      * Entity won't drop experience orbs if this returns false
      */

@@ -152,8 +152,8 @@ public class RocketSquidsBase {
     // Spawn Egg Items
     private static final DeferredRegister<Item> SPAWNEGGITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
     // Register Spawn Egg Items here
-    public static final RegistryObject<ForgeSpawnEggItem> SQUID_SPAWN_EGG = SPAWNEGGITEMS.register("rockets_squid_spawn_egg",
-            () -> new ForgeSpawnEggItem(SQUID_TYPE, ColorHelper.getColor(150, 30, 30), ColorHelper.getColor(255, 127, 0), new Item.Properties().tab(SQUIDS_TAB))
+    public static final RegistryObject<RocketSquidForgeSpawnEggItem> SQUID_SPAWN_EGG = SPAWNEGGITEMS.register("rockets_squid_spawn_egg",
+            () -> new RocketSquidForgeSpawnEggItem(SQUID_TYPE, BABY_SQUID_TYPE, ColorHelper.getColor(150, 30, 30), ColorHelper.getColor(255, 127, 0), new Item.Properties().tab(SQUIDS_TAB))
     ); // Hey if you wanted to know do not use SpawnEggItem use ForgeSpawnEggItem
 
     // Particles
