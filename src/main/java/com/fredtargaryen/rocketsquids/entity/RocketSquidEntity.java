@@ -222,20 +222,10 @@ public class RocketSquidEntity extends AbstractSquidEntity {
         return false;
     }
 
-    public ItemStack getHandItem(InteractionHand hand) {
-        ItemStack mainHandStack = getMainHandItem();
-        ItemStack offHandStack = getOffhandItem();
-        ItemStack stack = mainHandStack;
-        if (hand == InteractionHand.OFF_HAND) {
-            stack = offHandStack;
-        }
-        return stack;
-    }
-
     @Override
     public InteractionResult mobInteract (Player player, InteractionHand hand) {
         if(!this.level.isClientSide) {
-            ItemStack stack = getHandItem(hand);
+            ItemStack stack = getItemInHand(hand);
             if (stack == ItemStack.EMPTY) {
                 if (this.getSaddled() && !this.isVehicle()) {
                     player.startRiding(this);
@@ -243,8 +233,8 @@ public class RocketSquidEntity extends AbstractSquidEntity {
                 }
             }
             else {
-                Item i = stack.getItem();
-                if(i == RocketSquidsBase.SQUELEPORTER_INACTIVE.get()) {
+                Item interactItem = stack.getItem();
+                if (interactItem == RocketSquidsBase.SQUELEPORTER_INACTIVE.get()) {
                     //The squeleporter is inactive so store the squid here
                     ItemStack newStack = RocketSquidsBase.SQUELEPORTER_ACTIVE.get().getDefaultInstance();
                     newStack.getCapability(RocketSquidsBase.SQUELEPORTER_CAP).ifPresent(squeleporterCap -> {
@@ -268,12 +258,12 @@ public class RocketSquidEntity extends AbstractSquidEntity {
                     player.setItemSlot(handEquip, newStack);
                     player.getCooldowns().addCooldown(newStack.getItem(), 10);
                 }
-                else if (i == Items.FLINT_AND_STEEL) {
+                else if (interactItem == Items.FLINT_AND_STEEL) {
                     stack.hurt(1, player.getRandom(), (ServerPlayer) player);
                     this.squidCap.setForcedBlast(true);
                     return InteractionResult.SUCCESS;
                 }
-                else if (i == Items.SADDLE) {
+                else if (interactItem == Items.SADDLE) {
                     if (!this.getSaddled()) {
                         stack.hurt(1, player.getRandom(), (ServerPlayer) player);
                         this.setSaddled(true);
@@ -281,7 +271,7 @@ public class RocketSquidEntity extends AbstractSquidEntity {
                     player.startRiding(this);
                     return InteractionResult.SUCCESS;
                 }
-                else if (i == Items.FEATHER) {
+                else if (interactItem == Items.FEATHER) {
                     this.setShaking(true);
                     return InteractionResult.SUCCESS;
                 }
@@ -350,7 +340,7 @@ public class RocketSquidEntity extends AbstractSquidEntity {
     /**
      * Applies a velocity to the entities (unless they're riding), to push them away from each other.
      */
-    public void applyEntityCollision(Entity obstacle) {
+    public void push(Entity obstacle) {
         Entity passenger = this.getControllingPassenger();
         if(passenger == null || passenger != obstacle) {
             //Obstacle is not the rider, so apply collision
