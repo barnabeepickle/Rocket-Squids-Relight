@@ -1,3 +1,6 @@
+// Copyright 2016-2022, 2025-2026 FredTargaryen and contributors
+// See mod_authors in gradle.properties for full contributor list
+// See README.md for full copyright notice
 package com.fredtargaryen.rocketsquids.content;
 
 import net.minecraft.core.registries.Registries;
