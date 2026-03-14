@@ -1,3 +1,6 @@
+// Copyright 2026 FredTargaryen and contributors
+// See mod_authors in gradle.properties for full contributor list
+// See README.md for full copyright notice
 package com.fredtargaryen.rocketsquids.mixins;
 
 import com.fredtargaryen.rocketsquids.content.entity.AgeableWaterAnimal;
