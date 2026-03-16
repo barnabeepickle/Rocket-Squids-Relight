@@ -3,10 +3,7 @@ package com.fredtargaryen.rocketsquids.content.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.MobType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -85,5 +82,10 @@ public abstract class AgeableWaterAnimal extends AgeableMob {
         int i = level.getSeaLevel();
         int j = i - 13;
         return pos.getY() >= j && pos.getY() <= i && level.getFluidState(pos.below()).is(FluidTags.WATER) && level.getBlockState(pos.above()).is(Blocks.WATER);
+    }
+
+    @Override
+    public boolean startRiding(@NotNull Entity toRide) {
+        return false;
     }
 }
