@@ -151,6 +151,7 @@ public class ItemConch extends GeoModArmorItem {
                             BlockState stateBelow = level.getBlockState(pos.below());
                             if (stateBelow.getBlock() == ModBlocks.BLOCK_STATUE.get() && stateBelow.getValue(DOUBLE_BLOCK_HALF) == LOWER) {
                                 pos = pos.below();
+                                state = stateBelow;
                             }
                         }
                         StatueData.forWorld(level).removeStatue(pos);
