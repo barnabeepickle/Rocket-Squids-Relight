@@ -99,7 +99,7 @@ public class StatueBlock extends Block {
         if (blockPos.getY() < level.getMaxBuildHeight() - 1 && level.getBlockState(blockPos.above()).canBeReplaced(context)) {
             return this.defaultBlockState()
                     .setValue(FACING, context.getHorizontalDirection().getOpposite())
-                    .setValue(OPEN, context.getItemInHand().getItem() == ModItems.ITEM_STATUE_OPENED.get())
+                    .setValue(OPEN, context.getItemInHand().getItem() == ModItems.ITEM_STATUE_OPEN.get())
                     .setValue(DOUBLE_BLOCK_HALF, DoubleBlockHalf.LOWER);
         } else {
             return null;

@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "rocketsquids:statue_opened"
+          "name": "rocketsquids:statue_open"
         }
       ],
       "conditions": [
