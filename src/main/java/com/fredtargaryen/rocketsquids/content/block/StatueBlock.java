@@ -51,7 +51,7 @@ public class StatueBlock extends Block {
      */
     @Override
     public @NotNull Item asItem() {
-        return ModItems.ITEM_STATUE.get();
+        return ModItems.ITEM_STATUE_CLOSED.get();
     }
 
     @Override
