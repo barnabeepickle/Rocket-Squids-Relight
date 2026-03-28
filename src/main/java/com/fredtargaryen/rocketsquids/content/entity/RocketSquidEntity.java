@@ -624,12 +624,15 @@ public class RocketSquidEntity extends AbstractRocketSquidEntity {
 			float partialTick = event.getPartialTick();
             double exactPitch_r = prevPitch_r + (pitch_r - prevPitch_r) * partialTick;
             double yaw_r = Math.toRadians(event.getEntity().getYHeadRot() + 90.0);
+            double squidAngle = exactPitch_r - (Math.PI / 2.0);
+            double translation = -0.2 * Math.sin(squidAngle /2.0);
             this.riderRotated = true;
             PoseStack stack = event.getPoseStack();
             stack.pushPose();
-            Quaternionf quat = Axis.XP.rotation((float) -(exactPitch_r - (Math.PI / 2)));
-            quat.mul(Axis.YP.rotation((float) -yaw_r));
+            Quaternionf quat = Axis.XP.rotation((float) (squidAngle));
+            //quat = quat.mul(Axis.YP.rotation((float) -yaw_r));
             stack.mulPose(quat);
+            stack.translate(0.0, translation, 0.0);
         }
     }
 
