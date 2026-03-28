@@ -1,10 +1,14 @@
+// Copyright 2016-2022, 2025-2026 FredTargaryen and contributors
+// See README.md for full copyright notice and contributor info
 package com.fredtargaryen.rocketsquids.client.gui;
 
 import com.fredtargaryen.rocketsquids.DataReference;
 import com.fredtargaryen.rocketsquids.ModSounds;
 import com.fredtargaryen.rocketsquids.network.MessageHandler;
 import com.fredtargaryen.rocketsquids.network.message.MessagePlayNoteServer;
+import com.fredtargaryen.rocketsquids.util.color.ColorHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ConchScreen extends Screen {
     private final byte conchStage;
@@ -43,18 +48,18 @@ public class ConchScreen extends Screen {
     private static final ResourceLocation NOTE = new ResourceLocation(DataReference.MODID, "textures/gui/note.png");
 
     private static final Component[] buttonNames = {
-            Component.literal("C"),
-            Component.literal("C#"),
-            Component.literal("D"),
-            Component.literal("D#"),
-            Component.literal("E"),
-            Component.literal("F"),
-            Component.literal("F#"),
-            Component.literal("G"),
-            Component.literal("G#"),
-            Component.literal("A"),
-            Component.literal("A#"),
-            Component.literal("B")
+            Component.literal("C").withStyle(ChatFormatting.WHITE),
+            Component.literal("C#").withStyle(ChatFormatting.WHITE),
+            Component.literal("D").withStyle(ChatFormatting.WHITE),
+            Component.literal("D#").withStyle(ChatFormatting.WHITE),
+            Component.literal("E").withStyle(ChatFormatting.WHITE),
+            Component.literal("F").withStyle(ChatFormatting.WHITE),
+            Component.literal("F#").withStyle(ChatFormatting.WHITE),
+            Component.literal("G").withStyle(ChatFormatting.WHITE),
+            Component.literal("G#").withStyle(ChatFormatting.WHITE),
+            Component.literal("A").withStyle(ChatFormatting.WHITE),
+            Component.literal("A#").withStyle(ChatFormatting.WHITE),
+            Component.literal("B").withStyle(ChatFormatting.WHITE)
     };
 
     final int[] notes = new int[10];
@@ -98,14 +103,14 @@ public class ConchScreen extends Screen {
                         this.addRenderableWidget(new ConchButton(i,
                                 minx + 27 * column,
                                 bottomNoteY - 4 * i,
-                                buttonNames[column].getString(),
+                                buttonNames[column],
                                 this));
                     }
                 }
                 break;
             case 3:
                 //The number buttons
-                for(int i = 0; i < 10; i++) {
+                for (int i = 0; i < 10; i++) {
                     ConchNumberButton cnb = new ConchNumberButton(i,
                             minx + 32 * i,
                             bottomNumberY,
@@ -121,7 +126,7 @@ public class ConchScreen extends Screen {
                     this.addRenderableWidget(new ConchButton(i,
                             minx + 27 * column,
                             bottomNoteY - 4 * i,
-                            buttonNames[column].getString(),
+                            buttonNames[column],
                             this));
                 }
                 break;
@@ -156,8 +161,8 @@ public class ConchScreen extends Screen {
         private final int id;
         private final Minecraft mc;
 
-        public ConchButton(int buttonId, int x, int y, String buttonText, ConchScreen screen) {
-            super(x, y, 20, 20, Component.literal(buttonText), (button) -> {
+        public ConchButton(int buttonId, int x, int y, Component buttonText, ConchScreen screen) {
+            super(x, y, 20, 20, buttonText, (button) -> {
                 if(screen.changingNumberNote > -1)
                 {
                     screen.notes[screen.changingNumberNote] = buttonId;
@@ -188,34 +193,23 @@ public class ConchScreen extends Screen {
             Font fontrenderer = mc.font;
             this.isHovered = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
             float red, green, blue;
-            if(ConchScreen.this.playingNotes[this.id] > 0f)
+            if (ConchScreen.this.playingNotes[this.id] > 0f)
             {
                 //This note is on a "cooldown"; make it dark gray to symbolise that
                 red = green = blue = 0.1f;
-            }
-            else {
+            } else {
                 blue = this.isHovered ? 0.1F : 0.0F;
                 red = 0.9F + blue;
                 green = 0.9F * this.id / 36.0F + blue;
             }
             this.drawNote(guiGraphics, this.getX(), this.getY(), red, green, blue);
-            int j = 14737632;
 
-            if (packedFGColor != 0) {
-                j = packedFGColor;
-            }
-            else if (!this.active) {
-                j = 10526880;
-            }
-            else if (this.isHovered) {
-                j = 16777120;
-            }
-
-            guiGraphics.drawCenteredString(fontrenderer, this.getMessage(), this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, j);
+            guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+            guiGraphics.drawCenteredString(fontrenderer, this.getMessage(), this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, ColorHelper.getColor(255, 255, 255));
         }
 
         private void drawNote(GuiGraphics guiGraphics, int x, int y, float red, float green, float blue) {
-            RenderSystem.setShaderColor(red, green, blue, 1f);
+            RenderSystem.setShaderColor(red, green, blue, 1.0F);
             this.renderTexture(guiGraphics, NOTE, x + 2, y - 37, 0, 0, 0, 27, 54, 27, 54);
         }
     }
