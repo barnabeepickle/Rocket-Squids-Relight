@@ -1,3 +1,5 @@
+// Copyright 2016-2022, 2025-2026 FredTargaryen and contributors
+// See README.md for full copyright notice and contributor info
 package com.fredtargaryen.rocketsquids.content.item;
 
 import com.fredtargaryen.rocketsquids.client.event.ModClientHandler;
@@ -33,18 +35,6 @@ public class ItemConch3 extends Item {
     ) {
         if(worldIn.isClientSide) ModClientHandler.openConchClient((byte) 3);
         return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    @Override
-    public void appendHoverText(
-            @NotNull ItemStack stack,
-            @Nullable Level level,
-            @NotNull List<Component> tooltipComponents,
-            @NotNull TooltipFlag isAdvanced
-    ) {
-        super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
-        tooltipComponents.add(Component.translatable("item.rocketsquids.conch_item_3.lore"));
     }
 
     /**
