@@ -1,3 +1,5 @@
+// Copyright 2016-2022, 2025-2026 FredTargaryen and contributors
+// See README.md for full copyright notice and contributor info
 package com.fredtargaryen.rocketsquids.content.entity.ai;
 
 import com.fredtargaryen.rocketsquids.content.entity.RocketSquidEntity;
@@ -7,6 +9,7 @@ import com.fredtargaryen.rocketsquids.content.worldgen.StatueData;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
 
@@ -52,15 +55,15 @@ public class AdultSwimAroundGoal extends Goal {
     /**
      * Do a turn.
      *
-     * @param hasVIPRider whether there is a rider who is a VIP
+     * @param playerIsRiding whether a player is riding the squid
      * @param blocked     in the directions the squid is mainly pointing in, whether there are blocks in the way
      */
-    public void doTurn(boolean hasVIPRider, boolean blocked) {
-        if(hasVIPRider) {
+    public void doTurn(boolean playerIsRiding, boolean blocked) {
+        if(playerIsRiding) {
             //Rider rotations are clamped to [-PI, PI]; squid rotations are not.
             //Therefore need to work in terms of this range, or risk squids spinning ridiculous amounts if they have
             //turned around many times before being ridden.
-            Entity pass = this.squid.getControllingPassenger();
+            Entity pass = this.squid.getFirstPassenger();
             assert pass != null;
             float pp = (float) ((pass.getXRot() + 90.0F) * Math.PI / 180.0F);
             float py = (float) (pass.getYHeadRot() * Math.PI / 180.0F);
@@ -202,7 +205,7 @@ public class AdultSwimAroundGoal extends Goal {
                 if (randomInt == 0) {
                     if(!this.squid.areBlocksInWay()) this.squid.setShaking(true);
                 } else {
-                    this.doTurn(this.squid.hasVIPRider(), this.squid.areBlocksInWay());
+                    this.doTurn(this.squid.getFirstPassenger() instanceof Player, this.squid.areBlocksInWay());
                 }
             }
         }
