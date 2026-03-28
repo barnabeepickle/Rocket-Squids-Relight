@@ -2,15 +2,15 @@
 // See README.md for full copyright notice and contributor info
 package com.fredtargaryen.rocketsquids.content.entity;
 
-import com.fredtargaryen.rocketsquids.ModSounds;
 import com.fredtargaryen.rocketsquids.ModRocketSquids;
+import com.fredtargaryen.rocketsquids.ModSounds;
 import com.fredtargaryen.rocketsquids.client.particle.SquidFireworkParticle;
 import com.fredtargaryen.rocketsquids.config.GeneralConfig;
 import com.fredtargaryen.rocketsquids.content.ModEntities;
 import com.fredtargaryen.rocketsquids.content.ModItems;
 import com.fredtargaryen.rocketsquids.content.cap.entity.adult.AdultCap;
 import com.fredtargaryen.rocketsquids.content.entity.ai.AdultFlopAroundGoal;
-import com.fredtargaryen.rocketsquids.content.entity.ai.AdultSwimAroundGoal;
+import com.fredtargaryen.rocketsquids.content.entity.ai.AdultSwimAroundRiderRotationTestGoal;
 import com.fredtargaryen.rocketsquids.content.entity.ai.BlastoffGoal;
 import com.fredtargaryen.rocketsquids.content.entity.ai.ShakeGoal;
 import com.fredtargaryen.rocketsquids.network.MessageHandler;
@@ -55,7 +55,6 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
