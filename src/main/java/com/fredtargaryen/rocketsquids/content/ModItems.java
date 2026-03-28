@@ -24,7 +24,6 @@ public class ModItems {
     public static final RegistryObject<Item> TURBO_TUBE = ITEMS.register("turbo_tube", () -> new ItemTurboTube(new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<Item> ITEM_STATUE_CLOSED = ITEMS.register("statue_closed", () -> new BlockItem(ModBlocks.BLOCK_STATUE.get(), new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
     public static final RegistryObject<Item> ITEM_STATUE_OPEN = ITEMS.register("statue_open", () -> new BlockItem(ModBlocks.BLOCK_STATUE.get(), new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> SQUAVIGATOR = ITEMS.register("squavigator", () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<Item> SQUELEPORTER_ACTIVE = ITEMS.register("squeleporter_active", () -> new ItemSqueleporter(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<Item> SQUELEPORTER_INACTIVE = ITEMS.register("squeleporter_inactive", () -> new ItemSqueleporter(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
 

@@ -151,11 +151,7 @@ public class StatueBlock extends Block {
         int x = treasureSpawnPos.getX();
         int y = treasureSpawnPos.getY();
         int z = treasureSpawnPos.getZ();
-        ItemEntity squav = new ItemEntity(level, x + 0.5D, y + 0.5D, z + 0.5D, ModItems.SQUAVIGATOR.get().getDefaultInstance());
-        // North is negative Z I think
-        squav.setDeltaMovement(treasureVelocity);
-        level.addFreshEntity(squav);
-        ItemEntity squel = new ItemEntity(level, x + 0.5D, y + 0.5D, z + 0.5D, ModItems.SQUAVIGATOR.get().getDefaultInstance());
+        ItemEntity squel = new ItemEntity(level, x + 0.5D, y + 0.5D, z + 0.5D, ModItems.SQUELEPORTER_INACTIVE.get().getDefaultInstance());
         squel.setDeltaMovement(treasureVelocity);
         level.addFreshEntity(squel);
     }
