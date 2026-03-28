@@ -545,7 +545,7 @@ public class RocketSquidEntity extends AbstractRocketSquidEntity {
      */
     @Override
     public double getPassengersRidingOffset() {
-        return 0.355;
+        return 0.75;
     }
 
     @Override
