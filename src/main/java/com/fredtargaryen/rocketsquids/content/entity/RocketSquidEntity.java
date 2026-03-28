@@ -630,17 +630,17 @@ public class RocketSquidEntity extends AbstractRocketSquidEntity {
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void addRotation(RenderPlayerEvent.Pre event) {
-        if(event.getEntity().isPassenger()) {
+        if(event.getEntity() == this.getFirstPassenger()) {
             double prevPitch_r = this.squidCap.getPrevRotPitch();
             double pitch_r = this.squidCap.getRotPitch();
 			float partialTick = event.getPartialTick();
             double exactPitch_r = prevPitch_r + (pitch_r - prevPitch_r) * partialTick;
-			double yaw_r = this.squidCap.getRotYaw();
+            double yaw_r = Math.toRadians(event.getEntity().getYHeadRot() + 90.0);
             this.riderRotated = true;
             PoseStack stack = event.getPoseStack();
             stack.pushPose();
-            Quaternionf quat = Axis.YP.rotation((float) -yaw_r);
-            quat.mul(Axis.XP.rotation((float) (exactPitch_r - (Math.PI / 2))));
+            Quaternionf quat = Axis.XP.rotation((float) -(exactPitch_r - (Math.PI / 2)));
+            quat.mul(Axis.YP.rotation((float) -yaw_r));
             stack.mulPose(quat);
         }
     }
