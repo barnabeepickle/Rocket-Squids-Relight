@@ -403,23 +403,8 @@ public class RocketSquidEntity extends AbstractRocketSquidEntity {
         }
     }
 
-    /**
-     * Performs various checks to see of the rocket squids are eligable to "breed".
-     *
-     * @return true or false if they can breed
-     */
     public boolean canBreed() {
-        boolean canBreed = false;
-        if (this.breedable) {
-            if (this.breedCooldown == 0 || this.breedCooldown <= 0) {
-                if (!this.isLeashed()) {
-                    if (!this.hasPassengers()) {
-                        canBreed = true;
-                    }
-                }
-            }
-        }
-        return canBreed;
+        return this.breedable && this.breedCooldown <= 0 && !this.hasPassengers();
     }
 
     /**
