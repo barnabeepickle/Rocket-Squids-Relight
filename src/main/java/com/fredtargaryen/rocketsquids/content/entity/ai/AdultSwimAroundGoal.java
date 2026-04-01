@@ -169,7 +169,7 @@ public class AdultSwimAroundGoal extends Goal {
                             this.squid.setTargetRotPitch(Math.PI / 4.0);
                         } else {
                             //Less than 80 blocks away; blast directly towards the statue
-                            this.squid.setTargetRotPitch(Math.atan2(statueCoords[3] - pos.y, Math.sqrt(hozDistanceSquared)) + Math.PI / 2.0);
+                            this.squid.setTargetRotPitch(Math.atan2(pos.y - statueCoords[3], Math.sqrt(hozDistanceSquared)) + Math.PI / 2.0);
                         }
                         this.statueBlastStage = StatueBlastStage.TURN;
                     }
