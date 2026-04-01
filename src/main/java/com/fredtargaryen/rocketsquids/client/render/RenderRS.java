@@ -134,7 +134,7 @@ public class RenderRS extends MobRenderer<RocketSquidEntity, ModelRocketSquid<Ro
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(RocketSquidEntity entity) {
-        return entity.getBlasting() || entity.getShaking() ? blasting : normal;
+        return entity.getShaking() ? blasting : normal;
     }
 
     private void doAVertex(VertexConsumer ivb, Matrix4f pos, Matrix3f norm, float x, float y, float z, float u, float v, int lightLevel) {

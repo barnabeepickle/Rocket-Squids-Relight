@@ -45,7 +45,7 @@ public class ModelRocketSquid<T extends RocketSquidEntity> extends HierarchicalM
         MeshDefinition meshDef = new MeshDefinition();
         PartDefinition root = meshDef.getRoot();
 
-        // making the head/body
+        // make the head/body
         root.addOrReplaceChild("head",
                 CubeListBuilder.create()
                         .texOffs(0, 30)
@@ -53,7 +53,7 @@ public class ModelRocketSquid<T extends RocketSquidEntity> extends HierarchicalM
                 PartPose.offset(0.0F, 0.0F, 0.0F)
         );
 
-        // make the tenticles
+        // make the tentacles
         CubeListBuilder tentCubeList = CubeListBuilder.create()
                 .texOffs(0, 0).addBox(-1.0F, -1.0F, -1.0F, 2.0F, 20.0F, 2.0F);
 

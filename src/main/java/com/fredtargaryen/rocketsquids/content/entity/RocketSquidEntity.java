@@ -170,12 +170,12 @@ public class RocketSquidEntity extends AbstractRocketSquidEntity {
             //Client side
             //Handles tentacle angles
             this.lastTentacleAngle = this.tentacleAngle;
-            if (this.squidCap.getShaking()) {
-                //Tentacles stick out at 60 degrees
-                this.tentacleAngle = (float) Math.PI / 3;
-            } else if (this.squidCap.getBlasting()) {
+            if (this.squidCap.getBlasting()) {
                 //Tentacles quickly close up
                 this.tentacleAngle = 0;
+            } else if (this.squidCap.getShaking()) {
+                //Tentacles stick out at 60 degrees
+                this.tentacleAngle = (float) Math.PI / 3;
             } else {
                 //If in water, tentacles oscillate normally
                 this.tentacleAngle = this.isInWater() ? (float) ((Math.PI / 6) + (Mth.sin((float) Math.toRadians(4 * (this.tickCount % 360))) * Math.PI / 6)) : 0;
