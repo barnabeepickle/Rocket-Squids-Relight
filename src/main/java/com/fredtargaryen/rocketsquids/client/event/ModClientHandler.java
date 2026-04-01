@@ -33,19 +33,15 @@ import java.util.Iterator;
 
 import static com.fredtargaryen.rocketsquids.DataReference.MODID;
 
-
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ModClientHandler {
     public static void init(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
 
-
-
         modEventBus.addListener(ModClientHandler::onClientSetup);
         modEventBus.addListener(ModClientHandler::registerRenderers);
         modEventBus.addListener(ModClientHandler::registerLayerDefinitions);
-
     }
 
     @SubscribeEvent
@@ -53,19 +49,18 @@ public class ModClientHandler {
 
     }
 
-
     @SuppressWarnings("removal")
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        // register block renderers
+        // Register block renderers
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.BLOCK_CONCH.get(), RenderType.cutoutMipped());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.BLOCK_STATUE.get(), RenderType.cutoutMipped());
 
-        // register normal entity renderers
+        // Register normal entity renderers
         event.registerEntityRenderer(ModEntities.SAC_TYPE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.TUBE_TYPE.get(), ThrownItemRenderer::new);
 
-        // register custom entity renderers
+        // Register custom entity renderers
         event.registerEntityRenderer(ModEntities.SQUID_TYPE.get(), RenderRS::new);
         event.registerEntityRenderer(ModEntities.BABY_SQUID_TYPE.get(), RenderBabyRS::new);
     }
