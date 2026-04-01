@@ -2,6 +2,7 @@
 // See README.md for full copyright notice and contributor info
 package com.fredtargaryen.rocketsquids.content.entity.ai;
 
+import com.fredtargaryen.rocketsquids.DataReference;
 import com.fredtargaryen.rocketsquids.content.entity.RocketSquidEntity;
 import com.fredtargaryen.rocketsquids.network.MessageHandler;
 import com.fredtargaryen.rocketsquids.network.message.MessageSquidNote;
@@ -214,7 +215,7 @@ public class AdultSwimAroundGoal extends Goal {
     private void playNextNote() {
         byte note = this.squid.getTargetNote(this.noteIndex);
         Vec3 pos = this.squid.position();
-        MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, 16.0F, this.squid.level().dimension())), new MessageSquidNote(note));
+        MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, DataReference.SQUID_SING_RANGE, this.squid.level().dimension())), new MessageSquidNote(note));
         if(this.noteIndex == 2) {
             this.noteIndex = 0;
         }
