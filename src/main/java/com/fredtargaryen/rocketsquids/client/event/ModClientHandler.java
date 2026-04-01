@@ -39,14 +39,8 @@ public class ModClientHandler {
     public static void init(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
 
-        modEventBus.addListener(ModClientHandler::onClientSetup);
         modEventBus.addListener(ModClientHandler::registerRenderers);
         modEventBus.addListener(ModClientHandler::registerLayerDefinitions);
-    }
-
-    @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent event) {
-
     }
 
     @SuppressWarnings("removal")
