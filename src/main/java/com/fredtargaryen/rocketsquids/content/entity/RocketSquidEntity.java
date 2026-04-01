@@ -10,7 +10,7 @@ import com.fredtargaryen.rocketsquids.content.ModEntities;
 import com.fredtargaryen.rocketsquids.content.ModItems;
 import com.fredtargaryen.rocketsquids.content.cap.entity.adult.AdultCap;
 import com.fredtargaryen.rocketsquids.content.entity.ai.AdultFlopAroundGoal;
-import com.fredtargaryen.rocketsquids.content.entity.ai.AdultSwimAroundRiderRotationTestGoal;
+import com.fredtargaryen.rocketsquids.content.entity.ai.AdultSwimAroundGoal;
 import com.fredtargaryen.rocketsquids.content.entity.ai.BlastoffGoal;
 import com.fredtargaryen.rocketsquids.content.entity.ai.ShakeGoal;
 import com.fredtargaryen.rocketsquids.network.MessageHandler;
