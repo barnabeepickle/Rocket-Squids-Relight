@@ -4,9 +4,9 @@ package com.fredtargaryen.rocketsquids.content.entity.ai;
 
 import com.fredtargaryen.rocketsquids.DataReference;
 import com.fredtargaryen.rocketsquids.content.entity.RocketSquidEntity;
+import com.fredtargaryen.rocketsquids.content.worldgen.StatueData;
 import com.fredtargaryen.rocketsquids.network.MessageHandler;
 import com.fredtargaryen.rocketsquids.network.message.MessageSquidNote;
-import com.fredtargaryen.rocketsquids.content.worldgen.StatueData;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -30,8 +30,8 @@ public class AdultSwimAroundGoal extends Goal {
     }
 
     private final RandomSource r;
-	private final double swimForce;
-	private StatueBlastStage statueBlastStage;
+    private final double swimForce;
+    private StatueBlastStage statueBlastStage;
 
     public AdultSwimAroundGoal(RocketSquidEntity ers) {
         super();
@@ -57,10 +57,10 @@ public class AdultSwimAroundGoal extends Goal {
      * Do a turn.
      *
      * @param playerIsRiding whether a player is riding the squid
-     * @param blocked     in the directions the squid is mainly pointing in, whether there are blocks in the way
+     * @param blocked        in the directions the squid is mainly pointing in, whether there are blocks in the way
      */
     public void doTurn(boolean playerIsRiding, boolean blocked) {
-        if(playerIsRiding) {
+        if (playerIsRiding) {
             //Rider rotations are clamped to [-PI, PI]; squid rotations are not.
             //Therefore need to work in terms of this range, or risk squids spinning ridiculous amounts if they have
             //turned around many times before being ridden.
@@ -72,27 +72,25 @@ public class AdultSwimAroundGoal extends Goal {
             float unclamped_sy = (float) this.squid.getRotYaw();
             //Clamp them to [-2PI, 2PI]
             float clamped_sp = unclamped_sp;
-            while(clamped_sp > Math.PI * 2) clamped_sp -= (float) (Math.PI * 2);
-            while(clamped_sp < -Math.PI * 2) clamped_sp += (float) (Math.PI * 2);
+            while (clamped_sp > Math.PI * 2) clamped_sp -= (float) (Math.PI * 2);
+            while (clamped_sp < -Math.PI * 2) clamped_sp += (float) (Math.PI * 2);
             float clamped_sy = unclamped_sy;
-            while(clamped_sy > Math.PI * 2) clamped_sy -= (float) (Math.PI * 2);
-            while(clamped_sy < -Math.PI * 2) clamped_sy += (float) (Math.PI * 2);
+            while (clamped_sy > Math.PI * 2) clamped_sy -= (float) (Math.PI * 2);
+            while (clamped_sy < -Math.PI * 2) clamped_sy += (float) (Math.PI * 2);
             float pitchDiff = pp - clamped_sp;
             float yawDiff = py - clamped_sy;
-            if(Math.abs(pitchDiff) >= 0.005 || Math.abs(yawDiff) >= 0.005) {
+            if (Math.abs(pitchDiff) >= 0.005 || Math.abs(yawDiff) >= 0.005) {
                 //Player rotation is sufficiently far from squid rotation for the squid to start a new turn
                 //Turn by the difference in rotations, to avoid having to spin into the [-PI, PI] range
                 this.squid.setTargetRotPitch(unclamped_sp + pitchDiff);
                 this.squid.setTargetRotYaw(unclamped_sy + yawDiff);
             }
-        }
-        else {
-            if(blocked) {
+        } else {
+            if (blocked) {
                 //Just point the opposite way
                 Vec3 direction = this.squid.getDirectionAsVec3();
                 this.squid.pointToVector(new Vec3(-direction.x, -direction.y, -direction.z), Math.PI / 3.0);
-            }
-            else {
+            } else {
                 //Random doubles between -PI and PI, added to current rotation
                 this.squid.setTargetRotPitch(this.squid.getRotPitch() + (this.r.nextDouble() * Math.PI / 4 * (this.r.nextBoolean() ? 1 : -1)));
                 this.squid.setTargetRotYaw(this.squid.getRotYaw() + (this.r.nextDouble() * Math.PI / 4 * (this.r.nextBoolean() ? 1 : -1)));
@@ -131,12 +129,11 @@ public class AdultSwimAroundGoal extends Goal {
                     //Find nearest statue
                     Vec3 pos = this.squid.position();
                     int[] statueCoords = StatueData.forWorld(this.squid.level()).getNearestStatuePos(pos.x, pos.y, pos.z);
-                    if(statueCoords == null) {
+                    if (statueCoords == null) {
                         //StatueManager doesn't have any statues loaded
                         this.statueBlastStage = StatueBlastStage.NONE;
                         this.squid.setBlastToStatue(false);
-                    }
-                    else {
+                    } else {
                         //TargetPoint for playing notes related to distance
                         PacketDistributor.TargetPoint squidPoint = new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, DataReference.PLAYER_HEAR_RANGE, this.squid.level().dimension());
                         double zDistance = statueCoords[4] - pos.z;
@@ -147,21 +144,19 @@ public class AdultSwimAroundGoal extends Goal {
                         //Play a celebratory chord
                         if (hozDistanceSquared > 640000.0) {
                             //More than 50 chunks away (50 * 16 = 800 blocks). Low C Major
-                            MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> squidPoint), new MessageSquidNote((byte)0));
-                            MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> squidPoint), new MessageSquidNote((byte)4));
-                            MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> squidPoint), new MessageSquidNote((byte)7));
-                        }
-                        else if (hozDistanceSquared > 25600.0) {
+                            MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> squidPoint), new MessageSquidNote((byte) 0));
+                            MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> squidPoint), new MessageSquidNote((byte) 4));
+                            MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> squidPoint), new MessageSquidNote((byte) 7));
+                        } else if (hozDistanceSquared > 25600.0) {
                             //10-50 chunks away (10 * 16 = 160 blocks). Middle C Major
-                            MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> squidPoint), new MessageSquidNote((byte)12));
-                            MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> squidPoint), new MessageSquidNote((byte)16));
-                            MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> squidPoint), new MessageSquidNote((byte)19));
-                        }
-                        else {
+                            MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> squidPoint), new MessageSquidNote((byte) 12));
+                            MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> squidPoint), new MessageSquidNote((byte) 16));
+                            MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> squidPoint), new MessageSquidNote((byte) 19));
+                        } else {
                             //Less than 10 chunks away. High C Major
-                            MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> squidPoint), new MessageSquidNote((byte)24));
-                            MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> squidPoint), new MessageSquidNote((byte)28));
-                            MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> squidPoint), new MessageSquidNote((byte)31));
+                            MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> squidPoint), new MessageSquidNote((byte) 24));
+                            MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> squidPoint), new MessageSquidNote((byte) 28));
+                            MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> squidPoint), new MessageSquidNote((byte) 31));
                         }
                         if (hozDistanceSquared > 6400.0) {
                             //More than 80 blocks (5 chunks) away horizontally; blast at 45 degrees so the player can hopefully see easily
@@ -186,23 +181,22 @@ public class AdultSwimAroundGoal extends Goal {
                 default:
                     break;
             }
-        }
-        else {
+        } else {
             //Move and play notes if scheduled
-            if(this.tickCounter == this.nextScheduledMove) {
+            if (this.tickCounter == this.nextScheduledMove) {
                 int randomInt = this.r.nextInt(11);
                 if (randomInt == 0) {
-                    if(!this.squid.areBlocksInWay()) {
+                    if (!this.squid.areBlocksInWay()) {
                         this.squid.setShaking(true);
                     }
-                } else if (randomInt < 6){
+                } else if (randomInt < 6) {
                     this.doTurn(this.squid.getFirstPassenger() instanceof Player, this.squid.areBlocksInWay());
                 } else {
                     if (!this.squid.areBlocksInWay()) this.squid.addForce(this.swimForce);
                 }
                 this.scheduleNextMove();
             }
-            if(this.tickCounter == this.nextScheduledNote) {
+            if (this.tickCounter == this.nextScheduledNote) {
                 this.playNextNote();
                 this.scheduleNextNote();
             }
@@ -213,10 +207,9 @@ public class AdultSwimAroundGoal extends Goal {
         byte note = this.squid.getTargetNote(this.noteIndex);
         Vec3 pos = this.squid.position();
         MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, DataReference.SQUID_SING_RANGE, this.squid.level().dimension())), new MessageSquidNote(note));
-        if(this.noteIndex == 2) {
+        if (this.noteIndex == 2) {
             this.noteIndex = 0;
-        }
-        else {
+        } else {
             ++this.noteIndex;
         }
     }

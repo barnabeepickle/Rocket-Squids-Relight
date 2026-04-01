@@ -162,7 +162,7 @@ public class ModRocketSquids {
             GeneralConfig.MAX_GROUP_SIZE = GeneralConfig.MIN_GROUP_SIZE;
         }
 
-        // Spawn info (might be redundent due to biomemodifiers)
+        // Spawn info (might be redundant due to biomemodifiers)
         // noinspection deprecation
         SpawnPlacements.register(ModEntities.SQUID_TYPE.get(), SpawnPlacements.Type.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (type, world, reason, pos, random) -> true);
         ROCKET_SQUID_SPAWN_INFO = new MobSpawnSettings.SpawnerData(ModEntities.SQUID_TYPE.get(), GeneralConfig.SPAWN_PROB.get(), GeneralConfig.MIN_GROUP_SIZE.get(), GeneralConfig.MAX_GROUP_SIZE.get());
