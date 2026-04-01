@@ -131,7 +131,7 @@ public class AdultSwimAroundGoal extends Goal {
                     //Find nearest statue
                     Vec3 pos = this.squid.position();
                     int[] statueCoords = StatueData.forWorld(this.squid.level()).getNearestStatuePos(pos.x, pos.y, pos.z);
-                    if(statueCoords[3] < 1) {
+                    if(statueCoords == null) {
                         //StatueManager doesn't have any statues loaded
                         this.statueBlastStage = StatueBlastStage.NONE;
                         this.squid.setBlastToStatue(false);

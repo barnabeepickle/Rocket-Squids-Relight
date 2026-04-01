@@ -92,7 +92,8 @@ public class StatueData extends SavedData {
     }
 
     public int[] getNearestStatuePos(double x, double y, double z) {
-        int[] minloc = new int[] {-1, -1, -1, -1, -1};
+        if (this.statues.isEmpty()) return null;
+        int[] minloc = { 0, 0, 0, 0, 0 };
         double minDistance = Double.POSITIVE_INFINITY;
         for (int[] nextLoc : this.statues) {
             double nextXDist = nextLoc[2] - x;
