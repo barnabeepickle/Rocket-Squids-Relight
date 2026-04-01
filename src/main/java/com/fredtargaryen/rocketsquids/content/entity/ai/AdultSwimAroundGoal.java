@@ -104,7 +104,7 @@ public class AdultSwimAroundGoal extends Goal {
      * Need to allow some time for the move to finish, as well as some time for the squid to just hover for a bit
      */
     private void scheduleNextMove() {
-        this.nextScheduledMove += 20 + this.r.nextInt(80);
+        this.nextScheduledMove += 10 + this.r.nextInt(40);
     }
 
     /**
@@ -112,7 +112,7 @@ public class AdultSwimAroundGoal extends Goal {
      * Need to allow some time for the note to play, as well as some silent time
      */
     private void scheduleNextNote() {
-        this.nextScheduledNote += 40 + this.r.nextInt(20);
+        this.nextScheduledNote += 20 + this.r.nextInt(10);
     }
 
     @Override
