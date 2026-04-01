@@ -75,7 +75,7 @@ public class ModEntities {
 
     @SubscribeEvent
     public static void registerEntityAttributes(EntityAttributeCreationEvent event) {
-        // Entity attributes are stored in there class under the createAttributes() method not in the registry code
+        // Entity attributes are stored in their class under the createAttributes() method, not in the registry code
         event.put(ModEntities.SQUID_TYPE.get(), RocketSquidEntity.createAttributes().build());
         event.put(ModEntities.BABY_SQUID_TYPE.get(), BabyRocketSquidEntity.createAttributes().build());
     }
