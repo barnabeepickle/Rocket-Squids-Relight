@@ -3,10 +3,8 @@
 package com.fredtargaryen.rocketsquids;
 
 import net.minecraft.core.Direction;
-import 	net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
-
-import java.util.Random;
 
 /**
  * ===DESCRIPTION OF MESSAGE CHANNELS===
@@ -23,13 +21,19 @@ import java.util.Random;
  */
 @SuppressWarnings("removal")
 public class DataReference {
-    //MAIN MOD DETAILS
+    // MAIN MOD DETAILS
     public static final String MODID = "rocketsquids";
-    public static final String MODNAME = "Rocket Squids Relight";
+    public static final String MODNAME = "Rocket Squids";
 
+    // Capabilities
     public static final ResourceLocation SQUELEPORTER_LOCATION = new ResourceLocation(DataReference.MODID, "isqueleporter");
     public static final ResourceLocation BABY_CAP_LOCATION = new ResourceLocation(DataReference.MODID, "ibaby");
     public static final ResourceLocation ADULT_CAP_LOCATION = new ResourceLocation(DataReference.MODID, "iadult");
+
+    // Conch hearing ranges
+    public static final double PLAYER_HEAR_RANGE = 16.0;
+    public static final double SQUID_SING_RANGE = 8.0;
+    public static final double SQUID_LISTEN_RANGE = 8.0;
 
     //////////////////////
     //Worldgen constants//
