@@ -9,6 +9,8 @@ import com.fredtargaryen.rocketsquids.content.ModBlocks;
 import com.fredtargaryen.rocketsquids.content.block.StatueBlock;
 import com.fredtargaryen.rocketsquids.content.item.custom.GeoModArmorItem;
 import com.fredtargaryen.rocketsquids.content.worldgen.StatueData;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.BlockPos;
@@ -22,6 +24,8 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
@@ -90,8 +94,12 @@ public class ItemConch extends GeoModArmorItem {
         }
     };
 
+    private final ImmutableMultimap<Attribute, AttributeModifier> emptyModifierMap;
+
     public ItemConch(Item.Properties properties) {
         super(MATERIAL_CONCH, Type.HELMET, properties);
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+        emptyModifierMap = builder.build();
     }
 
     /**
@@ -210,5 +218,13 @@ public class ItemConch extends GeoModArmorItem {
                 return this.renderer;
             }
         });
+    }
+
+    /**
+     * Removes the "When on head:" tooltip, which is too much of a giveaway
+     */
+    @Override
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        return emptyModifierMap;
     }
 }
