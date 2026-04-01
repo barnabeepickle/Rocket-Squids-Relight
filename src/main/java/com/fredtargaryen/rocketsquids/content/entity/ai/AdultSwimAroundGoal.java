@@ -50,7 +50,7 @@ public class AdultSwimAroundGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        return this.squid.isInWater() && !this.squid.getShaking() && !this.squid.getBlasting();
+        return this.squid.isInWater();
     }
 
     /**
@@ -138,7 +138,7 @@ public class AdultSwimAroundGoal extends Goal {
                     }
                     else {
                         //TargetPoint for playing notes related to distance
-                        PacketDistributor.TargetPoint squidPoint = new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, 16.0F, this.squid.level().dimension());
+                        PacketDistributor.TargetPoint squidPoint = new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, DataReference.PLAYER_HEAR_RANGE, this.squid.level().dimension());
                         double zDistance = statueCoords[4] - pos.z;
                         double xDistance = statueCoords[2] - pos.x;
                         double hozDistanceSquared = zDistance * zDistance + xDistance * xDistance;
