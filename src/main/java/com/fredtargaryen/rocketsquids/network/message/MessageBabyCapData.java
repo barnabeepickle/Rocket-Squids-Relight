@@ -14,6 +14,10 @@ import java.util.Iterator;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+/**
+ * Syncs the capability for baby rocket squids.
+ * Direction: server to client
+ */
 public class MessageBabyCapData {
     private UUID squidToUpdate;
     private CompoundTag capData;

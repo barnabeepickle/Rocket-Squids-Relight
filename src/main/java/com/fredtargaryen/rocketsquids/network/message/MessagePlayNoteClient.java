@@ -8,6 +8,10 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
+/**
+ * Plays a note on the client.
+ * Direction: server to client
+ */
 public class MessagePlayNoteClient {
     private byte note;
 

@@ -8,6 +8,11 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
+/**
+ * Play a note from the client, but the note is sung by a squid, so it should only be heard by a client player if
+ * they're close enough and wearing the conch.
+ * Direction: server to client
+ */
 public class MessageSquidNote {
     private byte note;
 

@@ -12,6 +12,10 @@ import java.util.Iterator;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+/**
+ * Creates the exploded rocket squid firework effect.
+ * Direction: server to client
+ */
 public class MessageSquidFirework {
     private UUID uuid;
 

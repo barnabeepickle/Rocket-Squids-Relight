@@ -15,6 +15,10 @@ import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
+/**
+ * Plays a note on the server, for rocket squids to respond to if appropriate.
+ * Direction: client to server
+ */
 public class MessagePlayNoteServer {
     private byte note;
     private double x;
