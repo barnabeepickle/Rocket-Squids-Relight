@@ -3,6 +3,7 @@
 package com.fredtargaryen.rocketsquids.client.particle;
 
 import com.fredtargaryen.rocketsquids.ModRocketSquids;
+import com.fredtargaryen.rocketsquids.content.ModParticleTypes;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.*;
@@ -254,7 +255,7 @@ public class SquidFireworkParticle {
          * Creates a single particle.
          */
         private void createParticle(double x, double y, double z, double xMotion, double yMotion, double zMotion, int[] colorSpark, int[] colorSparkFade, boolean trail, boolean twinkle) {
-            SquidFireworkParticle.Spark fireworkparticle$spark = (SquidFireworkParticle.Spark) this.manager.createParticle((ParticleOptions) ModRocketSquids.FIREWORK_TYPE.get(), x, y, z, xMotion, yMotion, zMotion);
+            SquidFireworkParticle.Spark fireworkparticle$spark = (SquidFireworkParticle.Spark) this.manager.createParticle((ParticleOptions) ModParticleTypes.FIREWORK_TYPE.get(), x, y, z, xMotion, yMotion, zMotion);
             assert fireworkparticle$spark != null;
             fireworkparticle$spark.setTrail(trail);
             fireworkparticle$spark.setTwinkle(twinkle);
