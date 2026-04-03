@@ -3,7 +3,7 @@
 package com.fredtargaryen.rocketsquids.client.gui;
 
 import com.fredtargaryen.rocketsquids.DataReference;
-import com.fredtargaryen.rocketsquids.ModSounds;
+import com.fredtargaryen.rocketsquids.content.ModSounds;
 import com.fredtargaryen.rocketsquids.network.MessageHandler;
 import com.fredtargaryen.rocketsquids.network.message.MessagePlayNoteServer;
 import com.fredtargaryen.rocketsquids.util.color.ColorHelper;
@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class ConchScreen extends Screen {
     private final byte conchStage;

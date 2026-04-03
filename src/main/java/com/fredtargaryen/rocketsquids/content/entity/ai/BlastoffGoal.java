@@ -2,7 +2,7 @@
 // See README.md for full copyright notice and contributor info
 package com.fredtargaryen.rocketsquids.content.entity.ai;
 
-import com.fredtargaryen.rocketsquids.ModSounds;
+import com.fredtargaryen.rocketsquids.content.ModSounds;
 import com.fredtargaryen.rocketsquids.content.entity.RocketSquidEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 

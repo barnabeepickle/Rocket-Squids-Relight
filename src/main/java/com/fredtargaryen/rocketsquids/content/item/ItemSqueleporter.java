@@ -3,7 +3,7 @@
 package com.fredtargaryen.rocketsquids.content.item;
 
 import com.fredtargaryen.rocketsquids.ModRocketSquids;
-import com.fredtargaryen.rocketsquids.ModSounds;
+import com.fredtargaryen.rocketsquids.content.ModSounds;
 import com.fredtargaryen.rocketsquids.content.ModItems;
 import com.fredtargaryen.rocketsquids.content.entity.RocketSquidEntity;
 import net.minecraft.sounds.SoundSource;
