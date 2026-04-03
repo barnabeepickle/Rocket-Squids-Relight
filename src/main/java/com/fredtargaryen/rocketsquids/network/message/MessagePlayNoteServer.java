@@ -17,6 +17,7 @@ import java.util.function.Supplier;
 
 /**
  * Plays a note on the server, for rocket squids to respond to if appropriate.
+ * This causes a MessagePlayNoteClient to be sent to all players around.
  * Direction: client to server
  */
 public class MessagePlayNoteServer {
