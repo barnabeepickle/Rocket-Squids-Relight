@@ -59,16 +59,6 @@ public class ModRocketSquids {
 
     public static MobSpawnSettings.SpawnerData ROCKET_SQUID_SPAWN_INFO;
 
-    // Particles
-    private static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, MODID);
-    // Register all ParticleTypes here
-    public static final RegistryObject<ParticleType<SimpleParticleType>> FIREWORK_TYPE = PARTICLE_TYPES.register("firework",
-            () -> new SimpleParticleType(false));
-
-    public void registerParticleFactories(RegisterParticleProvidersEvent event) {
-        Minecraft.getInstance().particleEngine.register(FIREWORK_TYPE.get(), SquidFireworkParticle.SparkFactory::new);
-    }
-
     /**
      * A custom firework that looks kinda like a Rocket Squid, created in {@link ModRocketSquids#setupFirework()}
      * Firework structure:
@@ -112,8 +102,7 @@ public class ModRocketSquids {
         ModEntities.register(modEventBus);
         // Register our world gen features
         ModFeatures.register(modEventBus);
-        PARTICLE_TYPES.register(modEventBus);
-        modEventBus.addListener(this::registerParticleFactories);
+        ModParticleTypes.register(modEventBus);
         ModSounds.register(modEventBus);
 
         ModClientHandler.init(context);
