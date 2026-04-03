@@ -58,12 +58,12 @@ public class ModelRocketSquid<T extends RocketSquidEntity> extends HierarchicalM
                 .texOffs(0, 0).addBox(-1.0F, -1.0F, -1.0F, 2.0F, 20.0F, 2.0F);
 
         for (int i = 0; i < tentacles; i++) {
-            double doublethink = i * Math.PI * 2.0 / 8.0;
-            float floatx = (float)Math.cos(doublethink) * 5.0F;
+            double tentacleYRot = i * Math.PI * 2.0 / 8.0;
+            float floatx = (float)Math.cos(tentacleYRot) * 5.0F;
             float floaty = 9.0F;
-            float floatz = (float)Math.sin(doublethink) * 5.0F;
-            doublethink = i * Math.PI * -2.0 / 8.0 + (Math.PI / 2);
-            root.addOrReplaceChild(createTentacleName(i), tentCubeList, PartPose.offsetAndRotation(floatx, floaty, floatz, 0.0F, (float) doublethink, 0.0F));
+            float floatz = (float)Math.sin(tentacleYRot) * 5.0F;
+            tentacleYRot = i * Math.PI * -2.0 / 8.0 + (Math.PI / 2);
+            root.addOrReplaceChild(createTentacleName(i), tentCubeList, PartPose.offsetAndRotation(floatx, floaty, floatz, 0.0F, (float) tentacleYRot, 0.0F));
         }
 
         // make the saddle

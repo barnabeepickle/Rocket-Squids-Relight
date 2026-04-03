@@ -47,11 +47,10 @@ public class RenderBabyRS extends MobRenderer<BabyRocketSquidEntity, ModelRocket
     ) {
         float exactPitch = (float) (Mth.lerp(partialTicks, ers.getPrevRotPitch(), ers.getRotPitch()) * 180 / Math.PI);
         float exactYaw = (float) (Mth.lerp(partialTicks, ers.getPrevRotYaw(), ers.getRotYaw()) * 180 / Math.PI);
-        //0.5F for adults
+
         matrixStack.translate(0, 0.15, 0);
         matrixStack.mulPose(Axis.YP.rotationDegrees(180f - exactYaw));
         matrixStack.mulPose(Axis.XN.rotationDegrees(exactPitch));
-        //1.2F for adults
         matrixStack.translate(0f, -1.3f, 0f);
     }
 

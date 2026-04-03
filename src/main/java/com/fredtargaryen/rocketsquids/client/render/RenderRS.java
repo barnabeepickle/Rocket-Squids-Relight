@@ -59,6 +59,7 @@ public class RenderRS extends MobRenderer<RocketSquidEntity, ModelRocketSquid<Ro
     ) {
         float exactPitch = (float) (Mth.lerp(partialTicks, ers.getPrevRotPitch(), ers.getRotPitch()) * 180 / Math.PI);
         float exactYaw = (float) (Mth.lerp(partialTicks, ers.getPrevRotYaw(), ers.getRotYaw()) * 180 / Math.PI);
+
         matrixStack.translate(0, 0.5, 0);
         matrixStack.mulPose(Axis.YP.rotationDegrees(180f - exactYaw));
         matrixStack.mulPose(Axis.XN.rotationDegrees(exactPitch));
@@ -92,10 +93,7 @@ public class RenderRS extends MobRenderer<RocketSquidEntity, ModelRocketSquid<Ro
             matrixStackIn.mulPose(Axis.of(new Vector3f((float) Math.cos(yaw_r), 0f, (float) Math.sin(yaw_r))).rotation((float) pitch_r));
 
             //Prepare to draw
-            //RenderSystem.disableLighting();
-            //GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, 240f, 240f);
             RenderSystem.setShaderColor(1f, 1f,1f ,1f);
-            //this.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
 
             //Draw the faces. Advised not to touch any of this; creates a pretty cross of fire which is adjusted to be
             //visible even when squid is blasting directly away from viewer.
@@ -126,7 +124,6 @@ public class RenderRS extends MobRenderer<RocketSquidEntity, ModelRocketSquid<Ro
             this.doAVertex(ivb, pos, norm, -0.22f, 0.0f, -0.22f, minu, maxv, packedLightIn);
 
             //Clear up
-            //RenderSystem.enableLighting();
             matrixStackIn.popPose();
         }
         super.render(par1EntitySquid, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
