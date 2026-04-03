@@ -7,9 +7,9 @@ import com.fredtargaryen.rocketsquids.ModRocketSquids;
 import com.fredtargaryen.rocketsquids.content.entity.RocketSquidEntity;
 import com.fredtargaryen.rocketsquids.network.MessageHandler;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
 
@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 
 /**
  * Plays a note on the server, for rocket squids to respond to if appropriate.
- * This causes a MessagePlayNoteClient to be sent to all players around.
+ * This causes a {@link MessagePlayNoteClient} to be sent to all players around.
  * Direction: client to server
  */
 public class MessagePlayNoteServer {
@@ -41,7 +41,7 @@ public class MessagePlayNoteServer {
     public void onMessage(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             Player player = ctx.get().getSender();
-            if(note > -1 && note < 36) {
+            if (note > -1 && note < 36) {
                 MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> {
                     assert player != null;
                     return new PacketDistributor.TargetPoint(this.x, this.y, this.z, DataReference.PLAYER_HEAR_RANGE, player.level().dimension());

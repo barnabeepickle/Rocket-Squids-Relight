@@ -70,8 +70,7 @@ public class ModRocketSquids {
     }
 
     /**
-     * A custom firework that looks kinda like a Rocket Squid,
-     * setup is done in {@link ModRocketSquids#setupFirework()}
+     * A custom firework that looks kinda like a Rocket Squid, created in {@link ModRocketSquids#setupFirework()}
      * Firework structure:
      * TagCompound          (firework)
      * |_TagList            (list, "Explosions")
@@ -84,8 +83,7 @@ public class ModRocketSquids {
     public static final CompoundTag firework = new CompoundTag();
 
     /**
-     * Method resposible for setying up the rocket squid {@link ModRocketSquids#firework},
-     * called from {@link ModRocketSquids#postRegistration(FMLCommonSetupEvent) postRegistration()}.
+     * Set up the tag describing the rocket squid firework
      */
     public static void setupFirework() {
         ListTag list = new ListTag();
@@ -99,50 +97,31 @@ public class ModRocketSquids {
         firework.put("Explosions", list);
     }
 
-    /**
-     * The constructor for {@link ModRocketSquids}
-     */
     public ModRocketSquids(FMLJavaModLoadingContext context) {
         INSTANCE = this;
 
-        // Mod Event Bus
         final IEventBus modEventBus = context.getModEventBus();
 
-        // Register ourselves on the event bus for various stuff
         MinecraftForge.EVENT_BUS.register(this);
 
-        // Register our sounds
-        ModSounds.register(modEventBus);
-
-        // Register blocks and items
         ModBlocks.register(modEventBus);
         ModItems.register(modEventBus);
-
-        // Register entities + a spawn egg
-        ModEntities.register(modEventBus);
-
-        // Register our creative tab and put items in it
+        // Also populates the creative tab
         ModCreativeTabs.register(modEventBus);
-
-        // Register our particle along with it's factory
-        PARTICLE_TYPES.register(modEventBus);
-        modEventBus.addListener(this::registerParticleFactories);
-
+        // Also registers the spawn egg
+        ModEntities.register(modEventBus);
         // Register our world gen features
         ModFeatures.register(modEventBus);
+        PARTICLE_TYPES.register(modEventBus);
+        modEventBus.addListener(this::registerParticleFactories);
+        ModSounds.register(modEventBus);
 
-        // Initilize our client handler (its basicly an entry point)
         ModClientHandler.init(context);
 
-        // Register and load the mod config
         context.registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG_SPEC);
         Config.loadConfig(FMLPaths.CONFIGDIR.get().resolve(MODID + ".toml"));
 
-
-        // Loading/Setup Event bus
         IEventBus loadingBus = context.getModEventBus();
-
-        // Register our setup handler
         loadingBus.addListener(this::postRegistration);
     }
 
@@ -151,10 +130,8 @@ public class ModRocketSquids {
      * @param event FMLCommonSetupEvent
      */
     public void postRegistration(FMLCommonSetupEvent event) {
-        // initlize our custom packets
         MessageHandler.init();
 
-        // Run the firework setup function
         setupFirework();
 
         // Validate the config
