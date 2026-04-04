@@ -22,6 +22,5 @@ public class ModParticleTypes {
 
     public static void register(IEventBus eventBus) {
         PARTICLE_TYPES.register(eventBus);
-        Minecraft.getInstance().particleEngine.register(FIREWORK_TYPE.get(), SquidFireworkParticle.SparkFactory::new);
     }
 }
