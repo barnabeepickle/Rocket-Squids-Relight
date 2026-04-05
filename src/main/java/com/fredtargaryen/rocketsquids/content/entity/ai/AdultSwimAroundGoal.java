@@ -44,8 +44,6 @@ public class AdultSwimAroundGoal extends Goal {
         this.tickCounter = 0;
         this.nextScheduledMove = 0;
         this.nextScheduledNote = 0;
-        this.scheduleNextMove();
-        this.scheduleNextNote();
     }
 
     @Override
@@ -182,6 +180,9 @@ public class AdultSwimAroundGoal extends Goal {
                     break;
             }
         } else {
+            if (this.tickCounter > this.nextScheduledMove) this.scheduleNextMove();
+            if (this.tickCounter > this.nextScheduledNote) this.scheduleNextNote();
+
             //Move and play notes if scheduled
             if (this.tickCounter == this.nextScheduledMove) {
                 int randomInt = this.r.nextInt(11);
@@ -191,10 +192,11 @@ public class AdultSwimAroundGoal extends Goal {
                     }
                 } else if (randomInt < 6) {
                     this.doTurn(this.squid.getFirstPassenger() instanceof Player, this.squid.areBlocksInWay());
+                    this.scheduleNextMove();
                 } else {
                     if (!this.squid.areBlocksInWay()) this.squid.addForce(this.swimForce);
+                    this.scheduleNextMove();
                 }
-                this.scheduleNextMove();
             }
             if (this.tickCounter == this.nextScheduledNote) {
                 this.playNextNote();
