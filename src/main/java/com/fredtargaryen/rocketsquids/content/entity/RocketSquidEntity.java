@@ -3,11 +3,11 @@
 package com.fredtargaryen.rocketsquids.content.entity;
 
 import com.fredtargaryen.rocketsquids.ModRocketSquids;
-import com.fredtargaryen.rocketsquids.content.ModSounds;
 import com.fredtargaryen.rocketsquids.client.particle.SquidFireworkParticle;
 import com.fredtargaryen.rocketsquids.config.GeneralConfig;
 import com.fredtargaryen.rocketsquids.content.ModEntities;
 import com.fredtargaryen.rocketsquids.content.ModItems;
+import com.fredtargaryen.rocketsquids.content.ModSounds;
 import com.fredtargaryen.rocketsquids.content.cap.entity.adult.AdultCap;
 import com.fredtargaryen.rocketsquids.content.entity.ai.AdultFlopAroundGoal;
 import com.fredtargaryen.rocketsquids.content.entity.ai.AdultSwimAroundGoal;
@@ -17,7 +17,6 @@ import com.fredtargaryen.rocketsquids.network.MessageHandler;
 import com.fredtargaryen.rocketsquids.network.message.MessageAdultCapData;
 import com.fredtargaryen.rocketsquids.network.message.MessageSquidFirework;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleEngine;
@@ -600,19 +599,28 @@ public class RocketSquidEntity extends AbstractRocketSquidEntity {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void addRotation(RenderPlayerEvent.Pre event) {
         if (event.getEntity() == this.getFirstPassenger()) {
-            double prevPitch_r = this.squidCap.getPrevRotPitch();
-            double pitch_r = this.squidCap.getRotPitch();
             float partialTick = event.getPartialTick();
-            double exactPitch_r = prevPitch_r + (pitch_r - prevPitch_r) * partialTick;
-            double squidAngle = exactPitch_r - (Math.PI / 2.0);
+
+            double prevPitchRads = this.squidCap.getPrevRotPitch();
+            double pitchRads = this.squidCap.getRotPitch();
+            double exactPitchRads = prevPitchRads + (pitchRads - prevPitchRads) * partialTick;
+            double squidAngle = exactPitchRads - (Math.PI / 2.0);
+
+            double prevYawRads = this.squidCap.getPrevRotYaw();
+            double yawRads = this.squidCap.getRotYaw();
+            double exactYawRads = prevYawRads + (yawRads - prevYawRads) * partialTick;
+
             double translation = -0.2 * Math.abs(Math.sin(squidAngle / 2.0));
+
             this.riderRotated = true;
             PoseStack stack = event.getPoseStack();
             stack.pushPose();
-            // Rotate the rider to match the squid's pitch
-            Quaternionf quat = Axis.XP.rotation((float) (squidAngle));
+            // Rotate the rider to match the squid's rotation
+            Quaternionf quat = new Quaternionf()
+                    .rotateLocalX((float) (squidAngle))
+                    .rotateLocalY((float) -exactYawRads);
             stack.mulPose(quat);
-            // Keep the rider from floating above the saddle
+            // Keep the rider from floating away from the saddle
             stack.translate(0.0, translation, 0.0);
         }
     }
