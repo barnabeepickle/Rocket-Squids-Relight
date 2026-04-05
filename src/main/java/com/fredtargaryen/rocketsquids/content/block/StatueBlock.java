@@ -12,14 +12,18 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.WallSignBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -27,23 +31,23 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
-import static net.minecraft.world.level.block.state.properties.BlockStateProperties.DOUBLE_BLOCK_HALF;
-import static net.minecraft.world.level.block.state.properties.BlockStateProperties.OPEN;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.*;
 
 
-public class StatueBlock extends Block {
+public class StatueBlock extends Block implements SimpleWaterloggedBlock {
     public StatueBlock(Block.Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(FACING, Direction.NORTH)
                 .setValue(OPEN, false)
                 .setValue(DOUBLE_BLOCK_HALF, DoubleBlockHalf.LOWER)
+                .setValue(WATERLOGGED, false)
         );
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, OPEN, DOUBLE_BLOCK_HALF);
+        builder.add(FACING, OPEN, DOUBLE_BLOCK_HALF, WATERLOGGED);
     }
 
     /**
@@ -63,6 +67,10 @@ public class StatueBlock extends Block {
             @NotNull BlockPos pos,
             @NotNull BlockPos neighborPos
     ) {
+        if (state.getValue(WATERLOGGED)) {
+            level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+        }
+
         DoubleBlockHalf doubleBlockHalf = state.getValue(DOUBLE_BLOCK_HALF);
         if (direction.getAxis() == Direction.Axis.Y && doubleBlockHalf == DoubleBlockHalf.LOWER == (direction == Direction.UP)) {
             return neighborState.is(this) && neighborState.getValue(DOUBLE_BLOCK_HALF) != doubleBlockHalf
@@ -97,10 +105,12 @@ public class StatueBlock extends Block {
         BlockPos blockPos = context.getClickedPos();
         Level level = context.getLevel();
         if (blockPos.getY() < level.getMaxBuildHeight() - 1 && level.getBlockState(blockPos.above()).canBeReplaced(context)) {
+            FluidState fluidState = level.getFluidState(blockPos);
             return this.defaultBlockState()
                     .setValue(FACING, context.getHorizontalDirection().getOpposite())
                     .setValue(OPEN, context.getItemInHand().getItem() == ModItems.ITEM_STATUE_OPEN.get())
-                    .setValue(DOUBLE_BLOCK_HALF, DoubleBlockHalf.LOWER);
+                    .setValue(DOUBLE_BLOCK_HALF, DoubleBlockHalf.LOWER)
+                    .setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
         } else {
             return null;
         }
@@ -127,7 +137,11 @@ public class StatueBlock extends Block {
             @NotNull ItemStack stack
     ) {
         if (!level.isClientSide) {
-            level.setBlock(pos.above(), state.setValue(DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER), 3);
+            BlockPos abovePos = pos.above();
+            level.setBlock(abovePos, state
+                    .setValue(DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER)
+                            .setValue(WATERLOGGED, level.getFluidState(abovePos).getType() == Fluids.WATER),
+                    3);
             StatueData.forWorld(level).addStatue(pos);
         }
     }
@@ -154,5 +168,16 @@ public class StatueBlock extends Block {
         ItemEntity squel = new ItemEntity(level, x + 0.5D, y + 0.5D, z + 0.5D, ModItems.SQUELEPORTER_INACTIVE.get().getDefaultInstance());
         squel.setDeltaMovement(treasureVelocity);
         level.addFreshEntity(squel);
+    }
+
+    // Waterlogging related overrides
+    @Override
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+        return !(Boolean)state.getValue(WATERLOGGED);
+    }
+
+    @Override
+    public FluidState getFluidState(BlockState state) {
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 }
