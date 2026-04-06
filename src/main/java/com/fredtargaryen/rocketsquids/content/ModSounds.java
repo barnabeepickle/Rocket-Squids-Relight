@@ -57,7 +57,8 @@ public class ModSounds {
             SoundEvent.createVariableRangeEvent(new ResourceLocation(MODID, "conchgs5")),
             SoundEvent.createVariableRangeEvent(new ResourceLocation(MODID, "concha5")),
             SoundEvent.createVariableRangeEvent(new ResourceLocation(MODID, "conchas5")),
-            SoundEvent.createVariableRangeEvent(new ResourceLocation(MODID, "conchb5"))
+            SoundEvent.createVariableRangeEvent(new ResourceLocation(MODID, "conchb5")),
+            SoundEvent.createVariableRangeEvent(new ResourceLocation(MODID, "recognition"))
     };
 
     private static RegistryObject<SoundEvent> registerSoundEvents(String name) {

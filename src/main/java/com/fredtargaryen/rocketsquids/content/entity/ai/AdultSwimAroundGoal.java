@@ -139,6 +139,8 @@ public class AdultSwimAroundGoal extends Goal {
                         double hozDistanceSquared = zDistance * zDistance + xDistance * xDistance;
                         //Turn in direction of nearest statue. Not sure why but these values are necessary for it to point correctly
                         this.squid.setTargetRotYaw(Math.atan2(-xDistance, zDistance));
+                        // Send "Recognition" empty sound for those using subs
+                        MessageHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, DataReference.SQUID_SING_RANGE, this.squid.level().dimension())), new MessageSquidNote((byte) 36));
                         //Play a celebratory chord
                         if (hozDistanceSquared > 640000.0) {
                             //More than 50 chunks away (50 * 16 = 800 blocks). Low C Major
