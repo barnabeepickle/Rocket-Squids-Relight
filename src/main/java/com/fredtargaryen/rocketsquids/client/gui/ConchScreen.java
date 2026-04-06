@@ -3,7 +3,7 @@
 package com.fredtargaryen.rocketsquids.client.gui;
 
 import com.fredtargaryen.rocketsquids.DataReference;
-import com.fredtargaryen.rocketsquids.content.ModSounds;
+import com.fredtargaryen.rocketsquids.RSSounds;
 import com.fredtargaryen.rocketsquids.network.MessageHandler;
 import com.fredtargaryen.rocketsquids.network.message.MessagePlayNoteServer;
 import com.fredtargaryen.rocketsquids.util.color.ColorHelper;
@@ -178,7 +178,7 @@ public class ConchScreen extends Screen {
         @Override
         public void playDownSound(@NotNull SoundManager soundHandlerIn) {
             if(ConchScreen.this.playingNotes[this.id] <= 0f) {
-                soundHandlerIn.play(SimpleSoundInstance.forUI(ModSounds.CONCH_NOTES[this.id], 1.0F));
+                soundHandlerIn.play(SimpleSoundInstance.forUI(RSSounds.CONCH_NOTES[this.id], 1.0F));
                 MessageHandler.INSTANCE.sendToServer(new MessagePlayNoteServer((byte) this.id, ConchScreen.this.x, ConchScreen.this.y, ConchScreen.this.z));
                 ConchScreen.this.playingNotes[this.id] = 10f;
             }

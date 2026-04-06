@@ -4,7 +4,7 @@ package com.fredtargaryen.rocketsquids.client.render;
 
 import com.fredtargaryen.rocketsquids.DataReference;
 import com.fredtargaryen.rocketsquids.client.model.ModelRocketSquid;
-import com.fredtargaryen.rocketsquids.content.entity.RocketSquidEntity;
+import com.fredtargaryen.rocketsquids.level.entity.RocketSquidEntity;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

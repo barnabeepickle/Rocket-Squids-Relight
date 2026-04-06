@@ -2,8 +2,8 @@
 // See README.md for full copyright notice and contributor info
 package com.fredtargaryen.rocketsquids.client.event;
 
+import com.fredtargaryen.rocketsquids.*;
 import com.fredtargaryen.rocketsquids.client.particle.SquidFireworkParticle;
-import com.fredtargaryen.rocketsquids.content.*;
 import com.fredtargaryen.rocketsquids.client.gui.ConchScreen;
 import com.fredtargaryen.rocketsquids.client.model.ModelRocketSquid;
 import com.fredtargaryen.rocketsquids.client.model.ModelRocketSquidBaby;
@@ -45,30 +45,30 @@ public class ModClientHandler {
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         // Register block renderers
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.BLOCK_CONCH.get(), RenderType.cutoutMipped());
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.BLOCK_STATUE.get(), RenderType.cutoutMipped());
+        ItemBlockRenderTypes.setRenderLayer(RSBlocks.BLOCK_CONCH.get(), RenderType.cutoutMipped());
+        ItemBlockRenderTypes.setRenderLayer(RSBlocks.BLOCK_STATUE.get(), RenderType.cutoutMipped());
 
         // Register normal entity renderers
-        event.registerEntityRenderer(ModEntities.SAC_TYPE.get(), ThrownItemRenderer::new);
-        event.registerEntityRenderer(ModEntities.TUBE_TYPE.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(RSEntities.SAC_TYPE.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(RSEntities.TUBE_TYPE.get(), ThrownItemRenderer::new);
 
         // Register custom entity renderers
-        event.registerEntityRenderer(ModEntities.SQUID_TYPE.get(), RenderRS::new);
-        event.registerEntityRenderer(ModEntities.BABY_SQUID_TYPE.get(), RenderBabyRS::new);
+        event.registerEntityRenderer(RSEntities.SQUID_TYPE.get(), RenderRS::new);
+        event.registerEntityRenderer(RSEntities.BABY_SQUID_TYPE.get(), RenderBabyRS::new);
     }
 
     public static final ModelLayerLocation SQUID_BODY_LAYER;
 
     static {
-        assert ModEntities.SQUID_TYPE.getId() != null;
-        SQUID_BODY_LAYER = new ModelLayerLocation(ModEntities.SQUID_TYPE.getId(), "body");
+        assert RSEntities.SQUID_TYPE.getId() != null;
+        SQUID_BODY_LAYER = new ModelLayerLocation(RSEntities.SQUID_TYPE.getId(), "body");
     }
 
     public static final ModelLayerLocation BABY_SQUID_BODY_LAYER;
 
     static {
-        assert ModEntities.BABY_SQUID_TYPE.getId() != null;
-        BABY_SQUID_BODY_LAYER = new ModelLayerLocation(ModEntities.BABY_SQUID_TYPE.getId(), "body");
+        assert RSEntities.BABY_SQUID_TYPE.getId() != null;
+        BABY_SQUID_BODY_LAYER = new ModelLayerLocation(RSEntities.BABY_SQUID_TYPE.getId(), "body");
     }
 
     @SubscribeEvent
@@ -79,7 +79,7 @@ public class ModClientHandler {
 
     @SubscribeEvent
     public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
-        event.registerSpriteSet(ModParticleTypes.FIREWORK_TYPE.get(), SquidFireworkParticle.SparkFactory::new);
+        event.registerSpriteSet(RSParticleTypes.FIREWORK_TYPE.get(), SquidFireworkParticle.SparkFactory::new);
     }
 
     public static void openConchClient(byte conchStage) {
@@ -90,7 +90,7 @@ public class ModClientHandler {
         Player ep = Minecraft.getInstance().player;
         assert ep != null;
         Vec3 pos = ep.position();
-        ep.level().playLocalSound(pos.x, pos.y, pos.z, ModSounds.CONCH_NOTES[note], SoundSource.PLAYERS, 1.0F, 1.0F, true);
+        ep.level().playLocalSound(pos.x, pos.y, pos.z, RSSounds.CONCH_NOTES[note], SoundSource.PLAYERS, 1.0F, 1.0F, true);
     }
 
     public static void playNoteFromMessageConchNeeded(byte note) {
@@ -103,9 +103,9 @@ public class ModClientHandler {
         iter.next();
         iter.next();
         ItemStack helmet = iter.next();
-        if (helmet.getItem() == ModItems.ITEM_CONCH.get()) {
+        if (helmet.getItem() == RSItems.ITEM_CONCH.get()) {
             Vec3 pos = player.position();
-            player.level().playLocalSound(pos.x, pos.y, pos.z, ModSounds.CONCH_NOTES[note], SoundSource.NEUTRAL, 1.0F, 1.0F, true);
+            player.level().playLocalSound(pos.x, pos.y, pos.z, RSSounds.CONCH_NOTES[note], SoundSource.NEUTRAL, 1.0F, 1.0F, true);
         }
     }
 }

@@ -2,8 +2,8 @@
 // See README.md for full copyright notice and contributor info
 package com.fredtargaryen.rocketsquids.network.message;
 
-import com.fredtargaryen.rocketsquids.ModRocketSquids;
-import com.fredtargaryen.rocketsquids.content.cap.entity.adult.AdultCap;
+import com.fredtargaryen.rocketsquids.RocketSquidsBase;
+import com.fredtargaryen.rocketsquids.level.capability.entity.adult.AdultCap;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
@@ -41,7 +41,7 @@ public class MessageAdultCapData {
             while(squidFinder.hasNext()) {
                 e = squidFinder.next();
                 if(e.getUUID().equals(this.squidToUpdate)) {
-                    e.getCapability(ModRocketSquids.ADULTCAP).ifPresent(cap ->
+                    e.getCapability(RocketSquidsBase.ADULTCAP).ifPresent(cap ->
                         // We can assume e is an adult rocket squid
                         cap.loadNBT(this.capData)
                     );

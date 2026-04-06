@@ -3,8 +3,8 @@
 package com.fredtargaryen.rocketsquids.network.message;
 
 import com.fredtargaryen.rocketsquids.DataReference;
-import com.fredtargaryen.rocketsquids.ModRocketSquids;
-import com.fredtargaryen.rocketsquids.content.entity.RocketSquidEntity;
+import com.fredtargaryen.rocketsquids.RocketSquidsBase;
+import com.fredtargaryen.rocketsquids.level.entity.RocketSquidEntity;
 import com.fredtargaryen.rocketsquids.network.MessageHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.server.level.ServerLevel;
@@ -51,7 +51,7 @@ public class MessagePlayNoteServer {
                 for (Entity e : entityIterable) {
                     if (e instanceof RocketSquidEntity) {
                         if (e.position().distanceTo(player.position()) <= DataReference.SQUID_LISTEN_RANGE) {
-                            e.getCapability(ModRocketSquids.ADULTCAP).ifPresent(cap -> cap.processNote(this.note));
+                            e.getCapability(RocketSquidsBase.ADULTCAP).ifPresent(cap -> cap.processNote(this.note));
                         }
                     }
                 }

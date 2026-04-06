@@ -4,7 +4,7 @@ package com.fredtargaryen.rocketsquids.client.render;
 
 import com.fredtargaryen.rocketsquids.DataReference;
 import com.fredtargaryen.rocketsquids.client.model.ModelRocketSquidBaby;
-import com.fredtargaryen.rocketsquids.content.entity.BabyRocketSquidEntity;
+import com.fredtargaryen.rocketsquids.level.entity.BabyRocketSquidEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

@@ -3,7 +3,7 @@
 package com.fredtargaryen.rocketsquids.client.gui;
 
 import com.fredtargaryen.rocketsquids.DataReference;
-import com.fredtargaryen.rocketsquids.content.ModSounds;
+import com.fredtargaryen.rocketsquids.RSSounds;
 import com.fredtargaryen.rocketsquids.network.MessageHandler;
 import com.fredtargaryen.rocketsquids.network.message.MessagePlayNoteServer;
 import com.fredtargaryen.rocketsquids.util.color.ColorHelper;
@@ -45,7 +45,7 @@ public class ConchNumberButton extends ExtendedButton {
     public void playDownSound(@NotNull SoundManager soundHandlerIn) {
         int noteId = screen.notes[this.id];
         if(noteId > -1 && screen.playingNotes[noteId] <= 0f) {
-            soundHandlerIn.play(SimpleSoundInstance.forUI(ModSounds.CONCH_NOTES[noteId], 1.0F));
+            soundHandlerIn.play(SimpleSoundInstance.forUI(RSSounds.CONCH_NOTES[noteId], 1.0F));
             MessageHandler.INSTANCE.sendToServer(new MessagePlayNoteServer((byte) noteId, screen.getX(), screen.getY(), screen.getZ()));
             screen.playingNotes[noteId] = 10f;
         }
