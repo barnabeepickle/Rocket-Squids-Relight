@@ -123,13 +123,13 @@ public class ItemConch extends GeoModArmorItem {
         Level level = context.getLevel();
         Player player = context.getPlayer();
         assert player != null;
-        if (!level.isClientSide) {
-            BlockPos pos = context.getClickedPos();
-            Direction facing = context.getClickedFace();
-            BlockState state = level.getBlockState(pos);
-            Block block = state.getBlock();
-            if (player.isCrouching()) {
-                // Assume just trying to place the conch block
+        BlockPos pos = context.getClickedPos();
+        Direction facing = context.getClickedFace();
+        BlockState state = level.getBlockState(pos);
+        Block block = state.getBlock();
+        if (player.isCrouching()) {
+            // Assume just trying to place the conch block
+            if (!level.isClientSide) {
                 if (!state.canBeReplaced()) {
                     pos = pos.relative(facing);
                 }
@@ -153,8 +153,10 @@ public class ItemConch extends GeoModArmorItem {
 
                     return InteractionResult.CONSUME;
                 }
-            } else {
-                // If the player has right-clicked a statue, activate it
+            }
+        } else {
+            // If the player has right-clicked a statue, activate it
+            if (!level.isClientSide) {
                 if (block == ModBlocks.BLOCK_STATUE.get()) {
                     if (!state.getValue(OPEN)) {
                         if (state.getValue(DOUBLE_BLOCK_HALF) == UPPER) {
@@ -164,7 +166,7 @@ public class ItemConch extends GeoModArmorItem {
                                 state = stateBelow;
                             }
                         }
-                        StatueData.forWorld(level).removeStatue(new int[] {
+                        StatueData.forWorld(level).removeStatue(new int[]{
                                 0, 0, pos.getX(), pos.getY(), pos.getZ()
                         });
                         level.setBlockAndUpdate(pos, state.setValue(OPEN, true));
@@ -174,6 +176,11 @@ public class ItemConch extends GeoModArmorItem {
                     }
                 }
             }
+        }
+
+        if (level.isClientSide) {
+            this.use(level, player, context.getHand());
+            return InteractionResult.PASS;
         }
 
         return InteractionResult.FAIL;
