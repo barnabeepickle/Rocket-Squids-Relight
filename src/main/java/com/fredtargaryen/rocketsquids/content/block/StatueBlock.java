@@ -168,6 +168,9 @@ public class StatueBlock extends Block implements SimpleWaterloggedBlock {
         ItemEntity squel = new ItemEntity(level, x + 0.5D, y + 0.5D, z + 0.5D, ModItems.SQUELEPORTER_INACTIVE.get().getDefaultInstance());
         squel.setDeltaMovement(treasureVelocity);
         level.addFreshEntity(squel);
+        ItemEntity conch = new ItemEntity(level, x + 0.5D, y + 0.5D, z + 0.5D, ModItems.ITEM_CONCH3.get().getDefaultInstance());
+        conch.setDeltaMovement(treasureVelocity);
+        level.addFreshEntity(conch);
     }
 
     // Waterlogging related overrides
