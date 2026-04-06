@@ -1,7 +1,7 @@
 package com.fredtargaryen.rocketsquids.content.block;
 
-import com.fredtargaryen.rocketsquids.content.ModSounds;
 import com.fredtargaryen.rocketsquids.content.ModItems;
+import com.fredtargaryen.rocketsquids.content.ModSounds;
 import com.fredtargaryen.rocketsquids.content.worldgen.StatueData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,7 +19,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
-import net.minecraft.world.level.block.WallSignBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -139,7 +138,7 @@ public class StatueBlock extends Block implements SimpleWaterloggedBlock {
         if (!level.isClientSide) {
             BlockPos abovePos = pos.above();
             level.setBlock(abovePos, state
-                    .setValue(DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER)
+                            .setValue(DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER)
                             .setValue(WATERLOGGED, level.getFluidState(abovePos).getType() == Fluids.WATER),
                     3);
             StatueData.forWorld(level).addStatue(pos);
@@ -149,7 +148,7 @@ public class StatueBlock extends Block implements SimpleWaterloggedBlock {
     /**
      * Should only be called by ItemConch
      */
-    public void dispenseGift(Level level, BlockPos pos, Direction facing) {
+    public void dispenseGifts(Level level, BlockPos pos, Direction facing) {
         //Play some kind of wonderful "you found treasure" chord
         //Going with B4, D5 and F#5 (the minor chord makes it foreboding)
         level.playSound(null, pos, ModSounds.CONCH_NOTES[23], SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -176,7 +175,7 @@ public class StatueBlock extends Block implements SimpleWaterloggedBlock {
     // Waterlogging related overrides
     @Override
     public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
-        return !(Boolean)state.getValue(WATERLOGGED);
+        return !(Boolean) state.getValue(WATERLOGGED);
     }
 
     @Override
