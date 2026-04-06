@@ -29,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.*;
 
 
@@ -37,7 +36,7 @@ public class StatueBlock extends Block implements SimpleWaterloggedBlock {
     public StatueBlock(Block.Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
-                .setValue(FACING, Direction.NORTH)
+                .setValue(HORIZONTAL_FACING, Direction.NORTH)
                 .setValue(OPEN, false)
                 .setValue(DOUBLE_BLOCK_HALF, DoubleBlockHalf.LOWER)
                 .setValue(WATERLOGGED, false)
@@ -46,7 +45,7 @@ public class StatueBlock extends Block implements SimpleWaterloggedBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, OPEN, DOUBLE_BLOCK_HALF, WATERLOGGED);
+        builder.add(HORIZONTAL_FACING, OPEN, DOUBLE_BLOCK_HALF, WATERLOGGED);
     }
 
     /**
@@ -73,7 +72,7 @@ public class StatueBlock extends Block implements SimpleWaterloggedBlock {
         DoubleBlockHalf doubleBlockHalf = state.getValue(DOUBLE_BLOCK_HALF);
         if (direction.getAxis() == Direction.Axis.Y && doubleBlockHalf == DoubleBlockHalf.LOWER == (direction == Direction.UP)) {
             return neighborState.is(this) && neighborState.getValue(DOUBLE_BLOCK_HALF) != doubleBlockHalf
-                    ? state.setValue(FACING, neighborState.getValue(FACING))
+                    ? state.setValue(HORIZONTAL_FACING, neighborState.getValue(HORIZONTAL_FACING))
                     .setValue(OPEN, neighborState.getValue(OPEN))
                     : Blocks.AIR.defaultBlockState();
         } else {
@@ -106,7 +105,7 @@ public class StatueBlock extends Block implements SimpleWaterloggedBlock {
         if (blockPos.getY() < level.getMaxBuildHeight() - 1 && level.getBlockState(blockPos.above()).canBeReplaced(context)) {
             FluidState fluidState = level.getFluidState(blockPos);
             return this.defaultBlockState()
-                    .setValue(FACING, context.getHorizontalDirection().getOpposite())
+                    .setValue(HORIZONTAL_FACING, context.getHorizontalDirection().getOpposite())
                     .setValue(OPEN, context.getItemInHand().getItem() == ModItems.ITEM_STATUE_OPEN.get())
                     .setValue(DOUBLE_BLOCK_HALF, DoubleBlockHalf.LOWER)
                     .setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);

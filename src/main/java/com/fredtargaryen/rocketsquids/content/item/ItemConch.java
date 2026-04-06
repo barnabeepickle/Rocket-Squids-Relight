@@ -35,7 +35,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -46,8 +45,7 @@ import software.bernie.geckolib.renderer.GeoArmorRenderer;
 
 import java.util.function.Consumer;
 
-import static net.minecraft.world.level.block.state.properties.BlockStateProperties.DOUBLE_BLOCK_HALF;
-import static net.minecraft.world.level.block.state.properties.BlockStateProperties.OPEN;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.*;
 import static net.minecraft.world.level.block.state.properties.DoubleBlockHalf.LOWER;
 import static net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER;
 
@@ -172,7 +170,7 @@ public class ItemConch extends GeoModArmorItem {
                         });
                         level.setBlockAndUpdate(pos, state.setValue(OPEN, true));
                         context.getItemInHand().grow(-1);
-                        ((StatueBlock) block).dispenseGifts(level, pos, state.getValue(HorizontalDirectionalBlock.FACING));
+                        ((StatueBlock) block).dispenseGifts(level, pos, state.getValue(HORIZONTAL_FACING));
                         return InteractionResult.CONSUME;
                     }
                 }

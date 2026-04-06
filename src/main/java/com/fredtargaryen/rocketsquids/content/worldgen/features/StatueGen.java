@@ -11,9 +11,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -25,6 +23,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.*;
 
 public class StatueGen extends Feature<NoneFeatureConfiguration> {
 
@@ -95,13 +95,13 @@ public class StatueGen extends Feature<NoneFeatureConfiguration> {
                 Direction facing = DataReference.randomHorizontalFacing(level.getRandom());
                 FluidState fs = level.getFluidState(placePos);
                 level.setBlock(placePos, ModBlocks.BLOCK_STATUE.get().defaultBlockState()
-                        .setValue(HorizontalDirectionalBlock.FACING, facing)
-                        .setValue(BlockStateProperties.WATERLOGGED, fs.is(Fluids.WATER)), 3);
+                        .setValue(HORIZONTAL_FACING, facing)
+                        .setValue(WATERLOGGED, fs.is(Fluids.WATER)), 3);
                 fs = level.getFluidState(placePos.above());
                 level.setBlock(placePos.above(), ModBlocks.BLOCK_STATUE.get().defaultBlockState()
-                        .setValue(HorizontalDirectionalBlock.FACING, facing)
-                        .setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER)
-                        .setValue(BlockStateProperties.WATERLOGGED, fs.is(Fluids.WATER)), 3);
+                        .setValue(HORIZONTAL_FACING, facing)
+                        .setValue(DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER)
+                        .setValue(WATERLOGGED, fs.is(Fluids.WATER)), 3);
                 statueLocation[3] = placePos.getY();
                 statueManager.addStatue(statueLocation);
                 return true;
