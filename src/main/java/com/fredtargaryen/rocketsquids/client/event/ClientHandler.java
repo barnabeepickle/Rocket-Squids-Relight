@@ -31,7 +31,7 @@ import static com.fredtargaryen.rocketsquids.DataReference.MODID;
 
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-public class ModClientHandler {
+public class ClientHandler {
     @SuppressWarnings("removal")
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {

@@ -2,7 +2,7 @@
 // See README.md for full copyright notice and contributor info
 package com.fredtargaryen.rocketsquids.level.item;
 
-import com.fredtargaryen.rocketsquids.client.event.ModClientHandler;
+import com.fredtargaryen.rocketsquids.client.event.ClientHandler;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -28,7 +28,7 @@ public class ItemConch3 extends Item {
             @NotNull Player playerIn,
             @NotNull InteractionHand handIn
     ) {
-        if(worldIn.isClientSide) ModClientHandler.openConchClient((byte) 3);
+        if(worldIn.isClientSide) ClientHandler.openConchClient((byte) 3);
         return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
     }
 

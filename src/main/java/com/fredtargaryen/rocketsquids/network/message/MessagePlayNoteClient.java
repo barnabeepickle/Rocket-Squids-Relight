@@ -2,7 +2,7 @@
 // See README.md for full copyright notice and contributor info
 package com.fredtargaryen.rocketsquids.network.message;
 
-import com.fredtargaryen.rocketsquids.client.event.ModClientHandler;
+import com.fredtargaryen.rocketsquids.client.event.ClientHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -25,7 +25,7 @@ public class MessagePlayNoteClient {
     }
 
     public void onMessage(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> ModClientHandler.playNoteFromMessage(this.note));
+        ctx.get().enqueueWork(() -> ClientHandler.playNoteFromMessage(this.note));
         ctx.get().setPacketHandled(true);
     }
 

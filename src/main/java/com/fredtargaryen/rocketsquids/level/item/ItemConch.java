@@ -3,7 +3,7 @@
 package com.fredtargaryen.rocketsquids.level.item;
 
 import com.fredtargaryen.rocketsquids.DataReference;
-import com.fredtargaryen.rocketsquids.client.event.ModClientHandler;
+import com.fredtargaryen.rocketsquids.client.event.ClientHandler;
 import com.fredtargaryen.rocketsquids.client.render.armor.ConchWearableRenderer;
 import com.fredtargaryen.rocketsquids.RSBlocks;
 import com.fredtargaryen.rocketsquids.level.block.StatueBlock;
@@ -109,7 +109,7 @@ public class ItemConch extends GeoModArmorItem {
             @NotNull Player playerIn,
             @NotNull InteractionHand handIn
     ) {
-        if (worldIn.isClientSide && !playerIn.isCrouching()) ModClientHandler.openConchClient((byte) 1);
+        if (worldIn.isClientSide && !playerIn.isCrouching()) ClientHandler.openConchClient((byte) 1);
         return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
     }
 
