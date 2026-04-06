@@ -164,7 +164,9 @@ public class ItemConch extends GeoModArmorItem {
                                 state = stateBelow;
                             }
                         }
-                        StatueData.forWorld(level).removeStatue(pos);
+                        StatueData.forWorld(level).removeStatue(new int[] {
+                                0, 0, pos.getX(), pos.getY(), pos.getZ()
+                        });
                         level.setBlockAndUpdate(pos, state.setValue(OPEN, true));
                         context.getItemInHand().grow(-1);
                         ((StatueBlock) block).dispenseGift(level, pos, facing);
