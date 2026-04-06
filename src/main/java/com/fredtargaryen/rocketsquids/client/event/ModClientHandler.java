@@ -3,10 +3,10 @@
 package com.fredtargaryen.rocketsquids.client.event;
 
 import com.fredtargaryen.rocketsquids.*;
-import com.fredtargaryen.rocketsquids.client.particle.SquidFireworkParticle;
 import com.fredtargaryen.rocketsquids.client.gui.ConchScreen;
 import com.fredtargaryen.rocketsquids.client.model.ModelRocketSquid;
 import com.fredtargaryen.rocketsquids.client.model.ModelRocketSquidBaby;
+import com.fredtargaryen.rocketsquids.client.particle.SquidFireworkParticle;
 import com.fredtargaryen.rocketsquids.client.render.RenderBabyRS;
 import com.fredtargaryen.rocketsquids.client.render.RenderRS;
 import net.minecraft.client.Minecraft;
@@ -22,10 +22,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.util.Iterator;
 
@@ -34,13 +32,6 @@ import static com.fredtargaryen.rocketsquids.DataReference.MODID;
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ModClientHandler {
-    public static void init(FMLJavaModLoadingContext context) {
-        IEventBus modEventBus = context.getModEventBus();
-
-        modEventBus.addListener(ModClientHandler::registerRenderers);
-        modEventBus.addListener(ModClientHandler::registerLayerDefinitions);
-    }
-
     @SuppressWarnings("removal")
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {

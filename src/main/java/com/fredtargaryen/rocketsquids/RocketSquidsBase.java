@@ -2,7 +2,6 @@
 // See README.md for full copyright notice and contributor info
 package com.fredtargaryen.rocketsquids;
 
-import com.fredtargaryen.rocketsquids.client.event.ModClientHandler;
 import com.fredtargaryen.rocketsquids.config.Config;
 import com.fredtargaryen.rocketsquids.config.GeneralConfig;
 import com.fredtargaryen.rocketsquids.level.capability.entity.adult.AdultCap;
@@ -44,6 +43,7 @@ public class RocketSquidsBase {
     public static final Logger LOGGER = LogManager.getLogger();
 
     private static RocketSquidsBase INSTANCE;
+
     public static RocketSquidsBase getInstance() {
         return INSTANCE;
     }
@@ -55,11 +55,11 @@ public class RocketSquidsBase {
      * Firework structure:
      * TagCompound          (firework)
      * |_TagList            (list, "Explosions")
-     *   |_TagCompound      (Single firework part)
-     *     |_TagBoolean     ("Trail")
-     *     |_TagBoolean     ("Flicker")
-     *     |_TagIntArray    ("Colors")
-     *     |_TagIntArray    ("FadeColors")
+     * |_TagCompound      (Single firework part)
+     * |_TagBoolean     ("Trail")
+     * |_TagBoolean     ("Flicker")
+     * |_TagIntArray    ("Colors")
+     * |_TagIntArray    ("FadeColors")
      */
     public static final CompoundTag firework = new CompoundTag();
 
@@ -96,8 +96,6 @@ public class RocketSquidsBase {
         RSParticleTypes.register(modEventBus);
         RSSounds.register(modEventBus);
 
-        ModClientHandler.init(context);
-
         context.registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG_SPEC);
         Config.loadConfig(FMLPaths.CONFIGDIR.get().resolve(MODID + ".toml"));
 
@@ -107,6 +105,7 @@ public class RocketSquidsBase {
 
     /**
      * Called after all registry events. Runs in parallel with other SetupEvent handlers.
+     *
      * @param event FMLCommonSetupEvent
      */
     public void postRegistration(FMLCommonSetupEvent event) {
@@ -115,7 +114,7 @@ public class RocketSquidsBase {
         setupFirework();
 
         // Validate the config
-        if(GeneralConfig.MAX_GROUP_SIZE.get() < GeneralConfig.MIN_GROUP_SIZE.get()) {
+        if (GeneralConfig.MAX_GROUP_SIZE.get() < GeneralConfig.MIN_GROUP_SIZE.get()) {
             GeneralConfig.MAX_GROUP_SIZE = GeneralConfig.MIN_GROUP_SIZE;
         }
 
@@ -152,7 +151,7 @@ public class RocketSquidsBase {
 
     @SubscribeEvent
     public void onItemAttachCapabilitiesEvent(AttachCapabilitiesEvent<ItemStack> evt) {
-        if(evt.getObject().getItem() == RSItems.SQUELEPORTER_ACTIVE.get()) {
+        if (evt.getObject().getItem() == RSItems.SQUELEPORTER_ACTIVE.get()) {
             evt.addCapability(DataReference.SQUELEPORTER_LOCATION, new SqueleporterCapProvider());
         }
     }
